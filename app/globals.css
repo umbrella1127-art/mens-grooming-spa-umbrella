@@ -1,26 +1,65 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* デザイントークン — 黒〜チャコール + ブラウン + ベージュ/グレージュ + 白
+   高級感は出すが高級店に寄せすぎない。ブランドとして単一の配色にコミットする。 */
+@theme {
+  --color-ink: #1a1a1a;
+  --color-charcoal: #2e2c2a;
+  --color-charcoal-light: #4a4642;
+  --color-brown: #6b5545;
+  --color-brown-light: #8a7362;
+  --color-beige: #d9cfc2;
+  --color-greige: #b8afa4;
+  --color-paper: #faf8f5;
+  --color-paper-dark: #f2eee8;
+  --color-line-green: #06c755;
+
+  --font-serif-jp: var(--font-shippori), "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --font-sans-jp: var(--font-noto), "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-paper);
+  color: var(--color-charcoal);
+  font-family: var(--font-sans-jp);
+  line-height: 1.9;
+  letter-spacing: 0.02em;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-serif-jp);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 1.6;
+}
+
+/* ゆっくり現れるアニメーション（FadeIn コンポーネントが .is-visible を付与） */
+.fade-in {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 0.9s ease,
+    transform 0.9s ease;
+}
+.fade-in.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .fade-in {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
