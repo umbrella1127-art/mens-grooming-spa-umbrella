@@ -1,4 +1,3 @@
-import Image from "next/image";
 import CtaSection from "@/components/sections/CtaSection";
 import MenuCard from "@/components/sections/MenuCard";
 import PageHero from "@/components/sections/PageHero";
@@ -72,35 +71,17 @@ export default async function FacialPage() {
         </Container>
       </section>
 
-      {images.facial_hero && (
-        <section className="bg-ink py-16 md:py-24">
-          <Container>
-            <FadeIn>
-              <div className="grid items-center gap-8 md:grid-cols-2">
-                <div className="relative aspect-[4/3] overflow-hidden rounded-sm">
-                  <Image
-                    src={images.facial_hero.url}
-                    alt={images.facial_hero.alt}
-                    fill
-                    sizes="(min-width: 768px) 50vw, 100vw"
-                    className="object-cover"
-                  />
-                </div>
-                <div>
-                  <p className="mb-3 text-xs tracking-[0.3em] uppercase text-beige">
-                    Care
-                  </p>
-                  <p className="text-lg leading-relaxed text-paper">
-                    1回で劇的に変わるものではありません。
-                    <br />
-                    月に一度、肌を整える習慣に。
-                  </p>
-                </div>
-              </div>
-            </FadeIn>
-          </Container>
-        </section>
-      )}
+      <section className="bg-ink py-14 text-center md:py-20">
+        <Container>
+          <FadeIn>
+            <p className="mx-auto max-w-xl text-lg leading-relaxed text-paper">
+              1回で劇的に変わるものではありません。
+              <br />
+              月に一度、肌を整える習慣に。
+            </p>
+          </FadeIn>
+        </Container>
+      </section>
 
       <section className="py-16 md:py-24">
         <Container>

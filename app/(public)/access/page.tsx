@@ -28,6 +28,8 @@ export default async function AccessPage() {
         en="Access"
         title="アクセス・営業時間"
         lead={`${settings.address}\n${settings.parking}`}
+        imageUrl={images.access_entrance?.url}
+        imageAlt={images.access_entrance?.alt}
       />
 
       <section className="py-16 md:py-24">
