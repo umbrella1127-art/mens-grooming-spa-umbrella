@@ -137,6 +137,9 @@ export const fallbackMenus: Menu[] = [
     description:
       "カット＋シェービング＋ヘッドスパ「浄」50分。溜まった疲れをリセットして、また明日から頑張れる感覚へ。",
     duration_min: 150,
+    price_yen: 12870,
+    price_status: "fixed",
+    price_note: "税込",
     is_recommended: true,
     sort_order: 2,
     page_slug: "first-grooming",

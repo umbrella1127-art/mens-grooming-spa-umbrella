@@ -134,7 +134,7 @@ export default async function TopPage() {
                 umbrellaは、群馬県前橋市の男性専用サロンです。
                 カット、シェービング、ヘッドスパ、頭皮診断、フェイシャル、育毛、そして内側からのケアまで。
                 美容室でも、エステでも、ヘッドスパ専門店でもない、
-                「自分を整える場所」として、少し暗めの照明と静かな音楽の中で、
+                「自分を整える場所」として、落ち着いたトーンの照明と静かな音楽の中で、
                 何もしなくていい時間をお過ごしいただけます。
               </p>
             </FadeIn>
@@ -192,7 +192,7 @@ export default async function TopPage() {
               ))}
             </div>
             <p className="mt-6 text-center text-xs text-greige">
-              初回は約120分。カウンセリングと頭皮診断から始まります。
+              カウンセリングとマイクロスコープでの頭皮診断から始まります。
             </p>
             <div className="mt-6 text-center">
               <Link

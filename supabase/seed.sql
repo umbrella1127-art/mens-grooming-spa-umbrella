@@ -46,7 +46,7 @@ insert into menus (slug, name, category, description, duration_min, price_yen, p
 ('first-ume', '初回グルーミング【梅】', 'first_grooming',
  'カット＋シェービング＋ヘッドスパ「月」35分。月1回の身だしなみを一通り整えるコース。', 120, 9900, 'fixed', '税込', true, false, 1, 'first-grooming'),
 ('first-take', '初回グルーミング【竹】', 'first_grooming',
- 'カット＋シェービング＋ヘッドスパ「浄」50分。溜まった疲れをリセットして、また明日から頑張れる感覚へ。', 150, null, 'tbd', null, true, true, 2, 'first-grooming'),
+ 'カット＋シェービング＋ヘッドスパ「浄」50分。溜まった疲れをリセットして、また明日から頑張れる感覚へ。', 150, 12870, 'fixed', '税込', true, true, 2, 'first-grooming'),
 ('first-matsu', '初回グルーミング【松】', 'first_grooming',
  '竹の内容＋フェイシャル＋肌の水分・油分チェック。疲れをリセットし、肌まで整えて、自分に少し自信を持って帰る。', 180, null, 'tbd', null, true, false, 3, 'first-grooming'),
 -- フェイシャル

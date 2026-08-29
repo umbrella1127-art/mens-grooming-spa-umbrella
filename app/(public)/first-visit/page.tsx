@@ -15,7 +15,7 @@ export async function generateMetadata() {
   return buildMetadata({
     title: "初めての方へ",
     description:
-      "美容室が苦手でも、美容に詳しくなくても大丈夫。初回は約120分、カウンセリングと頭皮診断から始まります。前橋の男性専用グルーミングサロンの初回の流れをご案内します。",
+      "美容室が苦手でも、美容に詳しくなくても大丈夫。カウンセリングとマイクロスコープでの頭皮診断から始まります。前橋の男性専用グルーミングサロンの初回の流れをご案内します。",
     path: "/first-visit",
   });
 }
@@ -56,11 +56,12 @@ export default async function FirstVisitPage() {
           <FadeIn>
             <div className="mx-auto max-w-2xl space-y-4 text-sm leading-loose text-charcoal-light">
               <p>
-                少し暗めの照明。歌詞のない静かな音楽。香りにも配慮した、男性だけの空間です。
+                落ち着いたトーンの照明。歌詞のない静かな音楽。香りにも配慮した、男性だけの空間です。
               </p>
               <p>
-                施術中に会話は求めません。スマホからも少し離れて、「何もしなくていい時間」をお過ごしください。
-                もちろん、相談したいことがあればいつでもどうぞ。
+                シェービングやヘッドスパ、フェイシャルの間は、無理に会話を求めません。
+                スマホからも少し離れて、「何もしなくていい時間」をお過ごしください。
+                カットの間は、世間話はもちろん、インナービューティーやケアのご相談もお気軽にどうぞ。
               </p>
             </div>
           </FadeIn>
@@ -69,7 +70,7 @@ export default async function FirstVisitPage() {
 
       <section className="bg-paper-dark py-16 md:py-24">
         <Container>
-          <SectionHeading en="Flow">初回の流れ（約120分）</SectionHeading>
+          <SectionHeading en="Flow">初回の流れ</SectionHeading>
           <FadeIn>
             <div className="mx-auto max-w-2xl">
               <FlowSteps steps={FIRST_FLOW} />

@@ -15,7 +15,7 @@ export async function generateMetadata() {
   return buildMetadata({
     title: "初回グルーミングコース",
     description:
-      "カット・シェービング・ヘッドスパがひとつになった、初めての方のためのグルーミングコース。約120分、カウンセリングと頭皮診断込み。前橋の男性専用サロン。",
+      "カット・シェービング・ヘッドスパがひとつになった、初めての方のためのグルーミングコース。カウンセリングとマイクロスコープでの頭皮診断込み。前橋の男性専用サロン。",
     path: "/menu/first-grooming",
   });
 }
@@ -44,7 +44,7 @@ export default async function FirstGroomingPage() {
         en="First Grooming"
         title="初回グルーミングコース"
         lead={
-          "初めての方のための、約120分のグルーミング体験。\nカウンセリングと頭皮診断から始まり、カット・シェービング・ヘッドスパまで、一度に整えます。"
+          "初めての方のための、じっくり向き合うグルーミング体験。\nカウンセリングとマイクロスコープでの頭皮診断から始まり、カット・シェービング・ヘッドスパまで、一度に整えます。"
         }
         imageUrl={images.first_visit_hero?.url}
         imageAlt={images.first_visit_hero?.alt}
@@ -69,7 +69,7 @@ export default async function FirstGroomingPage() {
 
       <section className="bg-paper-dark py-16 md:py-24">
         <Container>
-          <SectionHeading en="Flow">当日の流れ（約120分）</SectionHeading>
+          <SectionHeading en="Flow">当日の流れ</SectionHeading>
           <FadeIn>
             <div className="mx-auto max-w-2xl">
               <FlowSteps steps={FLOW} />
