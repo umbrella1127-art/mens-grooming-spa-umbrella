@@ -3,6 +3,7 @@ export type PriceStatus = "fixed" | "tbd" | "hidden";
 export type MenuCategory =
   | "first_grooming"
   | "head_spa"
+  | "head_spa_solo"
   | "facial"
   | "shaving"
   | "hair_growth"

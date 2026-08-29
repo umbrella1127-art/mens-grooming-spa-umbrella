@@ -32,14 +32,19 @@ insert into menus (slug, name, category, description, duration_min, price_yen, p
 ('headspa-tsuki', '月（つき）', 'head_spa',
  'カット＋シェービング＋ヘッドスパ35分。月に一度の身だしなみとリセットを、一度にまとめて。', 90, 9900, 'fixed', '税込', true, false, 1, 'head-spa'),
 ('headspa-jo', '浄（じょう）', 'head_spa',
- 'カット＋シェービング＋ヘッドスパ50分。頭浸浴と専用オイルを使い、たっぷりのマッサージで深く整える上位コース。', 105, 12870, 'fixed', '税込', true, true, 2, 'head-spa'),
+ 'カット＋シェービング＋ヘッドスパ50分。頭浸浴と専用オイルを使い、たっぷりのマッサージで深く整える上位コース。', 120, 12870, 'fixed', '税込', true, true, 2, 'head-spa'),
+-- カットなしメニュー
+('headspa-solo', 'ヘッドスパ単品', 'head_spa_solo',
+ 'カット・シェービングなしで、ヘッドスパだけをご利用いただけます。予約枠の目安は60分です。', 60, null, 'tbd', 'カット不要', true, false, 1, 'head-spa'),
+('headspa-facial-solo', 'ヘッドスパ＋フェイシャル', 'head_spa_solo',
+ 'カット・シェービングなしで、ヘッドスパとフェイシャルを組み合わせたコースです。忙しい日でも、頭と肌をまとめて整えられます。', null, null, 'tbd', 'カット不要', true, false, 2, 'head-spa'),
 -- 初回グルーミング（名称は仮。お客様向けの名称は後日決定）
 ('first-ume', '初回グルーミング【梅】', 'first_grooming',
  'カット＋シェービング＋ヘッドスパ「月」35分。月1回の身だしなみを一通り整えるコース。', 120, 9900, 'fixed', '税込', true, false, 1, 'first-grooming'),
 ('first-take', '初回グルーミング【竹】', 'first_grooming',
- 'カット＋シェービング＋ヘッドスパ「浄」50分。溜まった疲れをリセットして、また明日から頑張れる感覚へ。', 120, null, 'tbd', null, true, true, 2, 'first-grooming'),
+ 'カット＋シェービング＋ヘッドスパ「浄」50分。溜まった疲れをリセットして、また明日から頑張れる感覚へ。', 150, null, 'tbd', null, true, true, 2, 'first-grooming'),
 ('first-matsu', '初回グルーミング【松】', 'first_grooming',
- '竹の内容＋フェイシャル＋肌の水分・油分チェック。疲れをリセットし、肌まで整えて、自分に少し自信を持って帰る。', 150, null, 'tbd', null, true, false, 3, 'first-grooming'),
+ '竹の内容＋フェイシャル＋肌の水分・油分チェック。疲れをリセットし、肌まで整えて、自分に少し自信を持って帰る。', 180, null, 'tbd', null, true, false, 3, 'first-grooming'),
 -- フェイシャル
 ('facial', 'グルーミングフェイシャル', 'facial',
  '肌の水分・油分を測定してから、オイルのハンドマッサージと美容機器で肌を整えるフェイシャルケア。', 60, null, 'tbd', null, true, false, 1, 'facial'),
@@ -63,7 +68,7 @@ insert into menus (slug, name, category, description, duration_min, price_yen, p
  '隣接エステサロンの設備を利用した男性向け痩身ケア。完全予約制。', null, null, 'hidden', '完全予約制・詳細はLINEで', true, false, 1, 'slimming'),
 -- 耳つぼ
 ('mimitsubo', '耳つぼセラピー', 'mimitsubo',
- 'ヘッドスパなどと組み合わせられる追加ケア。耳つぼジュエリー／シールタイプで、肩・腰などのポイントを扱います。', 15, null, 'tbd', 'オプション', true, false, 1, 'head-spa'),
+ 'ヘッドスパなどと組み合わせられる追加ケア。耳つぼシールを使用し、肩・腰などのポイントを扱います。', 15, 1650, 'fixed', '追加オプション・単品の場合2,200円', true, false, 1, 'head-spa'),
 -- ギフト
 ('gift', 'グルーミングギフト', 'gift',
  'ヘッドスパ35分＋シェービング＋フェイシャル。大切な男性に「整える時間」を贈るギフト体験（カットなし）。', 90, null, 'hidden', '料金はLINEでご案内', true, false, 1, 'gift'),

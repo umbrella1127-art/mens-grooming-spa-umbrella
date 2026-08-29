@@ -24,7 +24,7 @@ const QUALIFICATIONS = [
   "アーユルヴェーダフェイシャル修了",
   "ファスティングカウンセラー",
   "脳疲労アドバイザー",
-  "耳つぼセラピー資格",
+  "耳つぼセラピープロ養成講座 修了（日本耳つぼセラピープロ協会®）",
 ];
 
 export default async function AboutPage() {

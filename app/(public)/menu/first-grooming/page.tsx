@@ -22,7 +22,7 @@ export async function generateMetadata() {
 
 const FLOW = [
   { title: "カウンセリング" },
-  { title: "頭皮診断" },
+  { title: "マイクロスコープ診断" },
   { title: "カット" },
   { title: "シェービング" },
   { title: "ヘッドスパ" },
