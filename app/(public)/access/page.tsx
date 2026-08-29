@@ -1,9 +1,10 @@
+import Image from "next/image";
 import CtaSection from "@/components/sections/CtaSection";
 import PageHero from "@/components/sections/PageHero";
 import Container from "@/components/ui/Container";
 import FadeIn from "@/components/ui/FadeIn";
 import SectionHeading from "@/components/ui/SectionHeading";
-import { getSettings } from "@/lib/cms";
+import { getImages, getSettings } from "@/lib/cms";
 import { buildMetadata, JsonLd, localBusinessJsonLd } from "@/lib/seo";
 
 export const revalidate = 3600;
@@ -18,7 +19,7 @@ export async function generateMetadata() {
 }
 
 export default async function AccessPage() {
-  const settings = await getSettings();
+  const [settings, images] = await Promise.all([getSettings(), getImages()]);
 
   return (
     <>
@@ -78,17 +79,38 @@ export default async function AccessPage() {
               </p>
             </FadeIn>
             <FadeIn delay={150}>
-              <div className="h-80 overflow-hidden rounded-sm md:h-full">
-                <iframe
-                  title="MEN'S GROOMING SPA umbrella の地図"
-                  src={`https://www.google.com/maps?q=${encodeURIComponent(settings.address + " umbrella")}&output=embed`}
-                  className="h-full w-full border-0"
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
-              </div>
+              {images.access_entrance ? (
+                <div className="relative aspect-[4/3] overflow-hidden rounded-sm md:h-full md:aspect-auto">
+                  <Image
+                    src={images.access_entrance.url}
+                    alt={images.access_entrance.alt}
+                    fill
+                    sizes="(min-width: 768px) 50vw, 100vw"
+                    className="object-cover"
+                  />
+                </div>
+              ) : null}
+              <p className="mt-3 text-center text-xs text-greige">
+                この看板が目印です。
+              </p>
             </FadeIn>
           </div>
+        </Container>
+      </section>
+
+      <section className="pb-16 md:pb-24">
+        <Container>
+          <FadeIn>
+            <div className="h-80 overflow-hidden rounded-sm">
+              <iframe
+                title="MEN'S GROOMING SPA umbrella の地図"
+                src={`https://www.google.com/maps?q=${encodeURIComponent(settings.address + " umbrella")}&output=embed`}
+                className="h-full w-full border-0"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
+          </FadeIn>
         </Container>
       </section>
 

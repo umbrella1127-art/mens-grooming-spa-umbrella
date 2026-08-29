@@ -115,7 +115,9 @@ insert into images (slot_key, url, alt, label) values
 ('slimming_hero',     '/images/slimming.jpg',    '痩身ケアのイメージ', '痩身ページの写真'),
 ('gift_hero',         '/images/gift.jpg',        'ギフトのイメージ', 'ギフトページの写真'),
 ('voice_1',           '/images/voice_1.jpg',     'お客様の声', 'お客様の声1'),
-('voice_2',           '/images/voice_2.jpg',     'お客様の声', 'お客様の声2');
+('voice_2',           '/images/voice_2.jpg',     'お客様の声', 'お客様の声2'),
+('access_entrance',   '/images/access_entrance.jpg', '店舗エントランス', 'ACCESSページの写真'),
+('owner_cutting',     '/images/owner_cutting.jpg', 'カット施術中の井上', '井上さんの施術風景');
 
 -- ========== ab_variants（FVコピーのA/B案を保存） ==========
 insert into ab_variants (slot_key, variant_label, content, is_active) values

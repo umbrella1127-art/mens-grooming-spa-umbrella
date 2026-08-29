@@ -347,6 +347,8 @@ export const fallbackImages: ImageSlot[] = [
   ["gift_hero", "/images/gift.jpg", "ギフトのイメージ", "ギフトページの写真"],
   ["voice_1", "/images/voice_1.jpg", "お客様の声", "お客様の声1"],
   ["voice_2", "/images/voice_2.jpg", "お客様の声", "お客様の声2"],
+  ["access_entrance", "/images/access_entrance.jpg", "店舗エントランス", "ACCESSページの写真"],
+  ["owner_cutting", "/images/owner_cutting.jpg", "カット施術中の井上", "井上さんの施術風景"],
 ].map(([slot_key, url, alt, label]) => ({
   slot_key,
   url,

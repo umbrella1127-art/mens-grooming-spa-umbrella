@@ -43,13 +43,22 @@ export default async function AboutPage() {
       <section className="py-16 md:py-24">
         <Container>
           <div className="grid items-start gap-10 md:grid-cols-5">
-            <FadeIn className="md:col-span-2">
+            <FadeIn className="space-y-4 md:col-span-2">
               {images.owner_portrait && (
                 <Image
                   src={images.owner_portrait.url}
                   alt={images.owner_portrait.alt}
                   width={560}
                   height={700}
+                  className="rounded-sm object-cover"
+                />
+              )}
+              {images.owner_cutting && (
+                <Image
+                  src={images.owner_cutting.url}
+                  alt={images.owner_cutting.alt}
+                  width={560}
+                  height={373}
                   className="rounded-sm object-cover"
                 />
               )}

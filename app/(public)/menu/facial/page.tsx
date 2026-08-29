@@ -1,3 +1,4 @@
+import Image from "next/image";
 import CtaSection from "@/components/sections/CtaSection";
 import MenuCard from "@/components/sections/MenuCard";
 import PageHero from "@/components/sections/PageHero";
@@ -13,7 +14,7 @@ export async function generateMetadata() {
   return buildMetadata({
     title: "メンズフェイシャル",
     description:
-      "男性も、肌をプロに任せていい。肌の水分・油分を測定してから、オイルのハンドマッサージと美容機器で肌を整えるフェイシャルケア。前橋の男性専用サロン。",
+      "男性も、肌をプロに任せていい。肌測定・ハーブピーリング・美容機器で肌を整えるフェイシャルケア。前橋の男性専用サロン。",
     path: "/menu/facial",
   });
 }
@@ -26,22 +27,11 @@ const CONCERNS = [
 ];
 
 const CARE_ITEMS = [
-  {
-    title: "肌測定",
-    body: "簡易測定器で肌の水分・油分をチェック。今の肌を知るところから始めます。",
-  },
-  {
-    title: "美容機器によるケア",
-    body: "アネモネ、Dr.Arrivo Ghost を使用したフェイシャルケア。",
-  },
-  {
-    title: "オイルのハンドマッサージ",
-    body: "手のぬくもりで、顔まわりのこわばりをゆるめます。",
-  },
-  {
-    title: "美容液・パック仕上げ",
-    body: "ヒト幹細胞培養液・美容原液を使い、パックで仕上げます。",
-  },
+  { title: "肌測定", body: "水分・油分を数値でチェック。" },
+  { title: "ハーブピーリング", body: "毛穴・ニキビ跡に、古い角質からアプローチ。" },
+  { title: "美容機器ケア", body: "「アネモネ」「Dr.Arrivo Ghost」を使い分け。" },
+  { title: "オイルマッサージ", body: "指の腹と手のひらの温度で、表情筋をほぐす。" },
+  { title: "美容液・パック", body: "ヒト幹細胞培養液・美容原液で仕上げ。" },
 ];
 
 export default async function FacialPage() {
@@ -78,35 +68,65 @@ export default async function FacialPage() {
                 </li>
               ))}
             </ul>
-            <p className="mx-auto mt-8 max-w-2xl text-center text-sm leading-loose text-charcoal-light">
-              1回で劇的に変わるものではありません。継続して肌を整えていくケアとして、
-              月に一度の習慣に組み込むことをおすすめしています。
-            </p>
           </FadeIn>
         </Container>
       </section>
 
-      <section className="bg-paper-dark py-16 md:py-24">
+      {images.facial_hero && (
+        <section className="bg-ink py-16 md:py-24">
+          <Container>
+            <FadeIn>
+              <div className="grid items-center gap-8 md:grid-cols-2">
+                <div className="relative aspect-[4/3] overflow-hidden rounded-sm">
+                  <Image
+                    src={images.facial_hero.url}
+                    alt={images.facial_hero.alt}
+                    fill
+                    sizes="(min-width: 768px) 50vw, 100vw"
+                    className="object-cover"
+                  />
+                </div>
+                <div>
+                  <p className="mb-3 text-xs tracking-[0.3em] uppercase text-beige">
+                    Care
+                  </p>
+                  <p className="text-lg leading-relaxed text-paper">
+                    1回で劇的に変わるものではありません。
+                    <br />
+                    月に一度、肌を整える習慣に。
+                  </p>
+                </div>
+              </div>
+            </FadeIn>
+          </Container>
+        </section>
+      )}
+
+      <section className="py-16 md:py-24">
         <Container>
           <SectionHeading en="Care">フェイシャルの内容</SectionHeading>
           <FadeIn>
-            <div className="grid gap-5 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
               {CARE_ITEMS.map((item) => (
-                <div key={item.title} className="rounded-sm border border-beige bg-paper p-6">
-                  <p className="mb-2 font-serif-jp text-base text-ink">
+                <div
+                  key={item.title}
+                  className="rounded-sm border border-beige bg-paper-dark p-5"
+                >
+                  <p className="mb-1 font-serif-jp text-sm text-ink">
                     {item.title}
                   </p>
-                  <p className="text-sm leading-loose text-charcoal-light">
+                  <p className="text-xs leading-relaxed text-charcoal-light">
                     {item.body}
                   </p>
                 </div>
               ))}
             </div>
+            {/* 動画枠: フェイシャル施術動画が用意でき次第ここに挿入する */}
           </FadeIn>
         </Container>
       </section>
 
-      <section className="py-16 md:py-24">
+      <section className="bg-paper-dark py-16 md:py-24">
         <Container>
           <SectionHeading en="Menu">メニュー</SectionHeading>
           <FadeIn>
@@ -115,6 +135,10 @@ export default async function FacialPage() {
                 <MenuCard key={menu.slug} menu={menu} />
               ))}
             </div>
+            <p className="mx-auto mt-6 max-w-xl text-center text-sm leading-loose text-charcoal-light">
+              グルーミングコースに含まれるフェイシャルは、その日の肌の状態に合わせて内容を組み合わせます。
+              フェイシャル単品でご利用の場合は、2種類のフェイシャルからお選びいただけます（詳細はLINEでご案内します）。
+            </p>
           </FadeIn>
         </Container>
       </section>

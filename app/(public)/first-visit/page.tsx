@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import CtaSection from "@/components/sections/CtaSection";
 import FaqList from "@/components/sections/FaqList";
@@ -46,23 +47,34 @@ export default async function FirstVisitPage() {
         lead={
           "美容に詳しくなくても、来ていい場所です。\nむしろ、ほとんどのお客様が「美容室が苦手だった」方です。"
         }
-        imageUrl={images.first_visit_hero?.url}
-        imageAlt={images.first_visit_hero?.alt}
       />
 
       <section className="py-16 md:py-24">
         <Container>
           <SectionHeading en="Space">男性専用の、静かな空間</SectionHeading>
           <FadeIn>
-            <div className="mx-auto max-w-2xl space-y-4 text-sm leading-loose text-charcoal-light">
-              <p>
-                落ち着いたトーンの照明。歌詞のない静かな音楽。香りにも配慮した、男性だけの空間です。
-              </p>
-              <p>
-                シェービングやヘッドスパ、フェイシャルの間は、無理に会話を求めません。
-                スマホからも少し離れて、「何もしなくていい時間」をお過ごしください。
-                カットの間は、世間話はもちろん、インナービューティーやケアのご相談もお気軽にどうぞ。
-              </p>
+            <div className="grid items-center gap-8 md:grid-cols-2">
+              <div className="space-y-4 text-sm leading-loose text-charcoal-light">
+                <p>
+                  落ち着いたトーンの照明。歌詞のない静かな音楽。香りにも配慮した、男性だけの空間です。
+                </p>
+                <p>
+                  シェービングやヘッドスパ、フェイシャルの間は、無理に会話を求めません。
+                  スマホからも少し離れて、「何もしなくていい時間」をお過ごしください。
+                  カットの間は、世間話はもちろん、インナービューティーやケアのご相談もお気軽にどうぞ。
+                </p>
+              </div>
+              {images.first_visit_hero && (
+                <div className="relative aspect-[4/3] overflow-hidden rounded-sm">
+                  <Image
+                    src={images.first_visit_hero.url}
+                    alt={images.first_visit_hero.alt}
+                    fill
+                    sizes="(min-width: 768px) 50vw, 100vw"
+                    className="object-cover"
+                  />
+                </div>
+              )}
             </div>
           </FadeIn>
         </Container>
