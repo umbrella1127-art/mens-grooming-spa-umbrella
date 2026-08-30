@@ -1,3 +1,4 @@
+import Link from "next/link";
 import CtaSection from "@/components/sections/CtaSection";
 import MenuCard from "@/components/sections/MenuCard";
 import PageHero from "@/components/sections/PageHero";
@@ -103,6 +104,16 @@ export default async function FacialPage() {
               ))}
             </div>
             {/* 動画枠: フェイシャル施術動画が用意でき次第ここに挿入する */}
+            <p className="mt-8 text-center text-xs text-greige">
+              顔の産毛が気になる方は
+              <Link
+                href="/menu/shaving"
+                className="mx-1 border-b border-greige text-charcoal-light hover:text-brown"
+              >
+                シェービング
+              </Link>
+              との組み合わせもおすすめです。
+            </p>
           </FadeIn>
         </Container>
       </section>

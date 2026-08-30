@@ -56,7 +56,7 @@ insert into menus (slug, name, category, description, duration_min, price_yen, p
 ('shaving', 'シェービング', 'shaving',
  '単なるヒゲ剃りではなく、男性の身だしなみを整えるグルーミングとしてのシェービング。各コースに含まれます。', null, null, 'hidden', 'コースに含まれます', true, false, 1, 'shaving'),
 ('cactus-nose', 'サボテンノーズ（鼻毛ワックス）', 'option',
- 'シェービング・フェイシャルに追加できるオプションです。', 10, null, 'tbd', 'オプション', true, false, 2, 'shaving'),
+ '施術時間は5分ほど。効果は3〜4週間キープできます。シェービング・フェイシャルに追加できるオプションです。', 5, 990, 'fixed', '税込・オプション', true, false, 2, 'shaving'),
 -- 育毛
 ('hair-growth-single', '育毛ケア（1回）', 'hair_growth',
  'カウンセリング＋頭皮診断＋育毛施術＋頭皮確認＋アフターカウンセリング。KIRASUIを基本技術とした集中頭皮ケア。', 90, 17600, 'fixed', '税込', true, false, 1, 'hair-growth'),
@@ -117,7 +117,8 @@ insert into images (slot_key, url, alt, label) values
 ('voice_1',           '/images/voice_1.jpg',     'お客様の声', 'お客様の声1'),
 ('voice_2',           '/images/voice_2.jpg',     'お客様の声', 'お客様の声2'),
 ('access_entrance',   '/images/access_entrance.jpg', '店舗エントランス', 'ACCESSページの写真'),
-('owner_cutting',     '/images/owner_cutting.jpg', 'カット施術中の井上', '井上さんの施術風景');
+('owner_cutting',     '/images/owner_cutting.jpg', 'カット施術中の井上', '井上さんの施術風景'),
+('cactus_hero',       '/images/cactus.jpg', 'サボテンノーズ施術の様子', 'サボテンノーズページの写真');
 
 -- ========== ab_variants（FVコピーのA/B案を保存） ==========
 insert into ab_variants (slot_key, variant_label, content, is_active) values

@@ -1,3 +1,5 @@
+import Image from "next/image";
+import Link from "next/link";
 import CtaSection from "@/components/sections/CtaSection";
 import MenuCard from "@/components/sections/MenuCard";
 import PageHero from "@/components/sections/PageHero";
@@ -13,7 +15,7 @@ export async function generateMetadata() {
   return buildMetadata({
     title: "シェービング",
     description:
-      "単なるヒゲ剃りではなく、男性の身だしなみを整えるグルーミングとしてのシェービング。鼻毛ワックス「サボテンノーズ」もオプションでご用意。前橋の男性専用サロン。",
+      "理容師免許を持つスタッフだけができる、男性の身だしなみを整えるグルーミングとしてのシェービング。鼻毛ワックス「サボテンノーズ」もオプションでご用意。前橋の男性専用サロン。",
     path: "/menu/shaving",
   });
 }
@@ -33,7 +35,7 @@ export default async function ShavingPage() {
         en="Shaving"
         title="シェービング"
         lead={
-          "顔の産毛とヒゲを整えると、清潔感は驚くほど変わります。\n自分では手が届かない仕上がりを、プロの手で。"
+          "顔の産毛を整えると、清潔感は驚くほど変わります。\n自分では手が届かない仕上がりを、プロの手で。"
         }
         imageUrl={images.shaving_hero?.url}
         imageAlt={images.shaving_hero?.alt}
@@ -47,19 +49,77 @@ export default async function ShavingPage() {
           <FadeIn>
             <div className="mx-auto max-w-2xl space-y-4 text-sm leading-loose text-charcoal-light">
               <p>
-                当店のシェービングは、単なるヒゲ剃りではありません。
-                顔全体の産毛、ヒゲのライン、眉まわりまで、男性の身だしなみを整えるグルーミングです。
+                どれだけ良いスーツを着ていても、顔に産毛が目立っていては台無しです。
+                産毛を整えるだけで肌のトーンが明るく見え、第一印象がはっきりと変わります。
               </p>
               <p>
-                カット＋ヘッドスパの各コースに含まれているので、
+                実はこのシェービング、理容師免許を持つスタッフだけができる技術です。
+                一般的なエステサロンでは扱うことができません。
+              </p>
+              <p>
+                定期的に産毛を整えておくことは、
+                <Link
+                  href="/menu/facial"
+                  className="border-b border-brown text-brown transition-opacity hover:opacity-70"
+                >
+                  フェイシャル
+                </Link>
+                の仕上がりを引き出す土台にもなると言われています。カット＋ヘッドスパの各コースにも含まれているので、
                 月に一度の来店で、髪も顔もまとめて整えて帰ることができます。
               </p>
             </div>
-            <div className="mx-auto mt-10 grid max-w-3xl gap-6 md:grid-cols-2">
+            <div className="mx-auto mt-10 max-w-xl">
               {shaving && <MenuCard menu={shaving} />}
-              {cactus && <MenuCard menu={cactus} />}
             </div>
           </FadeIn>
+        </Container>
+      </section>
+
+      {cactus && (
+        <section className="bg-paper-dark py-16 md:py-24">
+          <Container>
+            <SectionHeading en="Cactus Nose">
+              サボテンノーズ（鼻毛ワックス）
+            </SectionHeading>
+            <FadeIn>
+              <div className="grid items-center gap-8 md:grid-cols-2">
+                {images.cactus_hero && (
+                  <div className="relative aspect-[3/1] overflow-hidden rounded-sm md:aspect-square">
+                    <Image
+                      src={images.cactus_hero.url}
+                      alt={images.cactus_hero.alt}
+                      fill
+                      sizes="(min-width: 768px) 50vw, 100vw"
+                      className="object-cover"
+                    />
+                  </div>
+                )}
+                <div>
+                  <p className="mb-4 text-sm leading-loose text-charcoal-light">
+                    人前に立つ機会が多い方に人気のオプションです。商談や面接、デートの前など、
+                    「今日はしっかり整えておきたい」という日にどうぞ。
+                    シェービングやフェイシャルと組み合わせてご利用いただけます。
+                  </p>
+                  <MenuCard menu={cactus} />
+                </div>
+              </div>
+            </FadeIn>
+          </Container>
+        </section>
+      )}
+
+      <section className="py-10">
+        <Container>
+          <p className="text-center text-xs text-greige">
+            肌のことも一緒に整えたい方は
+            <Link
+              href="/menu/facial"
+              className="mx-1 border-b border-greige text-charcoal-light hover:text-brown"
+            >
+              フェイシャル
+            </Link>
+            のページもご覧ください。
+          </p>
         </Container>
       </section>
 
