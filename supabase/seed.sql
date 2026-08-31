@@ -13,9 +13,9 @@ insert into site_settings (key, value, label, group_name, input_type, sort_order
 -- LINE
 ('line_url', '{"text": "https://lin.ee/PLACEHOLDER"}', '公式LINEのURL', 'line', 'url', 1),
 -- 営業時間
-('business_hours_weekday', '{"text": "12:00〜21:00"}', '営業時間（平日）', 'hours', 'text', 1),
-('business_hours_weekend', '{"text": "10:00〜19:00"}', '営業時間（土日祝）', 'hours', 'text', 2),
-('closed_days',            '{"text": "不定休"}', '定休日', 'hours', 'text', 3),
+('business_hours_weekday', '{"text": "火・金曜 17:00〜23:00"}', '営業時間（営業日1）', 'hours', 'text', 1),
+('business_hours_weekend', '{"text": "土・日・祝 10:00〜19:00"}', '営業時間（営業日2）', 'hours', 'text', 2),
+('closed_days',            '{"text": "月・水・木曜"}', '定休日', 'hours', 'text', 3),
 ('hours_note',             '{"text": "時間外をご希望の場合はLINEでご相談ください。"}', '営業時間の補足', 'hours', 'text', 4),
 -- 店舗情報
 ('shop_name',   '{"text": "MEN''S GROOMING SPA umbrella"}', '店舗名', 'shop', 'text', 1),

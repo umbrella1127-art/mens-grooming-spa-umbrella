@@ -27,9 +27,9 @@ export default function Footer({ settings }: { settings: Settings }) {
             <p>{settings.address}</p>
             <p>{settings.parking}</p>
             <p className="mt-3">
-              平日 {settings.business_hours_weekday}
+              {settings.business_hours_weekday}
               <br />
-              土日祝 {settings.business_hours_weekend}
+              {settings.business_hours_weekend}
             </p>
             <p>{settings.closed_days}・完全予約制</p>
             <LineCtaLink

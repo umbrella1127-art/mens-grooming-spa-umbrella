@@ -53,9 +53,9 @@ export default async function AccessPage() {
                     営業時間
                   </dt>
                   <dd className="text-charcoal">
-                    平日 {settings.business_hours_weekday}
+                    {settings.business_hours_weekday}
                     <br />
-                    土日祝 {settings.business_hours_weekend}
+                    {settings.business_hours_weekend}
                   </dd>
                 </div>
                 <div>
