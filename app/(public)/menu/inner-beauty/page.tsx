@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import CtaSection from "@/components/sections/CtaSection";
 import PageHero from "@/components/sections/PageHero";
@@ -89,10 +90,23 @@ export default async function InnerBeautyPage() {
                 </div>
               ))}
             </div>
-            <p className="mx-auto mt-8 max-w-2xl text-center text-xs leading-loose text-greige">
-              ご希望の方にはエステプロラボ社の商品もご案内していますが、販売が目的ではありません。
-              まずは相談から。合わないと感じたら断っていただいて大丈夫です。
-            </p>
+            <div className="mx-auto mt-10 grid max-w-2xl items-center gap-6 sm:grid-cols-5">
+              {images.inner_beauty_product && (
+                <div className="relative aspect-[3/4] overflow-hidden rounded-sm sm:col-span-2">
+                  <Image
+                    src={images.inner_beauty_product.url}
+                    alt={images.inner_beauty_product.alt}
+                    fill
+                    sizes="(min-width: 640px) 30vw, 60vw"
+                    className="object-cover"
+                  />
+                </div>
+              )}
+              <p className="text-xs leading-loose text-greige sm:col-span-3">
+                ご希望の方にはエステプロラボ社の商品もご案内していますが、販売が目的ではありません。
+                まずは相談から。合わないと感じたら断っていただいて大丈夫です。
+              </p>
+            </div>
           </FadeIn>
         </Container>
       </section>
