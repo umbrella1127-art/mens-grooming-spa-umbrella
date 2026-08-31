@@ -58,12 +58,12 @@ insert into menus (slug, name, category, description, duration_min, price_yen, p
 ('cactus-nose', 'サボテンノーズ（鼻毛ワックス）', 'option',
  '自分では確認しにくい鼻まわりまで整える、男性の身だしなみのためのオプションです。', 10, 990, 'hidden', 'オプション', true, false, 2, 'shaving'),
 -- 育毛
-('hair-growth-single', '育毛ケア（1回）', 'hair_growth',
- 'カウンセリング＋頭皮診断＋育毛施術＋頭皮確認＋アフターカウンセリング。KIRASUIを基本技術とした集中頭皮ケア。', 90, 17600, 'fixed', '税込', true, false, 1, 'hair-growth'),
-('hair-growth-3m', '育毛プログラム（お試し3ヶ月）', 'hair_growth',
- '2週間に1回の来店を基本とした、お試し3ヶ月プログラム。', null, null, 'tbd', null, true, false, 2, 'hair-growth'),
-('hair-growth-6m', '育毛プログラム（基本6ヶ月）', 'hair_growth',
- '2週間に1回の来店を基本とした、基本の6ヶ月プログラム。', null, null, 'tbd', null, true, true, 3, 'hair-growth'),
+('hair-growth-single', '抜け毛予防コース（1回）', 'hair_growth',
+ 'カウンセリング＋頭皮診断＋育毛施術＋頭皮確認＋アフターカウンセリング。まずは1回、今の頭皮の状態を知りたい方へ。', 90, 17600, 'fixed', '税込', true, false, 1, 'hair-growth'),
+('hair-growth-3m', '育毛スタートコース（5回）', 'hair_growth',
+ '通常価格88,000円のところ、17,600円お得。育毛剤プレゼント（10,000円相当）付き。', null, 70400, 'fixed', '税込・特典あり', true, false, 2, 'hair-growth'),
+('hair-growth-6m', '育毛チャレンジコース（10回）', 'hair_growth',
+ '通常価格176,000円のところ、44,000円お得。育毛剤プレゼント（10,000円相当）＋育毛系シャンプー1本プレゼント付き。', null, 132000, 'fixed', '税込・特典あり', true, true, 3, 'hair-growth'),
 -- インナービューティー
 ('inner-beauty', 'インナービューティー相談', 'inner_beauty',
  '食事・ファスティング・内側からのケアの相談。外側だけではなく、内側からも自分を整える。', null, null, 'hidden', 'ご相談はLINEから', true, false, 1, 'inner-beauty'),

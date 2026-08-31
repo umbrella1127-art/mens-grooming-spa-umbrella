@@ -190,10 +190,10 @@ export const fallbackMenus: Menu[] = [
   }),
   m({
     slug: "hair-growth-single",
-    name: "育毛ケア（1回）",
+    name: "抜け毛予防コース（1回）",
     category: "hair_growth",
     description:
-      "カウンセリング＋頭皮診断＋育毛施術＋頭皮確認＋アフターカウンセリング。KIRASUIを基本技術とした集中頭皮ケア。",
+      "カウンセリング＋頭皮診断＋育毛施術＋頭皮確認＋アフターカウンセリング。まずは1回、今の頭皮の状態を知りたい方へ。",
     duration_min: 90,
     price_yen: 17600,
     price_status: "fixed",
@@ -203,17 +203,25 @@ export const fallbackMenus: Menu[] = [
   }),
   m({
     slug: "hair-growth-3m",
-    name: "育毛プログラム（お試し3ヶ月）",
+    name: "育毛スタートコース（5回）",
     category: "hair_growth",
-    description: "2週間に1回の来店を基本とした、お試し3ヶ月プログラム。",
+    description:
+      "通常価格88,000円のところ、17,600円お得。育毛剤プレゼント（10,000円相当）付き。",
+    price_yen: 70400,
+    price_status: "fixed",
+    price_note: "税込・特典あり",
     sort_order: 2,
     page_slug: "hair-growth",
   }),
   m({
     slug: "hair-growth-6m",
-    name: "育毛プログラム（基本6ヶ月）",
+    name: "育毛チャレンジコース（10回）",
     category: "hair_growth",
-    description: "2週間に1回の来店を基本とした、基本の6ヶ月プログラム。",
+    description:
+      "通常価格176,000円のところ、44,000円お得。育毛剤プレゼント（10,000円相当）＋育毛系シャンプー1本プレゼント付き。",
+    price_yen: 132000,
+    price_status: "fixed",
+    price_note: "税込・特典あり",
     is_recommended: true,
     sort_order: 3,
     page_slug: "hair-growth",
