@@ -1,5 +1,6 @@
 // サーバー/クライアント両方から参照するナビゲーション定義
 export const NAV_ITEMS: { href: string; label: string }[] = [
+  { href: "/", label: "TOP" },
   { href: "/first-visit", label: "初めての方へ" },
   { href: "/menu", label: "メニュー・料金" },
   { href: "/menu/first-grooming", label: "初回グルーミング" },
