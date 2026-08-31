@@ -368,6 +368,9 @@ export const fallbackImages: ImageSlot[] = [
   ["inner_beauty_product", "/images/inner_beauty_product.jpg", "エステプロラボ社の商品", "インナービューティーページの商品写真"],
   ["slimming_case1", "/images/slimming_case1.jpg", "施術記録（39日間）の3Dボディスキャン比較", "痩身ページ：症例1"],
   ["slimming_case2", "/images/slimming_case2.jpg", "施術記録（27日間）の3Dボディスキャン比較", "痩身ページ：症例2"],
+  ["cert_headspa", "/images/cert_headspa.jpg", "HIGUCHI式ショートヘッドスパ 修了認定証", "ABOUTページ：資格証（ヘッドスパ）"],
+  ["cert_fasting", "/images/cert_fasting.jpg", "公認エキスパート ファスティングカウンセラー 認定証", "ABOUTページ：資格証（ファスティング）"],
+  ["cert_mimitsubo", "/images/cert_mimitsubo.jpg", "耳つぼセラピープロ養成講座 修了証", "ABOUTページ：資格証（耳つぼ）"],
 ].map(([slot_key, url, alt, label]) => ({
   slot_key,
   url,
