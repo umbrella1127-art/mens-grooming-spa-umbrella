@@ -44,10 +44,6 @@ export const MENU_GROUPS: MenuGroup[] = [
         originalPrice: "¥14,300",
       },
       {
-        name: "カット＋シェービング＋ヘッドスパ「風」20分",
-        price: "¥9,350",
-      },
-      {
         name: "カット＋シェービング＋ライトGROOMINGフェイシャル",
         price: "¥8,800",
         originalPrice: "¥9,350",
@@ -102,6 +98,7 @@ export const MENU_GROUPS: MenuGroup[] = [
         name: "ヘッドスパ「月」35分",
         note: "マイクロスコープでの頭皮診断付き",
         price: "¥7,700",
+        originalPrice: "¥8,800",
       },
       {
         name: "ヘッドスパ「浄」50分",
