@@ -1,7 +1,7 @@
-import Link from "next/link";
 import CtaSection from "@/components/sections/CtaSection";
 import MenuCard from "@/components/sections/MenuCard";
 import PageHero from "@/components/sections/PageHero";
+import RelatedLinkCard from "@/components/sections/RelatedLinkCard";
 import Container from "@/components/ui/Container";
 import FadeIn from "@/components/ui/FadeIn";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -104,16 +104,21 @@ export default async function FacialPage() {
               ))}
             </div>
             {/* 動画枠: フェイシャル施術動画が用意でき次第ここに挿入する */}
-            <p className="mt-8 text-center text-xs text-greige">
-              顔の産毛が気になる方は
-              <Link
-                href="/menu/shaving"
-                className="mx-1 border-b border-greige text-charcoal-light hover:text-brown"
-              >
-                シェービング
-              </Link>
-              との組み合わせもおすすめです。
-            </p>
+          </FadeIn>
+        </Container>
+      </section>
+
+      <section className="py-12 md:py-16">
+        <Container>
+          <FadeIn>
+            <RelatedLinkCard
+              href="/menu/shaving"
+              imageUrl={images.shaving_hero?.url}
+              imageAlt={images.shaving_hero?.alt}
+              eyebrow="関連メニュー"
+              title="シェービング"
+              description="顔の産毛が気になる方は、こちらもどうぞ。"
+            />
           </FadeIn>
         </Container>
       </section>

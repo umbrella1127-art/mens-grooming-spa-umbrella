@@ -1,8 +1,8 @@
 import Image from "next/image";
-import Link from "next/link";
 import CtaSection from "@/components/sections/CtaSection";
 import MenuCard from "@/components/sections/MenuCard";
 import PageHero from "@/components/sections/PageHero";
+import RelatedLinkCard from "@/components/sections/RelatedLinkCard";
 import Container from "@/components/ui/Container";
 import FadeIn from "@/components/ui/FadeIn";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -57,14 +57,8 @@ export default async function ShavingPage() {
                 一般的なエステサロンでは扱うことができません。
               </p>
               <p>
-                定期的に産毛を整えておくことは、
-                <Link
-                  href="/menu/facial"
-                  className="border-b border-brown text-brown transition-opacity hover:opacity-70"
-                >
-                  フェイシャル
-                </Link>
-                の仕上がりを引き出す土台にもなると言われています。カット＋ヘッドスパの各コースにも含まれているので、
+                定期的に産毛を整えておくことは、フェイシャルの仕上がりを引き出す土台にもなると言われています。
+                カット＋ヘッドスパの各コースにも含まれているので、
                 月に一度の来店で、髪も顔もまとめて整えて帰ることができます。
               </p>
             </div>
@@ -108,18 +102,18 @@ export default async function ShavingPage() {
         </section>
       )}
 
-      <section className="py-10">
+      <section className="py-12 md:py-16">
         <Container>
-          <p className="text-center text-xs text-greige">
-            肌のことも一緒に整えたい方は
-            <Link
+          <FadeIn>
+            <RelatedLinkCard
               href="/menu/facial"
-              className="mx-1 border-b border-greige text-charcoal-light hover:text-brown"
-            >
-              フェイシャル
-            </Link>
-            のページもご覧ください。
-          </p>
+              imageUrl={images.facial_hero?.url}
+              imageAlt={images.facial_hero?.alt}
+              eyebrow="関連メニュー"
+              title="フェイシャル"
+              description="肌のことも、まとめて整えたい方へ。"
+            />
+          </FadeIn>
         </Container>
       </section>
 
