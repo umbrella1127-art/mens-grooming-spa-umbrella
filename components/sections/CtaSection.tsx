@@ -21,8 +21,12 @@ export default function CtaSection({
     <section className="bg-charcoal py-16 text-paper md:py-20">
       <Container className="text-center">
         <FadeIn>
-          <h2 className="mb-4 text-xl md:text-2xl">{heading}</h2>
-          <p className="mx-auto mb-8 max-w-xl text-sm text-beige">{body}</p>
+          <h2 className="mb-4 whitespace-pre-line text-xl md:text-2xl">
+            {heading}
+          </h2>
+          <p className="mx-auto mb-8 max-w-xl whitespace-pre-line text-sm text-beige">
+            {body}
+          </p>
           <LineCtaLink
             href={settings.line_url}
             ctaType="line_inline"

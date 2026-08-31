@@ -53,10 +53,10 @@ insert into menus (slug, name, category, description, duration_min, price_yen, p
 ('facial', 'グルーミングフェイシャル', 'facial',
  '肌の水分・油分を測定してから、オイルのハンドマッサージと美容機器で肌を整えるフェイシャルケア。', 60, null, 'tbd', null, true, false, 1, 'facial'),
 -- シェービング
-('shaving', 'シェービング', 'shaving',
- '単なるヒゲ剃りではなく、男性の身だしなみを整えるグルーミングとしてのシェービング。各コースに含まれます。', null, null, 'hidden', 'コースに含まれます', true, false, 1, 'shaving'),
+('shaving', 'プロフェッショナル・シェービング', 'shaving',
+ '温かな蒸しタオルときめ細かな泡で肌を整え、顔から首元まで丁寧に仕上げます。単にヒゲを剃るのではなく、顔全体の清潔感を引き出すためのシェービングです。', null, null, 'hidden', 'カットコースに含まれます', true, false, 1, 'shaving'),
 ('cactus-nose', 'サボテンノーズ（鼻毛ワックス）', 'option',
- '施術時間は5分ほど。効果は3〜4週間キープできます。シェービング・フェイシャルに追加できるオプションです。', 5, 990, 'fixed', '税込・オプション', true, false, 2, 'shaving'),
+ '自分では確認しにくい鼻まわりまで整える、男性の身だしなみのためのオプションです。', 10, 990, 'hidden', 'オプション', true, false, 2, 'shaving'),
 -- 育毛
 ('hair-growth-single', '育毛ケア（1回）', 'hair_growth',
  'カウンセリング＋頭皮診断＋育毛施術＋頭皮確認＋アフターカウンセリング。KIRASUIを基本技術とした集中頭皮ケア。', 90, 17600, 'fixed', '税込', true, false, 1, 'hair-growth'),
