@@ -16,6 +16,7 @@ import EvidenceChart from "@/components/sections/EvidenceChart";
 import FlowSteps from "@/components/sections/FlowSteps";
 import MenuCard from "@/components/sections/MenuCard";
 import PageHero from "@/components/sections/PageHero";
+import RelatedLinkCard from "@/components/sections/RelatedLinkCard";
 import Container from "@/components/ui/Container";
 import FadeIn from "@/components/ui/FadeIn";
 import SectionHeading from "@/components/ui/SectionHeading";
@@ -197,10 +198,26 @@ export default async function HeadSpaPage() {
                   <MenuCard key={menu.slug} menu={menu} />
                 ))}
               </div>
+              <p className="mt-6 text-center text-xs text-greige">
+                その他の組み合わせもございます。詳しくはLINEでご相談ください。
+              </p>
             </FadeIn>
           </Container>
         </section>
       )}
+
+      <section className="py-16 md:py-24">
+        <Container>
+          <RelatedLinkCard
+            href="/gift"
+            imageUrl="/images/gift_banner_headspa.jpg"
+            imageAlt="ギフトチケットのイメージ"
+            eyebrow="Gift"
+            title="ギフトにも最適です"
+            description="大切な方に「整える時間」を贈る、umbrellaのグルーミングギフト。"
+          />
+        </Container>
+      </section>
 
       <section className="bg-ink py-16 text-paper md:py-24">
         <Container>

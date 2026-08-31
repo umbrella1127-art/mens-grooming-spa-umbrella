@@ -44,7 +44,7 @@ export default async function FirstVisitPage() {
         en="First Visit"
         title="初めての方へ"
         lead={
-          "美容に詳しくなくても、来ていい場所です。\nむしろ、ほとんどのお客様が「美容室が苦手だった」方です。"
+          "美容に詳しくなくても、何を選べばよいか分からなくても大丈夫です。\n美容室が得意ではない男性にも、気負わずに来ていただける場所です。"
         }
         imageUrl={images.first_visit_hero?.url}
         imageAlt={images.first_visit_hero?.alt}
@@ -52,16 +52,17 @@ export default async function FirstVisitPage() {
 
       <section className="py-16 md:py-24">
         <Container>
-          <SectionHeading en="Space">男性専用の、静かな空間</SectionHeading>
+          <SectionHeading en="Space">頑張る男が、静かに力を抜ける空間</SectionHeading>
           <FadeIn>
             <div className="mx-auto max-w-2xl space-y-4 text-sm leading-loose text-charcoal-light">
               <p>
-                落ち着いたトーンの照明。歌詞のない静かな音楽。香りにも配慮した、男性だけの空間です。
+                落ち着いた照明、歌詞のない静かな音楽、さりげない香り。
+                日常の騒がしさから少し離れ、深く休むための男性専用空間です。
               </p>
               <p>
-                シェービングやヘッドスパ、フェイシャルの間は、無理に会話を求めません。
-                スマホからも少し離れて、「何もしなくていい時間」をお過ごしください。
-                カットの間は、世間話はもちろん、インナービューティーやケアのご相談もお気軽にどうぞ。
+                目を閉じ、身体の力を抜き、すべてをプロに任せる。
+                髪や顔を整えながら、誰のためでもなく、自分のために過ごす
+                「何もしなくていい時間」をお楽しみください。
               </p>
             </div>
           </FadeIn>

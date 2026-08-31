@@ -16,14 +16,14 @@ export default function CertificateBadge({
 }) {
   return (
     <div
-      className={`mx-auto flex max-w-xl items-center gap-5 rounded-sm border border-beige bg-paper-dark p-5 ${className}`}
+      className={`mx-auto flex max-w-xl flex-col items-center gap-5 rounded-sm border border-beige bg-paper-dark p-6 text-center sm:flex-row sm:text-left ${className}`}
     >
       <Image
         src={imageUrl}
         alt={imageAlt}
-        width={90}
-        height={127}
-        className="h-auto w-[90px] shrink-0 rounded-sm border border-beige object-cover"
+        width={160}
+        height={226}
+        className="h-auto w-[160px] shrink-0 rounded-sm border border-beige object-cover sm:w-[180px]"
       />
       <div>
         {label && (
