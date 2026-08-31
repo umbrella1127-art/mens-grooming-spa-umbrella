@@ -118,7 +118,11 @@ insert into images (slot_key, url, alt, label) values
 ('voice_2',           '/images/voice_2.jpg',     'お客様の声', 'お客様の声2'),
 ('access_entrance',   '/images/access_entrance.jpg', '店舗エントランス', 'ACCESSページの写真'),
 ('owner_cutting',     '/images/owner_cutting.jpg', 'カット施術中の井上', '井上さんの施術風景'),
-('cactus_hero',       '/images/cactus.jpg', 'サボテンノーズ施術の様子', 'サボテンノーズページの写真');
+('cactus_hero',       '/images/cactus.jpg', 'サボテンノーズ施術の様子', 'サボテンノーズページの写真'),
+('hair_growth_before', '/images/hair_growth_before.jpg', '施術前の頭皮記録', '育毛ページ：ビフォー'),
+('hair_growth_after1', '/images/hair_growth_after1.jpg', '施術当日の頭皮記録', '育毛ページ：当日'),
+('hair_growth_after2', '/images/hair_growth_after2.jpg', '2回目施術後の頭皮記録', '育毛ページ：2回目'),
+('hair_growth_after3', '/images/hair_growth_after3.jpg', '3回目施術後の頭皮記録', '育毛ページ：3回目');
 
 -- ========== ab_variants（FVコピーのA/B案を保存） ==========
 insert into ab_variants (slot_key, variant_label, content, is_active) values

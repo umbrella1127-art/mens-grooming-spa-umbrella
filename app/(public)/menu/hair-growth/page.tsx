@@ -5,6 +5,7 @@ import {
   Sparkles,
   Zap,
 } from "lucide-react";
+import Image from "next/image";
 import CtaSection from "@/components/sections/CtaSection";
 import FlowSteps from "@/components/sections/FlowSteps";
 import MenuCard from "@/components/sections/MenuCard";
@@ -41,6 +42,13 @@ const FIVE_ELEMENTS = [
   { step: "04", title: "巡らせる", body: "頭皮をマッサージ", icon: Activity },
   { step: "05", title: "補う", body: "材料とエネルギー", icon: Zap },
 ];
+
+const RECORD_SLOTS = [
+  { key: "hair_growth_before", label: "ビフォー" },
+  { key: "hair_growth_after1", label: "当日" },
+  { key: "hair_growth_after2", label: "2回目" },
+  { key: "hair_growth_after3", label: "3回目" },
+] as const;
 
 export default async function HairGrowthPage() {
   const [settings, menus, images] = await Promise.all([
@@ -146,7 +154,45 @@ export default async function HairGrowthPage() {
         </Container>
       </section>
 
+      {/* 頭皮記録の一例 */}
       <section className="py-16 md:py-24">
+        <Container>
+          <SectionHeading en="Record">頭皮記録の一例</SectionHeading>
+          <FadeIn>
+            <p className="mx-auto mb-8 max-w-2xl text-center text-sm leading-loose text-charcoal-light">
+              当店では、頭皮の状態を毎回モニターで確認しながら育毛ケアを進めています。
+              以下は、あるお客様の記録の一例です。
+            </p>
+            <div className="mx-auto grid max-w-3xl grid-cols-2 gap-4 sm:grid-cols-4">
+              {RECORD_SLOTS.map((slot) => {
+                const img = images[slot.key];
+                if (!img) return null;
+                return (
+                  <div key={slot.key}>
+                    <div className="relative aspect-square overflow-hidden rounded-sm">
+                      <Image
+                        src={img.url}
+                        alt={img.alt}
+                        fill
+                        sizes="(min-width: 640px) 25vw, 50vw"
+                        className="object-cover"
+                      />
+                    </div>
+                    <p className="mt-2 text-center text-xs tracking-wider text-greige">
+                      {slot.label}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+            <p className="mx-auto mt-6 max-w-2xl text-center text-xs leading-loose text-greige">
+              ※これは個人の記録の一例であり、効果を保証するものではありません。頭皮の状態には個人差があります。
+            </p>
+          </FadeIn>
+        </Container>
+      </section>
+
+      <section className="bg-paper-dark py-16 md:py-24">
         <Container>
           <SectionHeading en="Menu">メニュー・プログラム</SectionHeading>
           <FadeIn>
