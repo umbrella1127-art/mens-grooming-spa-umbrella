@@ -1,4 +1,5 @@
 import Link from "next/link";
+import RevalidateButton from "@/components/admin/RevalidateButton";
 
 const SHORTCUTS = [
   {
@@ -51,6 +52,10 @@ export default function AdminDashboard() {
             <p className="text-sm text-neutral-500">{s.body}</p>
           </Link>
         ))}
+      </div>
+
+      <div className="mt-8">
+        <RevalidateButton />
       </div>
     </div>
   );
