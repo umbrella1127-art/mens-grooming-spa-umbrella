@@ -9,6 +9,11 @@ import FadeIn from "@/components/ui/FadeIn";
 import SectionHeading from "@/components/ui/SectionHeading";
 import StarRating from "@/components/ui/StarRating";
 import { getFaqs, getImages, getSettings } from "@/lib/cms";
+import {
+  FIRST_GROOMING_COURSES,
+  FIRST_GROOMING_LEAD,
+  FIRST_GROOMING_NOTE,
+} from "@/lib/first-grooming";
 import { buildMetadata, JsonLd, localBusinessJsonLd } from "@/lib/seo";
 
 export const revalidate = 3600;
@@ -30,39 +35,6 @@ const FOR_YOU_POINTS = [
   "ヘッドスパや肌ケアに興味はあるが、何を選べばいいか分からない",
   "女性のお客様が多い美容室では、どうも落ち着かない",
   "美容には詳しくないけれど、今より少しかっこよくなりたい",
-];
-
-const FIRST_GROOMING_TOP = [
-  {
-    key: "grooming",
-    name: "GROOMING｜身だしなみを整える",
-    duration: "約120分",
-    description:
-      "カット＋シェービング＋ヘッドスパ「月」35分。髪・顔・頭を一度に整える、umbrellaの基本コース。まずは月に一度のメンテナンスを始めたい方におすすめです。",
-    originalPrice: "¥11,000",
-    campaignPrice: "¥9,900",
-    recommended: false,
-  },
-  {
-    key: "deep-rest",
-    name: "DEEP REST｜深く休む",
-    duration: "約150分",
-    description:
-      "カット＋シェービング＋ヘッドスパ「浄」50分。頭浸浴と専用オイルを使い、頭から肩までじっくりとほぐします。脳疲労や、休んでも抜けにくい疲れを感じている方へ。",
-    originalPrice: "¥14,300",
-    campaignPrice: "¥12,870",
-    recommended: false,
-  },
-  {
-    key: "total-care",
-    name: "TOTAL CARE｜印象まで整える",
-    duration: "約180分",
-    description:
-      "GROOMINGの内容＋2種類のフェイシャルケア＋肌の水分・油分チェック。髪と頭を整えるだけでなく、疲れや年齢が表れやすい肌までケア。清潔感のある印象と、自信を取り戻したい方のためのコースです。",
-    originalPrice: "¥15,400～",
-    campaignPrice: "¥13,860～",
-    recommended: true,
-  },
 ];
 
 const OTHER_CARE = [
@@ -262,36 +234,19 @@ export default async function TopPage() {
           </SectionHeading>
           <FadeIn>
             <div className="mx-auto mb-10 max-w-2xl space-y-4 text-sm leading-loose text-charcoal-light">
-              <p>
-                身だしなみを整えたい。
-                <br />
-                溜まった疲れを深く休ませたい。
-                <br />
-                疲れて見える顔までケアしたい。
-              </p>
-              <p>今の自分に合うコースをお選びください。</p>
-              <p>
-                下記は、初めての方にもおすすめしているカット込みのセットコースです。
-                もちろん、カットなしでもご利用いただけます。
-              </p>
-              <p>umbrellaは、ヘッドスパを中心としたサロンです。</p>
-              <p>
-                「ヘッドスパだけで予約するのは申し訳ない」と、気を遣う必要は
-                ありません。ヘッドスパだけ、フェイシャルだけのご来店も、
-                心から歓迎しています。
-              </p>
+              {FIRST_GROOMING_LEAD.map((text) => (
+                <p key={text} className="whitespace-pre-line">
+                  {text}
+                </p>
+              ))}
             </div>
             <div className="grid gap-6 md:grid-cols-3">
-              {FIRST_GROOMING_TOP.map(({ key, ...course }) => (
+              {FIRST_GROOMING_COURSES.map(({ key, ...course }) => (
                 <CampaignPriceCard key={key} {...course} />
               ))}
             </div>
-            <p className="mx-auto mt-8 max-w-2xl text-center text-sm leading-loose text-charcoal-light">
-              どれを選べばよいか迷った方には、ヘッドスパとフェイシャルを一度に
-              体験できる「TOTAL CARE」をおすすめしています。
-              <br />
-              髪・頭・顔までまとめて整える、umbrellaの価値を最も実感していただける
-              コースです。
+            <p className="mx-auto mt-8 max-w-2xl whitespace-pre-line text-center text-sm leading-loose text-charcoal-light">
+              {FIRST_GROOMING_NOTE}
             </p>
             <div className="mt-6 text-center">
               <Link

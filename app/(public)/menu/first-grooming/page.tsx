@@ -6,7 +6,12 @@ import PageHero from "@/components/sections/PageHero";
 import Container from "@/components/ui/Container";
 import FadeIn from "@/components/ui/FadeIn";
 import SectionHeading from "@/components/ui/SectionHeading";
-import { getImages, getMenusByCategory, getSettings } from "@/lib/cms";
+import { getImages, getSettings } from "@/lib/cms";
+import {
+  FIRST_GROOMING_COURSES,
+  FIRST_GROOMING_LEAD,
+  FIRST_GROOMING_NOTE,
+} from "@/lib/first-grooming";
 import { buildMetadata } from "@/lib/seo";
 
 export const revalidate = 3600;
@@ -20,13 +25,6 @@ export async function generateMetadata() {
   });
 }
 
-/** 通常価格はCMSで管理していないため、キャンペーン価格表示用にここでスロットごと保持する */
-const ORIGINAL_PRICE_BY_SLUG: Record<string, string> = {
-  "first-ume": "¥11,000",
-  "first-take": "¥14,300",
-  "first-matsu": "¥15,400～",
-};
-
 const FLOW = [
   { title: "カウンセリング" },
   { title: "マイクロスコープ診断" },
@@ -39,11 +37,7 @@ const FLOW = [
 ];
 
 export default async function FirstGroomingPage() {
-  const [settings, menus, images] = await Promise.all([
-    getSettings(),
-    getMenusByCategory("first_grooming"),
-    getImages(),
-  ]);
+  const [settings, images] = await Promise.all([getSettings(), getImages()]);
 
   return (
     <>
@@ -64,46 +58,19 @@ export default async function FirstGroomingPage() {
           </SectionHeading>
           <FadeIn>
             <div className="mx-auto mb-10 max-w-2xl space-y-4 text-sm leading-loose text-charcoal-light">
-              <p>
-                身だしなみを整えたい。
-                <br />
-                溜まった疲れを深く休ませたい。
-                <br />
-                疲れて見える顔までケアしたい。
-              </p>
-              <p>今の自分に合うコースをお選びください。</p>
-              <p>
-                下記は、初めての方にもおすすめしているカット込みのセットコースです。
-                もちろん、カットなしでもご利用いただけます。
-              </p>
-              <p>umbrellaは、ヘッドスパを中心としたサロンです。</p>
-              <p>
-                「ヘッドスパだけで予約するのは申し訳ない」と、気を遣う必要は
-                ありません。ヘッドスパだけ、フェイシャルだけのご来店も、
-                心から歓迎しています。
-              </p>
-            </div>
-            <div className="grid gap-6 md:grid-cols-3">
-              {menus.map((menu) => (
-                <CampaignPriceCard
-                  key={menu.slug}
-                  name={menu.name}
-                  duration={menu.duration_min ? `約${menu.duration_min}分` : ""}
-                  description={menu.description ?? ""}
-                  originalPrice={ORIGINAL_PRICE_BY_SLUG[menu.slug] ?? ""}
-                  campaignPrice={`¥${menu.price_yen?.toLocaleString() ?? ""}${
-                    menu.price_note?.startsWith("〜") ? "～" : ""
-                  }`}
-                  recommended={menu.is_recommended}
-                />
+              {FIRST_GROOMING_LEAD.map((text) => (
+                <p key={text} className="whitespace-pre-line">
+                  {text}
+                </p>
               ))}
             </div>
-            <p className="mx-auto mt-8 max-w-2xl text-center text-sm leading-loose text-charcoal-light">
-              どれを選べばよいか迷った方には、ヘッドスパとフェイシャルを一度に
-              体験できる「TOTAL CARE」をおすすめしています。
-              <br />
-              髪・頭・顔までまとめて整える、umbrellaの価値を最も実感していただける
-              コースです。
+            <div className="grid gap-6 md:grid-cols-3">
+              {FIRST_GROOMING_COURSES.map(({ key, ...course }) => (
+                <CampaignPriceCard key={key} {...course} />
+              ))}
+            </div>
+            <p className="mx-auto mt-8 max-w-2xl whitespace-pre-line text-center text-sm leading-loose text-charcoal-light">
+              {FIRST_GROOMING_NOTE}
             </p>
           </FadeIn>
         </Container>

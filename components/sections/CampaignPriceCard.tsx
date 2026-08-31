@@ -1,14 +1,18 @@
 /** 通常価格→キャンペーン価格を強調して見せるコースカード */
 export default function CampaignPriceCard({
-  name,
+  nameEn,
+  nameJa,
   duration,
+  content,
   description,
   originalPrice,
   campaignPrice,
   recommended = false,
 }: {
-  name: string;
+  nameEn: string;
+  nameJa: string;
   duration: string;
+  content: string;
   description: string;
   originalPrice: string;
   campaignPrice: string;
@@ -27,15 +31,33 @@ export default function CampaignPriceCard({
           おすすめ
         </span>
       )}
-      <h3 className={`mb-2 text-lg ${recommended ? "text-paper" : "text-ink"}`}>
-        {name}
+      <h3
+        className={`text-xl tracking-wide md:text-2xl ${
+          recommended ? "text-paper" : "text-ink"
+        }`}
+      >
+        {nameEn}
       </h3>
       <p
-        className={`mb-3 text-xs tracking-wider ${
+        className={`mt-1 text-sm ${
+          recommended ? "text-beige" : "text-charcoal-light"
+        }`}
+      >
+        {nameJa}
+      </p>
+      <p
+        className={`mt-3 mb-3 text-xs tracking-wider ${
           recommended ? "text-beige/80" : "text-greige"
         }`}
       >
         {duration}
+      </p>
+      <p
+        className={`mb-1 text-sm ${
+          recommended ? "text-beige" : "text-charcoal-light"
+        }`}
+      >
+        {content}
       </p>
       <p
         className={`mb-5 flex-1 text-sm ${
@@ -53,12 +75,19 @@ export default function CampaignPriceCard({
           通常価格 {originalPrice}
         </p>
         <p
-          className={`text-xl font-bold ${
+          className={`mt-1 text-xs tracking-wider ${
+            recommended ? "text-beige/80" : "text-greige"
+          }`}
+        >
+          キャンペーン価格
+        </p>
+        <p
+          className={`font-serif-jp text-2xl md:text-3xl ${
             recommended ? "text-paper" : "text-brown"
           }`}
         >
-          キャンペーン価格 {campaignPrice}
-          <span className="ml-1 text-xs font-normal">（税込）</span>
+          {campaignPrice}
+          <span className="ml-1 text-xs">（税込）</span>
         </p>
       </div>
     </div>
