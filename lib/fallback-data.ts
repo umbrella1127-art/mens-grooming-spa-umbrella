@@ -344,7 +344,7 @@ export const fallbackFaqs: Faq[] = [
 
 export const fallbackImages: ImageSlot[] = [
   ["logo", "/images/logo.png", "MEN'S GROOMING SPA umbrella", "ロゴ"],
-  ["hero_top", "/images/hero_top.jpg", "落ち着いた男性専用サロンの空間", "トップのメイン写真"],
+  ["hero_top", "/images/hero_top_v2.jpg", "ヘッドスパ施術を受ける男性のお客様", "トップのメイン写真"],
   ["salon_interior", "/images/salon.jpg", "店内の様子", "店内写真"],
   ["owner_portrait", "/images/owner.jpg", "オーナー 井上孝志", "井上さんの写真"],
   ["head_spa_hero", "/images/head_spa.jpg", "ヘッドスパ施術の様子", "ヘッドスパページの写真"],

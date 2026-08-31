@@ -1,4 +1,3 @@
-import { User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import LineCtaLink from "@/components/analytics/LineCtaLink";
@@ -459,7 +458,13 @@ export default async function TopPage() {
                   終わったあと、頭も気持ちも軽くなった感じがします。」
                 </blockquote>
                 <figcaption className="flex items-center gap-1.5 text-xs text-greige">
-                  <User className="h-3.5 w-3.5 text-brown" aria-hidden="true" />
+                  <Image
+                    src="/images/icon_male.png"
+                    alt=""
+                    width={16}
+                    height={16}
+                    className="h-4 w-4 opacity-80"
+                  />
                   40代・男性
                 </figcaption>
               </figure>
@@ -470,7 +475,13 @@ export default async function TopPage() {
                   夫の誕生日にすすめたら、それから毎月通っています。」
                 </blockquote>
                 <figcaption className="flex items-center gap-1.5 text-xs text-greige">
-                  <User className="h-3.5 w-3.5 text-brown" aria-hidden="true" />
+                  <Image
+                    src="/images/icon_female.png"
+                    alt=""
+                    width={16}
+                    height={16}
+                    className="h-4 w-4 opacity-80"
+                  />
                   ご紹介のお客様
                 </figcaption>
               </figure>
