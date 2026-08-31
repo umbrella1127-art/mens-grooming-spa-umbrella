@@ -366,6 +366,8 @@ export const fallbackImages: ImageSlot[] = [
   ["hair_growth_after2", "/images/hair_growth_after2.jpg", "2回目施術後の頭皮記録", "育毛ページ：2回目"],
   ["hair_growth_after3", "/images/hair_growth_after3.jpg", "3回目施術後の頭皮記録", "育毛ページ：3回目"],
   ["inner_beauty_product", "/images/inner_beauty_product.jpg", "エステプロラボ社の商品", "インナービューティーページの商品写真"],
+  ["slimming_case1", "/images/slimming_case1.jpg", "施術記録（39日間）の3Dボディスキャン比較", "痩身ページ：症例1"],
+  ["slimming_case2", "/images/slimming_case2.jpg", "施術記録（27日間）の3Dボディスキャン比較", "痩身ページ：症例2"],
 ].map(([slot_key, url, alt, label]) => ({
   slot_key,
   url,
