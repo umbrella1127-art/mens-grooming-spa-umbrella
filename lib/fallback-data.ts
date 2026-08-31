@@ -5,10 +5,9 @@
 import type { Faq, ImageSlot, Menu, Post, Settings } from "./types";
 
 export const fallbackSettings: Settings = {
-  fv_copy_main:
-    "疲れが抜けない。\n髪が少し細くなった気がする。\n肌の印象も、変わってきた。",
+  fv_copy_main: "頑張る男の為の休息地。",
   fv_copy_sub:
-    "35歳を過ぎた男性のための、髪・頭皮・肌・身体をまとめて相談できる男性専用サロン。",
+    "極上ヘッドスパ × 肌ケアで、\n仕事の疲れも、見た目の年齢サインも、\nまとめてゼロリセット。",
   cta_primary_label: "LINEで相談・予約",
   cta_sub_label: "予約前のご相談だけでも大丈夫です。",
   line_url: "https://lin.ee/PLACEHOLDER",

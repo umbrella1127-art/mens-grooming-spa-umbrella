@@ -1,13 +1,14 @@
+import { Mars, Venus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import LineCtaLink from "@/components/analytics/LineCtaLink";
 import CtaSection from "@/components/sections/CtaSection";
 import FaqList from "@/components/sections/FaqList";
-import MenuCard from "@/components/sections/MenuCard";
 import Container from "@/components/ui/Container";
 import FadeIn from "@/components/ui/FadeIn";
 import SectionHeading from "@/components/ui/SectionHeading";
-import { getFaqs, getImages, getMenus, getSettings } from "@/lib/cms";
+import StarRating from "@/components/ui/StarRating";
+import { getFaqs, getImages, getSettings } from "@/lib/cms";
 import { buildMetadata, JsonLd, localBusinessJsonLd } from "@/lib/seo";
 
 export const revalidate = 3600;
@@ -20,13 +21,51 @@ export async function generateMetadata() {
   });
 }
 
-const CONCERNS = [
-  "ヘッドスパに興味はあるけれど、受けたことがない",
-  "肌のケアをプロにしてもらったことがない",
-  "美容室がどうも苦手だ",
-  "女性のお客様が多い空間だと落ち着かない",
-  "最近、疲れが抜けない",
-  "髪や頭皮のことが気になり始めた",
+const FOR_YOU_POINTS = [
+  "一晩眠っても、疲れが抜けなくなってきた",
+  "パソコンやスマートフォンで、目・頭・肩が重い",
+  "髪が細くなり、以前よりボリュームが出にくい",
+  "鏡を見たとき、顔が疲れていると感じる",
+  "肌のテカリや毛穴、年齢による変化が気になり始めた",
+  "ヘッドスパや肌ケアに興味はあるが、何を選べばいいか分からない",
+  "女性のお客様が多い美容室では、どうも落ち着かない",
+  "美容には詳しくないけれど、今より少しかっこよくなりたい",
+];
+
+const FIRST_GROOMING_TOP = [
+  {
+    key: "grooming",
+    name: "GROOMING｜身だしなみを整える",
+    duration: "約120分",
+    content: "カット＋シェービング＋ヘッドスパ「月」35分。",
+    description:
+      "髪・顔・頭を一度に整える、umbrellaの基本コース。まずは月に一度のメンテナンスを始めたい方におすすめです。",
+    originalPrice: "¥11,000",
+    campaignPrice: "¥9,900",
+    recommended: false,
+  },
+  {
+    key: "deep-rest",
+    name: "DEEP REST｜深く休む",
+    duration: "約150分",
+    content: "カット＋シェービング＋ヘッドスパ「浄」50分。",
+    description:
+      "頭浸浴と専用オイルを使い、頭から肩までじっくりとほぐします。脳疲労や、休んでも抜けにくい疲れを感じている方へ。",
+    originalPrice: "¥14,300",
+    campaignPrice: "¥12,870",
+    recommended: false,
+  },
+  {
+    key: "total-care",
+    name: "TOTAL CARE｜印象まで整える",
+    duration: "約180分",
+    content: "GROOMINGの内容＋2種類のフェイシャルケア＋肌の水分・油分チェック。",
+    description:
+      "髪と頭を整えるだけでなく、疲れや年齢が表れやすい肌までケア。清潔感のある印象と、自信を取り戻したい方のためのコースです。",
+    originalPrice: "¥15,400～",
+    campaignPrice: "¥13,860～",
+    recommended: true,
+  },
 ];
 
 const OTHER_CARE = [
@@ -43,15 +82,12 @@ const OTHER_CARE = [
 ];
 
 export default async function TopPage() {
-  const [settings, menus, faqs, images] = await Promise.all([
+  const [settings, faqs, images] = await Promise.all([
     getSettings(),
-    getMenus(),
     getFaqs(),
     getImages(),
   ]);
 
-  const headSpaMenus = menus.filter((m) => m.category === "head_spa");
-  const firstMenus = menus.filter((m) => m.category === "first_grooming");
   const topFaqs = faqs.slice(0, 3);
 
   return (
@@ -97,10 +133,12 @@ export default async function TopPage() {
       {/* ③ 共感 */}
       <section className="py-16 md:py-24">
         <Container>
-          <SectionHeading en="For You">こんなこと、ありませんか？</SectionHeading>
+          <SectionHeading en="For You">
+            「まだ大丈夫」と、自分のことを後回しにしていませんか？
+          </SectionHeading>
           <FadeIn>
             <ul className="mx-auto grid max-w-3xl gap-3 md:grid-cols-2">
-              {CONCERNS.map((c) => (
+              {FOR_YOU_POINTS.map((c) => (
                 <li
                   key={c}
                   className="flex items-start gap-3 rounded-sm bg-paper-dark px-5 py-4 text-sm"
@@ -111,9 +149,15 @@ export default async function TopPage() {
               ))}
             </ul>
             <p className="mx-auto mt-10 max-w-2xl text-center text-sm leading-loose text-charcoal-light">
-              ひとつでも当てはまったら、ここはあなたのための場所です。
+              頑張ることには慣れていても、自分を休ませ、整えることには慣れていない。
               <br />
-              美容に詳しくなくても、何を頼めばいいか分からなくても、大丈夫です。
+              ひとつでも当てはまったなら、今がメンテナンスを始めるタイミングです。
+              <br />
+              美容の知識も、特別な準備も必要ありません。
+              <br />
+              仕事の疲れも、髪や肌の悩みも、そのままお聞かせください。
+              <br />
+              ここは、頑張る男が月に一度、自分をゼロリセットするための休息地です。
             </p>
           </FadeIn>
         </Container>
@@ -125,18 +169,35 @@ export default async function TopPage() {
           <div className="grid items-center gap-10 md:grid-cols-2">
             <FadeIn>
               <SectionHeading en="About" align="left" tone="light">
-                男性の美容とメンテナンスを、
+                疲れも、髪も、肌も。
                 <br />
-                まとめて相談できる場所。
+                男のメンテナンスを、ひとつの場所で。
               </SectionHeading>
-              <p className="text-sm leading-loose text-beige">
-                MEN&apos;S GROOMING SPA
-                umbrellaは、群馬県前橋市の男性専用サロンです。
-                カット、シェービング、ヘッドスパ、頭皮診断、フェイシャル、育毛、そして内側からのケアまで。
-                美容室でも、エステでも、ヘッドスパ専門店でもない、
-                「自分を整える場所」として、落ち着いたトーンの照明と静かな音楽の中で、
-                何もしなくていい時間をお過ごしいただけます。
-              </p>
+              <div className="space-y-3 text-sm leading-loose text-beige">
+                <p>
+                  MEN&apos;S GROOMING SPA
+                  umbrellaは、ただ髪を切るためだけの理容室ではありません。
+                </p>
+                <p>カットとシェービングで、清潔感を整える。</p>
+                <p>ヘッドスパで、仕事の疲れを頭からほどく。</p>
+                <p>フェイシャルで、肌に表れ始めた年齢サインをケアする。</p>
+                <p>頭皮や身体の変化は、外側と内側の両方から考える。</p>
+                <p>年齢を重ねるほど、男性の悩みはひとつではなくなります。</p>
+                <p>
+                  だからumbrellaでは、ヘッドスパを中心に、髪・頭皮・肌・身体まで、
+                  そのときの自分に必要なケアをまとめて相談できます。
+                </p>
+                <p>すべてのメニューを受ける必要はありません。</p>
+                <p>今感じている疲れや変化を聞き、必要なケアだけをご提案します。</p>
+                <p>
+                  落ち着いた照明と静かな音楽の中で、目を閉じ、何も考えず、
+                  すべてを任せる。
+                </p>
+                <p>
+                  深く休んで、きちんと整い、来たときより少しかっこよくなって帰る。
+                </p>
+                <p>それが、umbrellaで過ごす月に一度のメンテナンスです。</p>
+              </div>
             </FadeIn>
             <FadeIn delay={150}>
               {images.salon_interior && (
@@ -153,21 +214,36 @@ export default async function TopPage() {
         </Container>
       </section>
 
-      {/* ⑤ ヘッドスパ（月・浄） */}
+      {/* ⑤ ヘッドスパ */}
       <section className="py-16 md:py-24">
         <Container>
           <SectionHeading en="Head Spa">
-            主役は、ヘッドスパ。
+            頑張り続ける頭に、脳疲労を休める時間を。
           </SectionHeading>
           <FadeIn>
-            <p className="mx-auto mb-10 max-w-2xl text-center text-sm leading-loose text-charcoal-light">
-              カウンセリングから頭皮診断、施術、肩までのケア、施術後の頭皮確認まで。
-              「気持ちよかった」で終わらない、本格的なヘッドスパです。
-            </p>
-            <div className="grid gap-6 md:grid-cols-2">
-              {headSpaMenus.map((menu) => (
-                <MenuCard key={menu.slug} menu={menu} />
-              ))}
+            <div className="mx-auto max-w-2xl space-y-4 text-sm leading-loose text-charcoal-light">
+              <p>仕事、パソコン、スマートフォン。</p>
+              <p>
+                身体を休めているつもりでも、脳は一日中、情報を処理し続けています。
+              </p>
+              <p>眠ってもすっきりしない。頭が重い。集中が続かない。</p>
+              <p>そんな感覚があるなら、脳疲労を抱えているのかもしれません。</p>
+              <p>
+                15年以上磨いてきた技術で、頭皮を整えながら、頭から肩までじっくりと
+                力を抜いていく。
+              </p>
+              <p>
+                ただ気持ちいいだけではなく、頭も気持ちも休ませ、また明日から
+                頑張るためのヘッドスパです。
+              </p>
+              <p>
+                もし、休んでも疲れが抜けないと感じているなら、まずは一度、
+                umbrellaのヘッドスパを受けてみてください。
+              </p>
+              <p>
+                施術後に感じる頭の軽さと、何も考えずに休む時間の心地よさを、
+                ぜひ体験していただきたいと思っています。
+              </p>
             </div>
             <div className="mt-8 text-center">
               <Link
@@ -184,15 +260,99 @@ export default async function TopPage() {
       {/* ⑥ 初回3コース */}
       <section className="bg-paper-dark py-16 md:py-24">
         <Container>
-          <SectionHeading en="First Visit">初めての方の3つのコース</SectionHeading>
+          <SectionHeading en="First Grooming">
+            初めてのumbrellaを、3つの整え方から。
+          </SectionHeading>
           <FadeIn>
+            <div className="mx-auto mb-10 max-w-2xl space-y-4 text-sm leading-loose text-charcoal-light">
+              <p>
+                身だしなみを整えたい。
+                <br />
+                溜まった疲れを深く休ませたい。
+                <br />
+                疲れて見える顔までケアしたい。
+              </p>
+              <p>今の自分に合うコースをお選びください。</p>
+              <p>
+                下記は、初めての方にもおすすめしているカット込みのセットコースです。
+                もちろん、カットなしでもご利用いただけます。
+              </p>
+              <p>umbrellaは、ヘッドスパを中心としたサロンです。</p>
+              <p>
+                「ヘッドスパだけで予約するのは申し訳ない」と、気を遣う必要は
+                ありません。ヘッドスパだけ、フェイシャルだけのご来店も、
+                心から歓迎しています。
+              </p>
+            </div>
             <div className="grid gap-6 md:grid-cols-3">
-              {firstMenus.map((menu) => (
-                <MenuCard key={menu.slug} menu={menu} />
+              {FIRST_GROOMING_TOP.map((course) => (
+                <div
+                  key={course.key}
+                  className={`relative flex h-full flex-col rounded-sm p-6 transition-shadow md:p-8 ${
+                    course.recommended
+                      ? "bg-ink shadow-lg ring-1 ring-brown"
+                      : "border border-beige bg-paper"
+                  }`}
+                >
+                  {course.recommended && (
+                    <span className="absolute -top-3 left-6 rounded-sm bg-brown px-3 py-0.5 text-[11px] tracking-wider text-paper">
+                      おすすめ
+                    </span>
+                  )}
+                  <h3
+                    className={`mb-2 text-lg ${
+                      course.recommended ? "text-paper" : "text-ink"
+                    }`}
+                  >
+                    {course.name}
+                  </h3>
+                  <p
+                    className={`mb-3 text-xs tracking-wider ${
+                      course.recommended ? "text-beige/80" : "text-greige"
+                    }`}
+                  >
+                    {course.duration}
+                  </p>
+                  <p
+                    className={`mb-1 text-sm ${
+                      course.recommended ? "text-beige" : "text-charcoal-light"
+                    }`}
+                  >
+                    {course.content}
+                  </p>
+                  <p
+                    className={`mb-5 flex-1 text-sm ${
+                      course.recommended ? "text-beige" : "text-charcoal-light"
+                    }`}
+                  >
+                    {course.description}
+                  </p>
+                  <div>
+                    <p
+                      className={`text-xs line-through ${
+                        course.recommended ? "text-beige/60" : "text-greige"
+                      }`}
+                    >
+                      通常価格 {course.originalPrice}
+                    </p>
+                    <p
+                      className={`text-xl font-bold ${
+                        course.recommended ? "text-paper" : "text-brown"
+                      }`}
+                    >
+                      キャンペーン価格 {course.campaignPrice}
+                      <span className="ml-1 text-xs font-normal">（税込）</span>
+                    </p>
+                  </div>
+                </div>
               ))}
             </div>
-            <p className="mt-6 text-center text-xs text-greige">
-              カウンセリングとマイクロスコープでの頭皮診断から始まります。
+            <p className="mx-auto mt-8 max-w-2xl text-center text-sm leading-loose text-charcoal-light">
+              どれを選べばよいか迷った方には、ヘッドスパとフェイシャルを一度に
+              体験できる「TOTAL CARE」をおすすめしています。
+              <br />
+              髪・頭・顔までまとめて整える、umbrellaの価値を最も実感していただける
+              コースです。
             </p>
             <div className="mt-6 text-center">
               <Link
@@ -223,17 +383,56 @@ export default async function TopPage() {
             </FadeIn>
             <FadeIn delay={150} className="md:col-span-3">
               <SectionHeading en="Owner" align="left">
-                「この人になら、相談できる」を大切に。
+                いくつになっても、かっこよくいたい。
               </SectionHeading>
-              <p className="mb-4 text-sm leading-loose text-charcoal-light">
-                オーナーの井上は、ヘッドスパ・アーユルヴェーダ・ファスティング・脳疲労ケアなど、
-                髪から身体の内側まで幅広い資格と経験を持っています。
-              </p>
-              <p className="mb-4 text-sm leading-loose text-charcoal-light">
-                そして自身も、79.5kgから63kgへ。
-                インナービューティーを取り入れた経験から、体型だけでなく肌も気持ちも変わることを実感しました。
-                外側だけ整えても十分ではない——それが、このサロンの考え方の原点です。
-              </p>
+              <div className="mb-4 space-y-3 text-sm leading-loose text-charcoal-light">
+                <p>口にすることは少なくても、</p>
+                <p>
+                  「いくつになっても、かっこよく見られたい」
+                  <br />
+                  「できることなら、若々しくいたい」
+                </p>
+                <p>そう思っている男性は、きっと少なくありません。</p>
+                <p>
+                  けれど、髪のことは理美容室、肌のことはエステ、身体のことは
+                  別の場所。
+                </p>
+                <p>
+                  何が自分に必要なのか、男性が美容についてまとめて相談できる
+                  場所は、まだ多くありません。
+                </p>
+                <p>実際にお客様からも、</p>
+                <p>
+                  「こういうことを、どこに相談したらいいのか分からなかった」
+                  <br />
+                  「男性の美容をまとめて相談できる場所がなかった」
+                </p>
+                <p>と、よく言われます。</p>
+                <p>
+                  だからumbrellaでは、ヘッドスパを中心に、カット、シェービング、
+                  フェイシャル、頭皮、身体、内側からのケアまで、男性の変化を
+                  まとめて相談できる場所を目指しています。
+                </p>
+                <p>
+                  無理に若作りをするのではなく、年齢を重ねた今の自分に似合う、
+                  清潔感と若々しさを整える。
+                </p>
+                <p>鏡を見たときに、少し自信が持てる。</p>
+                <p>人に会うとき、少し気持ちが前を向く。</p>
+                <p>そんな変化を持ち帰ってもらいたいと思っています。</p>
+                <p>
+                  美容に詳しくなくても、何を選べばよいか分からなくても
+                  大丈夫です。
+                </p>
+                <p>
+                  「最近、少し疲れて見える」
+                  <br />
+                  「髪や肌が変わってきた気がする」
+                </p>
+                <p>そのくらいの相談から、お聞かせください。</p>
+                <p>「この人になら、相談できる」</p>
+                <p>そう思っていただける存在であることを、大切にしています。</p>
+              </div>
               <Link
                 href="/about"
                 className="border-b border-brown pb-0.5 text-sm text-brown transition-opacity hover:opacity-70"
@@ -254,20 +453,24 @@ export default async function TopPage() {
           <FadeIn>
             <div className="grid gap-6 md:grid-cols-2">
               <figure className="rounded-sm bg-ink p-8">
+                <StarRating rating={5} className="mb-4 justify-start" />
                 <blockquote className="mb-4 text-sm leading-loose text-beige">
                   「普通の美容室のヘッドスパとは全然違って、本格的でした。
                   終わったあと、頭も気持ちも軽くなった感じがします。」
                 </blockquote>
-                <figcaption className="text-xs text-greige">
+                <figcaption className="flex items-center gap-1.5 text-xs text-greige">
+                  <Mars className="h-3.5 w-3.5 text-brown" aria-hidden="true" />
                   40代・男性
                 </figcaption>
               </figure>
               <figure className="rounded-sm bg-ink p-8">
+                <StarRating rating={5} className="mb-4 justify-start" />
                 <blockquote className="mb-4 text-sm leading-loose text-beige">
                   「男性だけの静かな空間で、とてもリラックスできました。
                   夫の誕生日にすすめたら、それから毎月通っています。」
                 </blockquote>
-                <figcaption className="text-xs text-greige">
+                <figcaption className="flex items-center gap-1.5 text-xs text-greige">
+                  <Venus className="h-3.5 w-3.5 text-brown" aria-hidden="true" />
                   ご紹介のお客様
                 </figcaption>
               </figure>

@@ -5,8 +5,8 @@
 -- ========== site_settings ==========
 insert into site_settings (key, value, label, group_name, input_type, sort_order) values
 -- FV（ファーストビュー）
-('fv_copy_main',   '{"text": "疲れが抜けない。\n髪が少し細くなった気がする。\n肌の印象も、変わってきた。"}', 'トップのキャッチコピー（メイン）', 'fv', 'textarea', 1),
-('fv_copy_sub',    '{"text": "35歳を過ぎた男性のための、髪・頭皮・肌・身体をまとめて相談できる男性専用サロン。"}', 'トップのキャッチコピー（サブ）', 'fv', 'textarea', 2),
+('fv_copy_main',   '{"text": "頑張る男の為の休息地。"}', 'トップのキャッチコピー（メイン）', 'fv', 'textarea', 1),
+('fv_copy_sub',    '{"text": "極上ヘッドスパ × 肌ケアで、\n仕事の疲れも、見た目の年齢サインも、\nまとめてゼロリセット。"}', 'トップのキャッチコピー（サブ）', 'fv', 'textarea', 2),
 -- CTA
 ('cta_primary_label', '{"text": "LINEで相談・予約"}', 'CTAボタンの文言', 'cta', 'text', 1),
 ('cta_sub_label',     '{"text": "予約前のご相談だけでも大丈夫です。"}', 'CTAの補足文言', 'cta', 'text', 2),
