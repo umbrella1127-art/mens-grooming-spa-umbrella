@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import LineCtaLink from "@/components/analytics/LineCtaLink";
+import CampaignPriceCard from "@/components/sections/CampaignPriceCard";
 import CtaSection from "@/components/sections/CtaSection";
 import FaqList from "@/components/sections/FaqList";
 import Container from "@/components/ui/Container";
@@ -36,9 +37,8 @@ const FIRST_GROOMING_TOP = [
     key: "grooming",
     name: "GROOMING｜身だしなみを整える",
     duration: "約120分",
-    content: "カット＋シェービング＋ヘッドスパ「月」35分。",
     description:
-      "髪・顔・頭を一度に整える、umbrellaの基本コース。まずは月に一度のメンテナンスを始めたい方におすすめです。",
+      "カット＋シェービング＋ヘッドスパ「月」35分。髪・顔・頭を一度に整える、umbrellaの基本コース。まずは月に一度のメンテナンスを始めたい方におすすめです。",
     originalPrice: "¥11,000",
     campaignPrice: "¥9,900",
     recommended: false,
@@ -47,9 +47,8 @@ const FIRST_GROOMING_TOP = [
     key: "deep-rest",
     name: "DEEP REST｜深く休む",
     duration: "約150分",
-    content: "カット＋シェービング＋ヘッドスパ「浄」50分。",
     description:
-      "頭浸浴と専用オイルを使い、頭から肩までじっくりとほぐします。脳疲労や、休んでも抜けにくい疲れを感じている方へ。",
+      "カット＋シェービング＋ヘッドスパ「浄」50分。頭浸浴と専用オイルを使い、頭から肩までじっくりとほぐします。脳疲労や、休んでも抜けにくい疲れを感じている方へ。",
     originalPrice: "¥14,300",
     campaignPrice: "¥12,870",
     recommended: false,
@@ -58,9 +57,8 @@ const FIRST_GROOMING_TOP = [
     key: "total-care",
     name: "TOTAL CARE｜印象まで整える",
     duration: "約180分",
-    content: "GROOMINGの内容＋2種類のフェイシャルケア＋肌の水分・油分チェック。",
     description:
-      "髪と頭を整えるだけでなく、疲れや年齢が表れやすい肌までケア。清潔感のある印象と、自信を取り戻したい方のためのコースです。",
+      "GROOMINGの内容＋2種類のフェイシャルケア＋肌の水分・油分チェック。髪と頭を整えるだけでなく、疲れや年齢が表れやすい肌までケア。清潔感のある印象と、自信を取り戻したい方のためのコースです。",
     originalPrice: "¥15,400～",
     campaignPrice: "¥13,860～",
     recommended: true,
@@ -284,66 +282,8 @@ export default async function TopPage() {
               </p>
             </div>
             <div className="grid gap-6 md:grid-cols-3">
-              {FIRST_GROOMING_TOP.map((course) => (
-                <div
-                  key={course.key}
-                  className={`relative flex h-full flex-col rounded-sm p-6 transition-shadow md:p-8 ${
-                    course.recommended
-                      ? "bg-ink shadow-lg ring-1 ring-brown"
-                      : "border border-beige bg-paper"
-                  }`}
-                >
-                  {course.recommended && (
-                    <span className="absolute -top-3 left-6 rounded-sm bg-brown px-3 py-0.5 text-[11px] tracking-wider text-paper">
-                      おすすめ
-                    </span>
-                  )}
-                  <h3
-                    className={`mb-2 text-lg ${
-                      course.recommended ? "text-paper" : "text-ink"
-                    }`}
-                  >
-                    {course.name}
-                  </h3>
-                  <p
-                    className={`mb-3 text-xs tracking-wider ${
-                      course.recommended ? "text-beige/80" : "text-greige"
-                    }`}
-                  >
-                    {course.duration}
-                  </p>
-                  <p
-                    className={`mb-1 text-sm ${
-                      course.recommended ? "text-beige" : "text-charcoal-light"
-                    }`}
-                  >
-                    {course.content}
-                  </p>
-                  <p
-                    className={`mb-5 flex-1 text-sm ${
-                      course.recommended ? "text-beige" : "text-charcoal-light"
-                    }`}
-                  >
-                    {course.description}
-                  </p>
-                  <div>
-                    <p
-                      className={`text-xs line-through ${
-                        course.recommended ? "text-beige/60" : "text-greige"
-                      }`}
-                    >
-                      通常価格 {course.originalPrice}
-                    </p>
-                    <p
-                      className={`text-xl font-bold ${
-                        course.recommended ? "text-paper" : "text-brown"
-                      }`}
-                    >
-                      キャンペーン価格 {course.campaignPrice}
-                      <span className="ml-1 text-xs font-normal">（税込）</span>
-                    </p>
-                  </div>
-                </div>
+              {FIRST_GROOMING_TOP.map(({ key, ...course }) => (
+                <CampaignPriceCard key={key} {...course} />
               ))}
             </div>
             <p className="mx-auto mt-8 max-w-2xl text-center text-sm leading-loose text-charcoal-light">

@@ -42,13 +42,13 @@ insert into menus (slug, name, category, description, duration_min, price_yen, p
  'カットなしでご利用いただけるセットコースです。シェービングで肌を整え、ヘッドスパ「月」で頭をほぐし、ベーシックGRフェイシャルで肌までケア。通常価格12,100円のところ、10,450円でご利用いただけます。', null, 10450, 'fixed', '税込・カット不要', true, false, 3, 'head-spa'),
 ('headspa-facial-jo', 'ヘッドスパ（浄）＋フェイシャル', 'head_spa_solo',
  'カット・シェービングなしで、「浄」のヘッドスパとフェイシャルを組み合わせたコースです。忙しい日でも、頭と肌をまとめて整えられます。', null, 13750, 'fixed', '〜・税込・カット不要', false, false, 4, 'head-spa'),
--- 初回グルーミング（名称は仮。お客様向けの名称は後日決定）
-('first-ume', '初回グルーミング【梅】', 'first_grooming',
- 'カット＋シェービング＋ヘッドスパ「月」35分。月1回の身だしなみを一通り整えるコース。', 120, 9900, 'fixed', '税込', true, false, 1, 'first-grooming'),
-('first-take', '初回グルーミング【竹】', 'first_grooming',
- 'カット＋シェービング＋ヘッドスパ「浄」50分。溜まった疲れをリセットして、また明日から頑張れる感覚へ。', 150, 12870, 'fixed', '税込', true, true, 2, 'first-grooming'),
-('first-matsu', '初回グルーミング【松】', 'first_grooming',
- '竹の内容＋フェイシャル＋肌の水分・油分チェック。疲れをリセットし、肌まで整えて、自分に少し自信を持って帰る。', 180, null, 'tbd', null, true, false, 3, 'first-grooming'),
+-- 初回グルーミング
+('first-ume', 'GROOMING｜身だしなみを整える', 'first_grooming',
+ 'カット＋シェービング＋ヘッドスパ「月」35分。髪・顔・頭を一度に整える、umbrellaの基本コース。まずは月に一度のメンテナンスを始めたい方におすすめです。', 120, 9900, 'fixed', '税込', true, false, 1, 'first-grooming'),
+('first-take', 'DEEP REST｜深く休む', 'first_grooming',
+ 'カット＋シェービング＋ヘッドスパ「浄」50分。頭浸浴と専用オイルを使い、頭から肩までじっくりとほぐします。脳疲労や、休んでも抜けにくい疲れを感じている方へ。', 150, 12870, 'fixed', '税込', true, false, 2, 'first-grooming'),
+('first-matsu', 'TOTAL CARE｜印象まで整える', 'first_grooming',
+ 'GROOMINGの内容＋2種類のフェイシャルケア＋肌の水分・油分チェック。髪と頭を整えるだけでなく、疲れや年齢が表れやすい肌までケア。清潔感のある印象と、自信を取り戻したい方のためのコースです。', 180, 13860, 'fixed', '〜・税込', true, true, 3, 'first-grooming'),
 -- フェイシャル
 ('facial', 'グルーミングフェイシャル', 'facial',
  '肌の水分・油分を測定してから、オイルのハンドマッサージと美容機器で肌を整えるフェイシャルケア。', 60, null, 'tbd', null, true, false, 1, 'facial'),
