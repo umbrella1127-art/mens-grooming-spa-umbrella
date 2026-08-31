@@ -47,7 +47,8 @@ export const FIRST_GROOMING_COURSES: FirstGroomingCourse[] = [
     nameEn: "TOTAL CARE",
     nameJa: "印象まで整える",
     duration: "約180分",
-    content: "GROOMINGの内容＋2種類のフェイシャルケア＋肌の水分・油分チェック。",
+    content:
+      "カット＋シェービング＋ヘッドスパ「月」35分＋ベーシックGROOMINGフェイシャル。",
     description:
       "髪と頭を整えるだけでなく、疲れや年齢が表れやすい肌までケア。清潔感のある印象と、自信を取り戻したい方のためのコースです。",
     originalPrice: "¥15,400～",

@@ -32,7 +32,7 @@ export default function CampaignPriceCard({
         </span>
       )}
       <h3
-        className={`text-xl tracking-wide md:text-2xl ${
+        className={`whitespace-nowrap text-lg tracking-wide lg:text-2xl ${
           recommended ? "text-paper" : "text-ink"
         }`}
       >
@@ -52,13 +52,26 @@ export default function CampaignPriceCard({
       >
         {duration}
       </p>
-      <p
-        className={`mb-1 text-sm ${
-          recommended ? "text-beige" : "text-charcoal-light"
+      <div
+        className={`mb-4 border-b pb-4 ${
+          recommended ? "border-beige/25" : "border-beige"
         }`}
       >
-        {content}
-      </p>
+        <p
+          className={`mb-1.5 text-[11px] tracking-[0.2em] ${
+            recommended ? "text-beige/70" : "text-brown"
+          }`}
+        >
+          施術内容
+        </p>
+        <p
+          className={`text-sm leading-relaxed ${
+            recommended ? "text-paper" : "text-ink"
+          }`}
+        >
+          {content}
+        </p>
+      </div>
       <p
         className={`mb-5 flex-1 text-sm ${
           recommended ? "text-beige" : "text-charcoal-light"
