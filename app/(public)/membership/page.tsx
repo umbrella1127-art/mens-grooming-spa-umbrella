@@ -32,6 +32,11 @@ export default async function MembershipPage() {
 
       <section className="py-16 md:py-24">
         <Container>
+          <div className="mb-6 flex justify-center">
+            <span className="inline-flex items-center gap-2 rounded-full border border-brown/40 bg-paper-dark px-4 py-1.5 text-xs tracking-[0.2em] text-brown">
+              COMING SOON
+            </span>
+          </div>
           <SectionHeading en="Concept">
             何度か通って、気に入ったら。
           </SectionHeading>
@@ -39,7 +44,7 @@ export default async function MembershipPage() {
             <div className="mx-auto max-w-2xl space-y-4 text-sm leading-loose text-charcoal-light">
               <p>
                 年間メンバーシップは、カット＋シェービング＋ヘッドスパを年間12回、
-                毎月のメンテナンスとしてご利用いただける制度です（現在準備中です）。
+                毎月のメンテナンスとしてご利用いただける制度です。
               </p>
               <p>
                 初回から会員になっていただく必要はまったくありません。
