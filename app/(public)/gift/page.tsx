@@ -12,17 +12,10 @@ export async function generateMetadata() {
   return buildMetadata({
     title: "ギフト",
     description:
-      "大切な男性に「整える時間」を贈る。ヘッドスパ・シェービング・フェイシャルのギフト体験。奥様からご主人へ、お子様からお父様へ。前橋の男性専用サロン。",
+      "贈るのは、金額ではなく、自分を整える時間。ヘッドスパ＋シェービング＋フェイシャルのギフト体験。奥様からご主人へ、お子様からお父様へ。前橋の男性専用サロン。",
     path: "/gift",
   });
 }
-
-const GIFT_FOR = [
-  { from: "奥様から", to: "いつも頑張っているご主人へ" },
-  { from: "パートナーから", to: "大切な人へ" },
-  { from: "お子様から", to: "お父さんへ、父の日や誕生日に" },
-  { from: "あなたから", to: "お世話になっているあの人へ" },
-];
 
 export default async function GiftPage() {
   const [settings, images] = await Promise.all([getSettings(), getImages()]);
@@ -40,32 +33,37 @@ export default async function GiftPage() {
       <section className="py-16 md:py-24">
         <Container>
           <SectionHeading en="Experience">
-            金額ではなく、体験を贈る
+            贈るのは、金額ではなく、自分を整える時間。
           </SectionHeading>
           <FadeIn>
+            <p className="mx-auto mb-10 max-w-2xl text-center font-serif-jp text-base leading-loose text-brown">
+              大切な方へ、体験を贈る。
+              <br />
+              umbrellaのギフト。
+            </p>
             <div className="mx-auto max-w-2xl space-y-4 text-sm leading-loose text-charcoal-light">
               <p>
-                umbrellaのギフトは、金券ではなく「体験」です。
-                ヘッドスパ35分＋シェービング＋フェイシャルを組み合わせた、
-                男性のためのご褒美時間をそのまま贈れます（カットは含みません）。
+                毎日頑張っているご主人へ。
+                <br />
+                父の日や誕生日に、お父さんへ。
+                <br />
+                お世話になった大切な方へ。
               </p>
               <p>
-                自分ではなかなかヘッドスパやフェイシャルに行かない男性にこそ、
-                贈り物として体験してもらいたい内容です。
+                ヘッドスパ＋シェービング＋フェイシャルを組み合わせた、
+                男性のためのご褒美時間をそのまま贈れます。
               </p>
-            </div>
-            <div className="mx-auto mt-10 grid max-w-3xl gap-4 sm:grid-cols-2">
-              {GIFT_FOR.map((g) => (
-                <div key={g.from} className="rounded-sm bg-paper-dark p-5">
-                  <p className="mb-1 text-xs tracking-wider text-brown">
-                    {g.from}
-                  </p>
-                  <p className="text-sm text-charcoal">{g.to}</p>
-                </div>
-              ))}
+              <p>
+                温かなタオルに包まれ、頭から顔までゆっくり整える。
+                普段は自分からヘッドスパやフェイシャルへ行かない男性にも、
+                喜んでいただける体験です。
+              </p>
+              <p>ギフトの内容は、ご希望に合わせてご相談いただけます。</p>
             </div>
             <p className="mt-8 text-center text-xs text-greige">
-              {settings.gift_note}
+              贈る相手やご予算、目的などをLINEでお送りください。
+              <br />
+              ご希望を伺いながら、贈り方をご案内します。
             </p>
           </FadeIn>
         </Container>
