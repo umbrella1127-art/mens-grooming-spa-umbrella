@@ -32,11 +32,6 @@ export default async function MembershipPage() {
 
       <section className="py-16 md:py-24">
         <Container>
-          <div className="mb-6 flex justify-center">
-            <span className="inline-flex items-center gap-2 rounded-full border border-brown/40 bg-paper-dark px-4 py-1.5 text-xs tracking-[0.2em] text-brown">
-              COMING SOON
-            </span>
-          </div>
           <SectionHeading en="Concept">
             何度か通って、気に入ったら。
           </SectionHeading>
@@ -51,9 +46,11 @@ export default async function MembershipPage() {
                 何度か通っていただいて、「ここに毎月任せたい」と思えたら。
                 そのときに、ご案内させてください。
               </p>
-              <p className="text-xs text-greige">
-                内容・料金の詳細は決まり次第、このページでご案内します。
-              </p>
+            </div>
+            <div className="mt-8 flex justify-center">
+              <span className="inline-flex items-center gap-2 rounded-full border border-brown/40 bg-paper-dark px-4 py-1.5 text-xs tracking-[0.2em] text-brown">
+                COMING SOON
+              </span>
             </div>
           </FadeIn>
         </Container>
