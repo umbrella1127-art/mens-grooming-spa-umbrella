@@ -362,6 +362,10 @@ export const fallbackImages: ImageSlot[] = [
   ["cert_headspa", "/images/cert_headspa.jpg", "HIGUCHI式ショートヘッドスパ 修了認定証", "ABOUTページ：資格証（ヘッドスパ）"],
   ["cert_fasting", "/images/cert_fasting.jpg", "公認エキスパート ファスティングカウンセラー 認定証", "ABOUTページ：資格証（ファスティング）"],
   ["cert_mimitsubo", "/images/cert_mimitsubo.jpg", "耳つぼセラピープロ養成講座 修了証", "ABOUTページ：資格証（耳つぼ）"],
+  ["facial_herbpeel_before", "/images/facial_herbpeel_before.jpg", "ハーブピーリング施術前の肌", "フェイシャルページ：ハーブピーリング施術前（頬）"],
+  ["facial_herbpeel_after", "/images/facial_herbpeel_after.jpg", "ハーブピーリング施術後の肌", "フェイシャルページ：ハーブピーリング施術後（頬）"],
+  ["facial_herbpeel_before2", "/images/facial_herbpeel_before2.jpg", "ハーブピーリング施術前の肌（首元）", "フェイシャルページ：ハーブピーリング施術前（首元）"],
+  ["facial_herbpeel_after2", "/images/facial_herbpeel_after2.jpg", "ハーブピーリング施術後の肌（首元）", "フェイシャルページ：ハーブピーリング施術後（首元）"],
 ].map(([slot_key, url, alt, label]) => ({
   slot_key,
   url,

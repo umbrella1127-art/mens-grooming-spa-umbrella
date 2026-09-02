@@ -1,3 +1,4 @@
+import Image from "next/image";
 import CtaSection from "@/components/sections/CtaSection";
 import MenuCard from "@/components/sections/MenuCard";
 import PageHero from "@/components/sections/PageHero";
@@ -32,6 +33,51 @@ const CARE_ITEMS = [
   { title: "美容機器ケア", body: "「アネモネ」「Dr.Arrivo Ghost」を使い分け。" },
   { title: "オイルマッサージ", body: "指の腹と手のひらの温度で、表情筋をほぐす。" },
   { title: "美容液・パック", body: "ヒト幹細胞培養液・美容原液で仕上げ。" },
+];
+
+const HERBPEEL_CONCERNS = [
+  "額や鼻まわりのテカリが気になる",
+  "毛穴の黒ずみや皮脂汚れが目立つ",
+  "肌がざらつき、ごわついている",
+  "顔色がくすみ、疲れて見える",
+  "脂っぽいのに、洗顔後はつっぱる",
+  "肌を整えたいけれど、何をすればよいか分からない",
+];
+
+const HERBPEEL_BENEFITS = [
+  {
+    title: "余分な皮脂や古い角質を洗浄",
+    body: "ベタつきが気になる肌を、清潔な状態へ整えます。",
+  },
+  {
+    title: "毛穴まわりの汚れをケア",
+    body: "皮脂や古い角質を取り除き、すっきりした印象へ導きます。",
+  },
+  {
+    title: "ざらつき・ごわつきをなめらかに",
+    body: "肌表面を整え、つるんとした手触りへ。",
+  },
+  {
+    title: "古い角質によるくすみをケア",
+    body: "疲れて見える肌を、明るく清潔感のある印象へ整えます。",
+  },
+  {
+    title: "水分を補い、キメの整った肌へ",
+    body: "角質ケア後の肌にうるおいを与え、すこやかに保ちます。",
+  },
+];
+
+const HERBPEEL_PHOTOS = [
+  {
+    label: "頬",
+    before: "facial_herbpeel_before" as const,
+    after: "facial_herbpeel_after" as const,
+  },
+  {
+    label: "首元",
+    before: "facial_herbpeel_before2" as const,
+    after: "facial_herbpeel_after2" as const,
+  },
 ];
 
 export default async function FacialPage() {
@@ -136,15 +182,170 @@ export default async function FacialPage() {
               グルーミングコースに含まれるフェイシャルは、その日の肌の状態に合わせて内容を組み合わせます。
               フェイシャル単品でご利用の場合は、2種類のフェイシャルからお選びいただけます（詳細はLINEでご案内します）。
             </p>
-            <div className="mx-auto mt-6 max-w-xl rounded-sm border border-beige bg-paper p-6 text-center">
-              <p className="mb-1 font-serif-jp text-base text-ink">
-                ハーブピーリングの追加
+          </FadeIn>
+        </Container>
+      </section>
+
+      {/* ハーブピーリング */}
+      <section className="py-16 md:py-24">
+        <Container>
+          <SectionHeading en="Herb Peeling">
+            テカリも、毛穴も、疲れて見える肌も。
+            <br />
+            月に一度、顔まで整える。
+          </SectionHeading>
+          <FadeIn>
+            <div className="mx-auto max-w-2xl space-y-4 text-sm leading-loose text-charcoal-light">
+              <p>
+                毎日洗顔しているのに、午後になると顔がベタつく。
+                毛穴やざらつきが目立ち、最近は疲れていない日まで疲れて見える。
               </p>
-              <p className="text-sm leading-relaxed text-charcoal-light">
-                毛穴やニキビ跡が気になる方には、古い角質からアプローチするハーブピーリングをプラスできます。
+              <p>
+                そんな大人の男性肌を、ハーブピーリングで清潔感のある、
+                なめらかな印象へ整えます。
               </p>
-              <p className="mt-3 text-sm text-greige">料金はLINEでご相談ください</p>
             </div>
+
+            {(images[HERBPEEL_PHOTOS[0].before] ||
+              images[HERBPEEL_PHOTOS[1].before]) && (
+              <div className="mx-auto mt-10 max-w-2xl space-y-8">
+                {HERBPEEL_PHOTOS.map((pair) => {
+                  const before = images[pair.before];
+                  const after = images[pair.after];
+                  if (!before || !after) return null;
+                  return (
+                    <div key={pair.label}>
+                      <p className="mb-2 text-center text-xs tracking-wider text-greige">
+                        {pair.label}
+                      </p>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <div className="relative aspect-[4/3] overflow-hidden rounded-sm">
+                            <Image
+                              src={before.url}
+                              alt={before.alt}
+                              fill
+                              sizes="(min-width: 640px) 320px, 50vw"
+                              className="object-cover"
+                            />
+                          </div>
+                          <p className="mt-1.5 text-center text-[11px] tracking-wider text-greige">
+                            BEFORE
+                          </p>
+                        </div>
+                        <div>
+                          <div className="relative aspect-[4/3] overflow-hidden rounded-sm">
+                            <Image
+                              src={after.url}
+                              alt={after.alt}
+                              fill
+                              sizes="(min-width: 640px) 320px, 50vw"
+                              className="object-cover"
+                            />
+                          </div>
+                          <p className="mt-1.5 text-center text-[11px] tracking-wider text-greige">
+                            AFTER
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+                <p className="mx-auto max-w-2xl text-center text-xs leading-loose text-greige">
+                  ※これは実際に施術を受けたお客様の記録の一例です。効果を保証するものではなく、結果には個人差があります。
+                </p>
+              </div>
+            )}
+          </FadeIn>
+        </Container>
+      </section>
+
+      <section className="bg-paper-dark py-16 md:py-24">
+        <Container>
+          <SectionHeading en="Signs">
+            こんな肌の変化、感じていませんか？
+          </SectionHeading>
+          <FadeIn>
+            <ul className="mx-auto grid max-w-2xl gap-3 sm:grid-cols-2">
+              {HERBPEEL_CONCERNS.map((c) => (
+                <li
+                  key={c}
+                  className="flex items-start gap-3 rounded-sm bg-paper px-5 py-4 text-sm"
+                >
+                  <span className="mt-0.5 text-brown">✓</span>
+                  {c}
+                </li>
+              ))}
+            </ul>
+            <p className="mx-auto mt-8 max-w-2xl text-center text-sm leading-loose text-charcoal-light">
+              ひとつでも当てはまったら、肌にも定期的なメンテナンスが必要かもしれません。
+            </p>
+          </FadeIn>
+        </Container>
+      </section>
+
+      <section className="py-16 md:py-24">
+        <Container>
+          <SectionHeading en="Why">
+            男性の肌は、脂っぽいだけではありません。
+          </SectionHeading>
+          <FadeIn>
+            <p className="mx-auto max-w-2xl text-center text-sm leading-loose text-charcoal-light">
+              男性の肌は皮脂が多く、テカリや毛穴汚れが目立ちやすい一方で、
+              年齢とともに水分が失われやすくなります。
+              さらに、毎日のシェービングや紫外線、睡眠不足などが重なることで、
+              ざらつきやごわつき、疲れた印象につながります。
+            </p>
+          </FadeIn>
+        </Container>
+      </section>
+
+      <section className="bg-paper-dark py-16 md:py-24">
+        <Container>
+          <SectionHeading en="Approach">
+            ハーブピーリングでできること
+          </SectionHeading>
+          <FadeIn>
+            <div className="mx-auto grid max-w-3xl gap-4 sm:grid-cols-2">
+              {HERBPEEL_BENEFITS.map((item) => (
+                <div
+                  key={item.title}
+                  className="rounded-sm border border-beige bg-paper p-5"
+                >
+                  <p className="mb-1 font-serif-jp text-sm text-ink">
+                    {item.title}
+                  </p>
+                  <p className="text-xs leading-relaxed text-charcoal-light">
+                    {item.body}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </FadeIn>
+        </Container>
+      </section>
+
+      <section className="bg-ink py-16 text-center text-paper md:py-24">
+        <Container>
+          <FadeIn>
+            <p className="mx-auto mb-6 max-w-2xl font-serif-jp text-xl leading-relaxed md:text-2xl">
+              目指すのは、自然な清潔感。
+            </p>
+            <div className="mx-auto max-w-2xl space-y-4 text-sm leading-loose text-beige">
+              <p>
+                作り込んだ美しさではなく、近くで見られたときに感じる清潔感。
+                ハーブピーリングは、毛穴・テカリ・ざらつきをケアし、
+                若々しく整った印象を目指す男性のための肌メンテナンスです。
+              </p>
+              <p>疲れた頭は、ヘッドスパで。疲れて見える肌は、ハーブピーリングで。</p>
+              <p>
+                美容に詳しくなくても大丈夫です。月に一度、自分を整える時間に、
+                顔のメンテナンスも加えてみてください。
+              </p>
+            </div>
+            <p className="mx-auto mt-8 max-w-2xl text-xs leading-loose text-greige">
+              ※強い赤みや炎症、傷、肌荒れなどがある場合は、肌の状態を確認したうえで施術を見合わせることがあります。
+            </p>
           </FadeIn>
         </Container>
       </section>
