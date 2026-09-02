@@ -73,18 +73,6 @@ export const MENU_GROUPS: MenuGroup[] = [
         price: "¥20,790",
         originalPrice: "¥23,100",
       },
-      {
-        name: "カット＋シェービング＋ヘッドスパ35分＋フェイシャル",
-        note: "髪・顔・頭をまとめて整えたい方へ",
-        price: "¥15,000",
-        originalPrice: "¥19,800",
-      },
-      {
-        name: "カット＋シェービング＋ヘッドスパ50分＋フェイシャル2種＋ヒト幹細胞エステ",
-        note: "umbrellaでご用意しているなかで最も内容の多いコースです",
-        price: "¥20,000",
-        originalPrice: "¥26,400",
-      },
     ],
   },
   {
@@ -126,7 +114,7 @@ export const MENU_GROUPS: MenuGroup[] = [
   {
     id: "hair",
     en: "Hair",
-    title: "カット・カラー・パーマ",
+    title: "カット・カラー",
     items: [
       { name: "カット", price: "¥7,700" },
       {
@@ -139,12 +127,6 @@ export const MENU_GROUPS: MenuGroup[] = [
         note: "カラーのみのご予約は承っておりません",
         price: "¥7,700",
       },
-      {
-        name: "メンズパーマ",
-        note: "パーマのみのご予約は承っておりません",
-        price: "¥6,600",
-      },
-      { name: "メンズトリートメントパーマ", price: "¥8,800" },
     ],
   },
   {

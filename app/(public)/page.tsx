@@ -64,7 +64,7 @@ export default async function TopPage() {
       <JsonLd data={localBusinessJsonLd(settings)} />
 
       {/* ① ファーストビュー + ② 35歳以降の変化（共感型コピー） */}
-      <section className="relative flex min-h-[82svh] items-center overflow-hidden bg-ink text-paper">
+      <section className="relative flex min-h-[82svh] items-end overflow-hidden bg-ink text-paper">
         {images.hero_top && (
           <>
             <Image
@@ -73,12 +73,13 @@ export default async function TopPage() {
               fill
               sizes="100vw"
               priority
-              className="object-cover opacity-40"
+              className="object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-ink/50 via-ink/60 to-ink/90" />
+            {/* 下端だけに影。写真の上〜中央は鮮明なまま見せる。 */}
+            <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/40 to-transparent" />
           </>
         )}
-        <Container className="relative py-24">
+        <Container className="relative pt-24 pb-16 md:pb-20">
           <FadeIn>
             <h1 className="mb-6 whitespace-pre-line text-3xl leading-relaxed md:text-5xl md:leading-relaxed">
               {settings.fv_copy_main}

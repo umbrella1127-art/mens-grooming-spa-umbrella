@@ -136,6 +136,15 @@ export default async function FacialPage() {
               グルーミングコースに含まれるフェイシャルは、その日の肌の状態に合わせて内容を組み合わせます。
               フェイシャル単品でご利用の場合は、2種類のフェイシャルからお選びいただけます（詳細はLINEでご案内します）。
             </p>
+            <div className="mx-auto mt-6 max-w-xl rounded-sm border border-beige bg-paper p-6 text-center">
+              <p className="mb-1 font-serif-jp text-base text-ink">
+                ハーブピーリングの追加
+              </p>
+              <p className="text-sm leading-relaxed text-charcoal-light">
+                毛穴やニキビ跡が気になる方には、古い角質からアプローチするハーブピーリングをプラスできます。
+              </p>
+              <p className="mt-3 text-sm text-greige">料金はLINEでご相談ください</p>
+            </div>
           </FadeIn>
         </Container>
       </section>
