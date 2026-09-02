@@ -141,6 +141,12 @@ export const MENU_GROUPS: MenuGroup[] = [
       },
       { name: "フェイシャルエステ", price: "¥6,600〜" },
       {
+        name: "ハーブピーリング",
+        note: "毛穴・テカリ・ざらつきが気になる方へ",
+        price: "¥8,800",
+        originalPrice: "¥12,100",
+      },
+      {
         name: "耳つぼセラピー",
         note: "他メニューとの組み合わせは¥1,650",
         price: "¥2,200",

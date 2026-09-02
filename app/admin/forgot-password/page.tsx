@@ -20,7 +20,7 @@ export default function ForgotPasswordPage() {
         redirectTo: `${window.location.origin}/admin/reset-password`,
       });
       if (error) {
-        setError("送信できませんでした。時間をおいて再度お試しください。");
+        setError(`送信できませんでした（${error.message}）`);
         return;
       }
       setSent(true);

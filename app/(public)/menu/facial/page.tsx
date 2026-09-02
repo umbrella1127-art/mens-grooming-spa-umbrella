@@ -206,6 +206,21 @@ export default async function FacialPage() {
               </p>
             </div>
 
+            <div className="mx-auto mt-8 max-w-sm rounded-sm border border-beige bg-paper p-8 text-center">
+              <p className="mb-4 font-serif-jp text-2xl text-ink md:text-3xl">
+                ハーブピーリング
+              </p>
+              <p className="text-xs text-greige line-through">
+                通常価格 ¥12,100
+              </p>
+              <p className="mt-1 text-xs tracking-wider text-greige">
+                キャンペーン価格
+              </p>
+              <p className="font-serif-jp text-3xl text-brown md:text-4xl">
+                ¥8,800<span className="ml-1 text-xs">（税込）</span>
+              </p>
+            </div>
+
             {(images[HERBPEEL_PHOTOS[0].before] ||
               images[HERBPEEL_PHOTOS[1].before]) && (
               <div className="mx-auto mt-10 max-w-2xl space-y-8">
