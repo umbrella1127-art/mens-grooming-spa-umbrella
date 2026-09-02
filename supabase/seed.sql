@@ -128,8 +128,8 @@ insert into images (slot_key, url, alt, label) values
 ('slimming_case2', '/images/slimming_case2.jpg', '施術記録（27日間）の3Dボディスキャン比較', '痩身ページ：症例2'),
 ('facial_herbpeel_before', '/images/facial_herbpeel_before.jpg', 'ハーブピーリング施術前の肌', 'フェイシャルページ：ハーブピーリング施術前（頬）'),
 ('facial_herbpeel_after', '/images/facial_herbpeel_after.jpg', 'ハーブピーリング施術後の肌', 'フェイシャルページ：ハーブピーリング施術後（頬）'),
-('facial_herbpeel_before2', '/images/facial_herbpeel_before2.jpg', 'ハーブピーリング施術前の肌（首元）', 'フェイシャルページ：ハーブピーリング施術前（首元）'),
-('facial_herbpeel_after2', '/images/facial_herbpeel_after2.jpg', 'ハーブピーリング施術後の肌（首元）', 'フェイシャルページ：ハーブピーリング施術後（首元）');
+('facial_herbpeel_before2', '/images/facial_herbpeel_before2.jpg', 'ハーブピーリング施術前の肌（顎）', 'フェイシャルページ：ハーブピーリング施術前（顎）'),
+('facial_herbpeel_after2', '/images/facial_herbpeel_after2.jpg', 'ハーブピーリング施術後の肌（顎）', 'フェイシャルページ：ハーブピーリング施術後（顎）');
 
 -- ========== ab_variants（FVコピーのA/B案を保存） ==========
 insert into ab_variants (slot_key, variant_label, content, is_active) values

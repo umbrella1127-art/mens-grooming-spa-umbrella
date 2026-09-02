@@ -74,7 +74,7 @@ const HERBPEEL_PHOTOS = [
     after: "facial_herbpeel_after" as const,
   },
   {
-    label: "首元",
+    label: "顎",
     before: "facial_herbpeel_before2" as const,
     after: "facial_herbpeel_after2" as const,
   },
