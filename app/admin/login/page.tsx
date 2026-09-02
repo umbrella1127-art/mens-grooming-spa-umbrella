@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { getBrowserClient } from "@/lib/supabase/client";
@@ -79,6 +80,11 @@ export default function AdminLoginPage() {
           {loading ? "ログイン中…" : "ログイン"}
         </button>
       </form>
+      <p className="mt-4 text-center text-xs">
+        <Link href="/admin/forgot-password" className="text-neutral-500 underline">
+          パスワードをお忘れの場合
+        </Link>
+      </p>
     </div>
   );
 }

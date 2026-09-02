@@ -10,6 +10,14 @@ export async function updateSession(request: NextRequest) {
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const publicPaths = [
+    "/admin/login",
+    "/admin/forgot-password",
+    "/admin/reset-password",
+  ];
+  const isPublicPage = publicPaths.some((p) =>
+    request.nextUrl.pathname.startsWith(p),
+  );
   const isLoginPage = request.nextUrl.pathname.startsWith("/admin/login");
 
   if (!url || !anonKey) {
@@ -38,7 +46,7 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user && !isLoginPage) {
+  if (!user && !isPublicPage) {
     return NextResponse.redirect(new URL("/admin/login", request.url));
   }
   if (user && isLoginPage) {
