@@ -65,10 +65,32 @@ export async function POST(req: Request) {
 
       after(async () => {
         const supabase = getServiceClient();
-        await supabase
+        // pendingのときだけ更新する（二重クリックで後勝ちになるのを防ぐ）
+        const { data: updated } = await supabase
           .from("content_drafts")
           .update({ status, updated_at: new Date().toISOString() })
-          .eq("id", draftId);
+          .eq("id", draftId)
+          .eq("status", "pending")
+          .select("status")
+          .maybeSingle();
+
+        if (!updated) {
+          // 既に決定済みだった場合は現在の状態を取り直して表示する
+          const { data: current } = await supabase
+            .from("content_drafts")
+            .select("status")
+            .eq("id", draftId)
+            .single();
+          const currentStatus = current?.status;
+          const label = currentStatus ? STATUS_LABEL[currentStatus] : undefined;
+          if (label) {
+            await editOriginalInteractionResponse(interactionToken, {
+              content: `${label}（すでに決定済みです）\n\n${originalContent}`,
+              components: [],
+            });
+          }
+          return;
+        }
 
         await editOriginalInteractionResponse(interactionToken, {
           content: `${STATUS_LABEL[status]}\n\n${originalContent}`,
