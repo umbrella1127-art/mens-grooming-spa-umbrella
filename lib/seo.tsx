@@ -3,7 +3,7 @@ import type { Faq, Post, Settings } from "./types";
 
 export const SITE_NAME = "MEN'S GROOMING SPA umbrella";
 export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://mens.umbrella1127.com";
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://mensspa.umbrella1127.com";
 
 const TITLE_SUFFIX = `｜${SITE_NAME}｜前橋 メンズサロン`;
 
