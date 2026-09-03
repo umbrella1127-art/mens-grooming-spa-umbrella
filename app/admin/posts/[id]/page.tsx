@@ -32,67 +32,67 @@ export default async function AdminPostEditPage({
 
       <form
         action={updatePost}
-        className="space-y-4 rounded-lg border border-neutral-200 bg-white p-6"
+        className="space-y-4 rounded-sm border border-beige bg-white p-6"
       >
         <input type="hidden" name="id" value={post.id} />
         <div>
-          <label className="mb-1 block text-xs text-neutral-500">
+          <label className="mb-1 block text-xs text-charcoal-light">
             タイトル
           </label>
           <input
             name="title"
             required
             defaultValue={post.title}
-            className="w-full rounded border border-neutral-300 px-3 py-2 text-sm"
+            className="w-full rounded border border-beige px-3 py-2 text-sm"
           />
         </div>
         <div className="grid gap-4 md:grid-cols-2">
           <div>
-            <label className="mb-1 block text-xs text-neutral-500">
+            <label className="mb-1 block text-xs text-charcoal-light">
               URL（半角英数字とハイフン）
             </label>
             <input
               name="slug"
               required
               defaultValue={post.slug}
-              className="w-full rounded border border-neutral-300 px-3 py-2 text-sm"
+              className="w-full rounded border border-beige px-3 py-2 text-sm"
             />
           </div>
           <div>
-            <label className="mb-1 block text-xs text-neutral-500">
+            <label className="mb-1 block text-xs text-charcoal-light">
               カバー画像URL（任意）
             </label>
             <input
               name="cover_image_url"
               defaultValue={post.cover_image_url ?? ""}
-              className="w-full rounded border border-neutral-300 px-3 py-2 text-sm"
+              className="w-full rounded border border-beige px-3 py-2 text-sm"
             />
           </div>
         </div>
         <div>
-          <label className="mb-1 block text-xs text-neutral-500">
+          <label className="mb-1 block text-xs text-charcoal-light">
             概要（一覧・検索結果に表示）
           </label>
           <textarea
             name="excerpt"
             rows={2}
             defaultValue={post.excerpt ?? ""}
-            className="w-full rounded border border-neutral-300 px-3 py-2 text-sm"
+            className="w-full rounded border border-beige px-3 py-2 text-sm"
           />
         </div>
         <div>
-          <label className="mb-1 block text-xs text-neutral-500">
+          <label className="mb-1 block text-xs text-charcoal-light">
             本文（Markdown。## で見出し、- で箇条書き）
           </label>
           <textarea
             name="body_markdown"
             rows={20}
             defaultValue={post.body_markdown}
-            className="w-full rounded border border-neutral-300 px-3 py-2 font-mono text-sm"
+            className="w-full rounded border border-beige px-3 py-2 font-mono text-sm"
           />
         </div>
         <details className="text-sm">
-          <summary className="cursor-pointer text-neutral-500">
+          <summary className="cursor-pointer text-charcoal-light">
             SEO設定（任意）
           </summary>
           <div className="mt-3 grid gap-4 md:grid-cols-2">
@@ -100,18 +100,18 @@ export default async function AdminPostEditPage({
               name="meta_title"
               placeholder="検索結果用タイトル"
               defaultValue={post.meta_title ?? ""}
-              className="w-full rounded border border-neutral-300 px-3 py-2 text-sm"
+              className="w-full rounded border border-beige px-3 py-2 text-sm"
             />
             <input
               name="meta_description"
               placeholder="検索結果用説明文"
               defaultValue={post.meta_description ?? ""}
-              className="w-full rounded border border-neutral-300 px-3 py-2 text-sm"
+              className="w-full rounded border border-beige px-3 py-2 text-sm"
             />
           </div>
         </details>
 
-        <div className="flex flex-wrap items-center gap-3 border-t border-neutral-100 pt-5">
+        <div className="flex flex-wrap items-center gap-3 border-t border-beige/60 pt-5">
           <button
             type="submit"
             className="rounded border border-neutral-900 px-6 py-2 text-sm"
@@ -137,7 +137,7 @@ export default async function AdminPostEditPage({
               保存して公開
             </button>
           )}
-          <span className="text-xs text-neutral-400">
+          <span className="text-xs text-greige">
             現在: {post.status === "published" ? "公開中" : "下書き"}
           </span>
           {post.status === "published" && (

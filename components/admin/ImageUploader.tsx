@@ -85,7 +85,7 @@ export default function ImageUploader({ slot }: { slot: ImageSlot }) {
   }
 
   return (
-    <div className="flex items-center gap-5 rounded-lg border border-neutral-200 bg-white p-4">
+    <div className="flex items-center gap-5 rounded-sm border border-beige bg-white p-4">
       {/* サムネイルは通常のimgで十分（管理画面のため最適化不要） */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
@@ -100,18 +100,18 @@ export default function ImageUploader({ slot }: { slot: ImageSlot }) {
             value={alt}
             onChange={(e) => setAlt(e.target.value)}
             placeholder="画像の説明（alt）"
-            className="w-full max-w-xs rounded border border-neutral-300 px-2 py-1 text-xs"
+            className="w-full max-w-xs rounded border border-beige px-2 py-1 text-xs"
           />
           <button
             type="button"
             onClick={onSaveAlt}
             disabled={busy}
-            className="shrink-0 rounded border border-neutral-300 px-3 py-1 text-xs disabled:opacity-50"
+            className="shrink-0 rounded border border-beige px-3 py-1 text-xs disabled:opacity-50"
           >
             説明を保存
           </button>
         </div>
-        <label className="inline-block cursor-pointer rounded bg-neutral-900 px-4 py-1.5 text-xs text-white">
+        <label className="inline-block cursor-pointer rounded bg-ink px-4 py-1.5 text-xs text-white">
           {busy ? "アップロード中…" : "画像を差し替える"}
           <input
             type="file"

@@ -32,7 +32,7 @@ export default async function AdminSettingsPage({
   return (
     <div>
       <h1 className="mb-2 text-xl font-bold">サイト設定</h1>
-      <p className="mb-6 text-sm text-neutral-500">
+      <p className="mb-6 text-sm text-charcoal-light">
         各項目を編集して「保存」を押してください。
       </p>
       <SavedBanner show={saved === "1"} />
@@ -50,7 +50,7 @@ export default async function AdminSettingsPage({
             key={group}
             action={saveSettings}
             id={group}
-            className="rounded-lg border border-neutral-200 bg-white p-6"
+            className="rounded-sm border border-beige bg-white p-6"
           >
             <h2 className="mb-5 font-bold">{GROUP_LABELS[group] ?? group}</h2>
             <div className="space-y-4">
@@ -60,7 +60,7 @@ export default async function AdminSettingsPage({
                   <div key={row.key}>
                     <label
                       htmlFor={row.key}
-                      className="mb-1 block text-sm text-neutral-600"
+                      className="mb-1 block text-sm text-charcoal"
                     >
                       {row.label}
                     </label>
@@ -70,7 +70,7 @@ export default async function AdminSettingsPage({
                         name={row.key}
                         rows={3}
                         defaultValue={row.value?.text ?? ""}
-                        className="w-full rounded border border-neutral-300 px-3 py-2 text-sm"
+                        className="w-full rounded border border-beige px-3 py-2 text-sm"
                       />
                     ) : (
                       <input
@@ -78,7 +78,7 @@ export default async function AdminSettingsPage({
                         name={row.key}
                         type={row.input_type === "url" ? "url" : "text"}
                         defaultValue={row.value?.text ?? ""}
-                        className="w-full rounded border border-neutral-300 px-3 py-2 text-sm"
+                        className="w-full rounded border border-beige px-3 py-2 text-sm"
                       />
                     )}
                   </div>
@@ -86,7 +86,7 @@ export default async function AdminSettingsPage({
             </div>
             <button
               type="submit"
-              className="mt-5 rounded bg-neutral-900 px-6 py-2 text-sm text-white"
+              className="mt-5 rounded bg-ink px-6 py-2 text-sm text-white"
             >
               保存
             </button>

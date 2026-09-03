@@ -191,7 +191,7 @@ export async function getBoardData(): Promise<BoardData> {
   const stages: Stage[] = [
     {
       n: String(pending.length),
-      label: "🖐 承認待ち",
+      label: "承認待ち",
       hint:
         pending.length === 0
           ? "たまっていません"
@@ -214,7 +214,7 @@ export async function getBoardData(): Promise<BoardData> {
     },
     {
       n: String(approved.length),
-      label: "ネタ在庫（承認済み）",
+      label: "ネタ在庫",
       hint: `直近7日で ${approvedLast7} 件承認`,
       tone: approved.length < 3 ? "warn" : "info",
     },

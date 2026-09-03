@@ -7,22 +7,22 @@ function FaqFields({ faq }: { faq?: Faq }) {
   return (
     <div className="space-y-3">
       <div>
-        <label className="mb-1 block text-xs text-neutral-500">質問</label>
+        <label className="mb-1 block text-xs text-charcoal-light">質問</label>
         <input
           name="question"
           required
           defaultValue={faq?.question ?? ""}
-          className="w-full rounded border border-neutral-300 px-3 py-2 text-sm"
+          className="w-full rounded border border-beige px-3 py-2 text-sm"
         />
       </div>
       <div>
-        <label className="mb-1 block text-xs text-neutral-500">回答</label>
+        <label className="mb-1 block text-xs text-charcoal-light">回答</label>
         <textarea
           name="answer"
           required
           rows={3}
           defaultValue={faq?.answer ?? ""}
-          className="w-full rounded border border-neutral-300 px-3 py-2 text-sm"
+          className="w-full rounded border border-beige px-3 py-2 text-sm"
         />
       </div>
       <div className="flex flex-wrap items-center gap-5 text-sm">
@@ -32,7 +32,7 @@ function FaqFields({ faq }: { faq?: Faq }) {
             name="category"
             defaultValue={faq?.category ?? ""}
             placeholder="初めての方 など"
-            className="w-40 rounded border border-neutral-300 px-2 py-1 text-sm"
+            className="w-40 rounded border border-beige px-2 py-1 text-sm"
           />
         </label>
         <label className="flex items-center gap-2">
@@ -41,7 +41,7 @@ function FaqFields({ faq }: { faq?: Faq }) {
             name="sort_order"
             type="number"
             defaultValue={faq?.sort_order ?? 99}
-            className="w-16 rounded border border-neutral-300 px-2 py-1 text-sm"
+            className="w-16 rounded border border-beige px-2 py-1 text-sm"
           />
         </label>
         <label className="flex items-center gap-2">
@@ -74,7 +74,7 @@ export default async function AdminFaqsPage({
         {faqs.map((faq) => (
           <div
             key={faq.id}
-            className="rounded-lg border border-neutral-200 bg-white p-5"
+            className="rounded-sm border border-beige bg-white p-5"
           >
             <form action={updateFaq}>
               <input type="hidden" name="id" value={faq.id} />
@@ -82,7 +82,7 @@ export default async function AdminFaqsPage({
               <div className="mt-4 flex gap-3">
                 <button
                   type="submit"
-                  className="rounded bg-neutral-900 px-6 py-2 text-sm text-white"
+                  className="rounded bg-ink px-6 py-2 text-sm text-white"
                 >
                   保存
                 </button>
@@ -101,13 +101,13 @@ export default async function AdminFaqsPage({
         ))}
       </div>
 
-      <div className="mt-10 rounded-lg border border-dashed border-neutral-300 bg-white p-5">
+      <div className="mt-10 rounded-sm border border-dashed border-beige bg-white p-5">
         <h2 className="mb-4 font-bold">新しい質問を追加</h2>
         <form action={createFaq}>
           <FaqFields />
           <button
             type="submit"
-            className="mt-4 rounded bg-neutral-900 px-6 py-2 text-sm text-white"
+            className="mt-4 rounded bg-ink px-6 py-2 text-sm text-white"
           >
             追加
           </button>

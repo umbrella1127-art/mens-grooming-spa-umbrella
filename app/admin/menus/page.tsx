@@ -34,7 +34,7 @@ export default async function AdminMenusPage({
   return (
     <div>
       <h1 className="mb-2 text-xl font-bold">メニュー・料金</h1>
-      <p className="mb-6 text-sm text-neutral-500">
+      <p className="mb-6 text-sm text-charcoal-light">
         価格が決まったら金額を入力して「価格の表示」を「金額を表示」に変更してください。
       </p>
       <SavedBanner show={saved === "1"} />
@@ -48,7 +48,7 @@ export default async function AdminMenusPage({
       <div className="space-y-10">
         {categories.map((category) => (
           <section key={category}>
-            <h2 className="mb-4 border-b border-neutral-300 pb-2 font-bold">
+            <h2 className="mb-4 border-b border-beige pb-2 font-bold">
               {CATEGORY_LABELS[category] ?? category}
             </h2>
             <div className="space-y-6">
@@ -58,51 +58,51 @@ export default async function AdminMenusPage({
                   <form
                     key={menu.id}
                     action={updateMenu}
-                    className="rounded-lg border border-neutral-200 bg-white p-5"
+                    className="rounded-sm border border-beige bg-white p-5"
                   >
                     <input type="hidden" name="id" value={menu.id} />
                     <div className="grid gap-4 md:grid-cols-2">
                       <div>
-                        <label className="mb-1 block text-xs text-neutral-500">
+                        <label className="mb-1 block text-xs text-charcoal-light">
                           メニュー名
                         </label>
                         <input
                           name="name"
                           defaultValue={menu.name}
-                          className="w-full rounded border border-neutral-300 px-3 py-2 text-sm"
+                          className="w-full rounded border border-beige px-3 py-2 text-sm"
                         />
                       </div>
                       <div className="grid grid-cols-3 gap-3">
                         <div>
-                          <label className="mb-1 block text-xs text-neutral-500">
+                          <label className="mb-1 block text-xs text-charcoal-light">
                             所要時間（分）
                           </label>
                           <input
                             name="duration_min"
                             type="number"
                             defaultValue={menu.duration_min ?? ""}
-                            className="w-full rounded border border-neutral-300 px-3 py-2 text-sm"
+                            className="w-full rounded border border-beige px-3 py-2 text-sm"
                           />
                         </div>
                         <div>
-                          <label className="mb-1 block text-xs text-neutral-500">
+                          <label className="mb-1 block text-xs text-charcoal-light">
                             価格（円・税込）
                           </label>
                           <input
                             name="price_yen"
                             type="number"
                             defaultValue={menu.price_yen ?? ""}
-                            className="w-full rounded border border-neutral-300 px-3 py-2 text-sm"
+                            className="w-full rounded border border-beige px-3 py-2 text-sm"
                           />
                         </div>
                         <div>
-                          <label className="mb-1 block text-xs text-neutral-500">
+                          <label className="mb-1 block text-xs text-charcoal-light">
                             価格の表示
                           </label>
                           <select
                             name="price_status"
                             defaultValue={menu.price_status}
-                            className="w-full rounded border border-neutral-300 px-2 py-2 text-sm"
+                            className="w-full rounded border border-beige px-2 py-2 text-sm"
                           >
                             <option value="fixed">金額を表示</option>
                             <option value="tbd">「価格未定」と表示</option>
@@ -111,24 +111,24 @@ export default async function AdminMenusPage({
                         </div>
                       </div>
                       <div className="md:col-span-2">
-                        <label className="mb-1 block text-xs text-neutral-500">
+                        <label className="mb-1 block text-xs text-charcoal-light">
                           説明文
                         </label>
                         <textarea
                           name="description"
                           rows={2}
                           defaultValue={menu.description ?? ""}
-                          className="w-full rounded border border-neutral-300 px-3 py-2 text-sm"
+                          className="w-full rounded border border-beige px-3 py-2 text-sm"
                         />
                       </div>
                       <div>
-                        <label className="mb-1 block text-xs text-neutral-500">
+                        <label className="mb-1 block text-xs text-charcoal-light">
                           価格の補足（「税込」「オプション」など）
                         </label>
                         <input
                           name="price_note"
                           defaultValue={menu.price_note ?? ""}
-                          className="w-full rounded border border-neutral-300 px-3 py-2 text-sm"
+                          className="w-full rounded border border-beige px-3 py-2 text-sm"
                         />
                       </div>
                       <div className="flex items-end gap-5 text-sm">
@@ -154,14 +154,14 @@ export default async function AdminMenusPage({
                             name="sort_order"
                             type="number"
                             defaultValue={menu.sort_order}
-                            className="w-16 rounded border border-neutral-300 px-2 py-1 text-sm"
+                            className="w-16 rounded border border-beige px-2 py-1 text-sm"
                           />
                         </label>
                       </div>
                     </div>
                     <button
                       type="submit"
-                      className="mt-4 rounded bg-neutral-900 px-6 py-2 text-sm text-white"
+                      className="mt-4 rounded bg-ink px-6 py-2 text-sm text-white"
                     >
                       保存
                     </button>

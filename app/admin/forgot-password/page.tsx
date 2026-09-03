@@ -30,10 +30,10 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="mx-auto mt-16 max-w-sm rounded-lg border border-neutral-200 bg-white p-8">
+    <div className="mx-auto mt-16 max-w-sm rounded-sm border border-beige bg-white p-8">
       <h1 className="mb-6 text-lg font-bold">パスワードの再設定</h1>
       {sent ? (
-        <p className="text-sm text-neutral-700">
+        <p className="text-sm text-charcoal">
           入力されたメールアドレス宛に、パスワード再設定用のリンクを送信しました。メールを確認してください（届かない場合は迷惑メールフォルダもご確認ください）。
         </p>
       ) : (
@@ -48,21 +48,21 @@ export default function ForgotPasswordPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded border border-neutral-300 px-3 py-2 text-sm"
+              className="w-full rounded border border-beige px-3 py-2 text-sm"
             />
           </div>
           {error && <p className="text-sm text-red-600">{error}</p>}
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded bg-neutral-900 py-2.5 text-sm text-white disabled:opacity-50"
+            className="w-full rounded bg-ink py-2.5 text-sm text-white disabled:opacity-50"
           >
             {loading ? "送信中…" : "再設定メールを送る"}
           </button>
         </form>
       )}
       <p className="mt-4 text-center text-xs">
-        <Link href="/admin/login" className="text-neutral-500 underline">
+        <Link href="/admin/login" className="text-charcoal-light underline">
           ログイン画面に戻る
         </Link>
       </p>

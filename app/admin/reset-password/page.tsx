@@ -63,14 +63,14 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div className="mx-auto mt-16 max-w-sm rounded-lg border border-neutral-200 bg-white p-8">
+    <div className="mx-auto mt-16 max-w-sm rounded-sm border border-beige bg-white p-8">
       <h1 className="mb-6 text-lg font-bold">新しいパスワードの設定</h1>
       {done ? (
-        <p className="text-sm text-neutral-700">
+        <p className="text-sm text-charcoal">
           パスワードを設定しました。管理画面に移動します…
         </p>
       ) : !ready ? (
-        <p className="text-sm text-neutral-500">
+        <p className="text-sm text-charcoal-light">
           リンクを確認しています。うまく表示されない場合は、メール内のリンクをもう一度開いてください。
         </p>
       ) : (
@@ -86,7 +86,7 @@ export default function ResetPasswordPage() {
               minLength={8}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded border border-neutral-300 px-3 py-2 text-sm"
+              className="w-full rounded border border-beige px-3 py-2 text-sm"
             />
           </div>
           <div>
@@ -100,14 +100,14 @@ export default function ResetPasswordPage() {
               minLength={8}
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
-              className="w-full rounded border border-neutral-300 px-3 py-2 text-sm"
+              className="w-full rounded border border-beige px-3 py-2 text-sm"
             />
           </div>
           {error && <p className="text-sm text-red-600">{error}</p>}
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded bg-neutral-900 py-2.5 text-sm text-white disabled:opacity-50"
+            className="w-full rounded bg-ink py-2.5 text-sm text-white disabled:opacity-50"
           >
             {loading ? "設定中…" : "パスワードを設定する"}
           </button>

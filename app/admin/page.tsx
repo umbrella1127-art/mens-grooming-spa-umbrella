@@ -46,13 +46,14 @@ export default async function AdminBoardPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-[17px] font-bold">
+      <div className="border-b border-beige pb-4">
+        <p className="mb-1 text-[10px] tracking-[0.2em] text-greige">BOARD</p>
+        <h1 className="font-serif-jp text-[20px] tracking-wide text-ink">
           業務ボード
-          <span className="ml-2 text-[12.5px] font-normal text-neutral-500">
-            {board.today} 時点。コンテンツがどこまで進んで、どこで止まっているか
-          </span>
         </h1>
+        <p className="mt-1 text-[12.5px] text-charcoal-light">
+          {board.today} 時点。コンテンツがどこまで進んで、どこで止まっているか
+        </p>
       </div>
 
       <Alerts alerts={board.alerts} />
@@ -60,7 +61,7 @@ export default async function AdminBoardPage() {
       <Flow stages={board.stages} />
 
       <div className="grid gap-4 lg:grid-cols-2">
-        <Card title="🖐 承認待ちの下書き" aside="Discordで承認・修正・却下">
+        <Card eyebrow="APPROVAL" title="承認待ちの下書き" aside="Discordで承認・修正・却下">
           {board.pendingDrafts.length === 0 ? (
             <Empty>
               {board.draftsAvailable
@@ -68,16 +69,16 @@ export default async function AdminBoardPage() {
                 : "下書きを読み取れませんでした。"}
             </Empty>
           ) : (
-            <ul className="divide-y divide-neutral-100">
+            <ul className="divide-y divide-beige/60">
               {board.pendingDrafts.map((d) => (
                 <li key={d.id} className="flex gap-3 py-2.5">
                   <div className="pt-0.5">
                     <Badge>{CHANNEL_LABEL[d.channel]}</Badge>
                   </div>
-                  <p className="flex-1 text-[12.5px] leading-relaxed text-neutral-700">
+                  <p className="flex-1 text-[12.5px] leading-relaxed text-charcoal">
                     {d.text}
                   </p>
-                  <span className="shrink-0 text-[11px] tabular-nums text-neutral-400">
+                  <span className="shrink-0 text-[11px] tabular-nums text-greige">
                     {d.days}日
                   </span>
                 </li>
@@ -86,20 +87,20 @@ export default async function AdminBoardPage() {
           )}
         </Card>
 
-        <Card title="📝 ブログの下書き" aside="入稿待ち">
+        <Card eyebrow="DRAFTS" title="ブログの下書き" aside="入稿待ち">
           {board.draftPosts.length === 0 ? (
             <Empty>書きかけの記事はありません。</Empty>
           ) : (
-            <ul className="divide-y divide-neutral-100">
+            <ul className="divide-y divide-beige/60">
               {board.draftPosts.map((p) => (
                 <li key={p.id} className="flex items-center gap-3 py-2.5">
                   <Link
                     href={`/admin/posts/${p.id}`}
-                    className="flex-1 text-[12.5px] text-neutral-700 hover:underline"
+                    className="flex-1 text-[12.5px] text-charcoal hover:underline"
                   >
                     {p.title}
                   </Link>
-                  <span className="shrink-0 text-[11px] tabular-nums text-neutral-400">
+                  <span className="shrink-0 text-[11px] tabular-nums text-greige">
                     {p.days}日
                   </span>
                 </li>
@@ -110,7 +111,8 @@ export default async function AdminBoardPage() {
       </div>
 
       <Card
-        title="🕒 直近の下書き"
+        eyebrow="ACTIVITY"
+        title="直近の下書き"
         aside={board.activity.map((a) => `${a.label} ${a.value}`).join(" ／ ")}
       >
         {board.recentDrafts.length === 0 ? (
@@ -123,7 +125,7 @@ export default async function AdminBoardPage() {
           <div className="overflow-x-auto">
             <table className="w-full min-w-[560px] text-left text-[12.5px]">
               <thead>
-                <tr className="border-b border-neutral-200 text-[10.5px] uppercase tracking-wide text-neutral-400">
+                <tr className="border-b border-beige text-[10.5px] uppercase tracking-wide text-greige">
                   <th className="py-2 pr-3 font-semibold">種別</th>
                   <th className="py-2 pr-3 font-semibold">状態</th>
                   <th className="py-2 pr-3 font-semibold">内容</th>
@@ -132,7 +134,7 @@ export default async function AdminBoardPage() {
               </thead>
               <tbody>
                 {board.recentDrafts.map((d) => (
-                  <tr key={d.id} className="border-b border-neutral-100 last:border-b-0">
+                  <tr key={d.id} className="border-b border-beige/60 last:border-b-0">
                     <td className="py-2.5 pr-3 align-top">
                       <Badge>{CHANNEL_LABEL[d.channel]}</Badge>
                     </td>
@@ -141,10 +143,10 @@ export default async function AdminBoardPage() {
                         {STATUS_LABEL[d.status]}
                       </Badge>
                     </td>
-                    <td className="py-2.5 pr-3 align-top leading-relaxed text-neutral-700">
+                    <td className="py-2.5 pr-3 align-top leading-relaxed text-charcoal">
                       {d.text}
                     </td>
-                    <td className="py-2.5 align-top whitespace-nowrap tabular-nums text-neutral-400">
+                    <td className="py-2.5 align-top whitespace-nowrap tabular-nums text-greige">
                       {d.at}
                     </td>
                   </tr>
@@ -155,22 +157,22 @@ export default async function AdminBoardPage() {
         )}
       </Card>
 
-      <Card title="🛠 やりたいことから探す">
+      <Card eyebrow="SHORTCUTS" title="やりたいことから探す">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {SHORTCUTS.map((s) => (
             <Link
               key={s.title}
               href={s.href}
-              className="rounded-[14px] border border-neutral-200 p-4 transition-colors hover:bg-neutral-50"
+              className="rounded-sm border border-beige p-4 transition-colors hover:bg-paper-dark"
             >
               <p className="mb-1 text-[12.5px] font-bold">{s.title}</p>
-              <p className="text-[11.5px] leading-relaxed text-neutral-500">
+              <p className="text-[11.5px] leading-relaxed text-charcoal-light">
                 {s.body}
               </p>
             </Link>
           ))}
         </div>
-        <div className="mt-4 border-t border-neutral-100 pt-4">
+        <div className="mt-4 border-t border-beige/60 pt-4">
           <RevalidateButton />
         </div>
       </Card>

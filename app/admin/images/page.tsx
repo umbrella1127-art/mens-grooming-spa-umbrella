@@ -10,7 +10,7 @@ export default async function AdminImagesPage() {
   return (
     <div>
       <h1 className="mb-2 text-xl font-bold">写真</h1>
-      <p className="mb-6 text-sm text-neutral-500">
+      <p className="mb-6 text-sm text-charcoal-light">
         各写真の「画像を差し替える」から新しい写真をアップロードできます。
       </p>
 
