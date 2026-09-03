@@ -1,5 +1,12 @@
 import Link from "next/link";
 import RevalidateButton from "@/components/admin/RevalidateButton";
+import { Alerts, Badge, Card, Empty, Flow } from "@/components/admin/board";
+import {
+  CHANNEL_LABEL,
+  STATUS_LABEL,
+  STATUS_TONE,
+  getBoardData,
+} from "@/lib/admin/board";
 
 const SHORTCUTS = [
   {
@@ -34,29 +41,139 @@ const SHORTCUTS = [
   },
 ];
 
-export default function AdminDashboard() {
+export default async function AdminBoardPage() {
+  const board = await getBoardData();
+
   return (
-    <div>
-      <h1 className="mb-2 text-xl font-bold">管理画面</h1>
-      <p className="mb-8 text-sm text-neutral-500">
-        やりたいことを選んでください。保存すると数秒でサイトに反映されます。
-      </p>
-      <div className="grid gap-4 sm:grid-cols-2">
-        {SHORTCUTS.map((s) => (
-          <Link
-            key={s.title}
-            href={s.href}
-            className="rounded-lg border border-neutral-200 bg-white p-6 transition-shadow hover:shadow-md"
-          >
-            <p className="mb-1 font-bold">{s.title}</p>
-            <p className="text-sm text-neutral-500">{s.body}</p>
-          </Link>
-        ))}
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-[17px] font-bold">
+          業務ボード
+          <span className="ml-2 text-[12.5px] font-normal text-neutral-500">
+            {board.today} 時点。コンテンツがどこまで進んで、どこで止まっているか
+          </span>
+        </h1>
       </div>
 
-      <div className="mt-8">
-        <RevalidateButton />
+      <Alerts alerts={board.alerts} />
+
+      <Flow stages={board.stages} />
+
+      <div className="grid gap-4 lg:grid-cols-2">
+        <Card title="🖐 承認待ちの下書き" aside="Discordで承認・修正・却下">
+          {board.pendingDrafts.length === 0 ? (
+            <Empty>
+              {board.draftsAvailable
+                ? "承認待ちはありません。"
+                : "下書きを読み取れませんでした。"}
+            </Empty>
+          ) : (
+            <ul className="divide-y divide-neutral-100">
+              {board.pendingDrafts.map((d) => (
+                <li key={d.id} className="flex gap-3 py-2.5">
+                  <div className="pt-0.5">
+                    <Badge>{CHANNEL_LABEL[d.channel]}</Badge>
+                  </div>
+                  <p className="flex-1 text-[12.5px] leading-relaxed text-neutral-700">
+                    {d.text}
+                  </p>
+                  <span className="shrink-0 text-[11px] tabular-nums text-neutral-400">
+                    {d.days}日
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
+
+        <Card title="📝 ブログの下書き" aside="入稿待ち">
+          {board.draftPosts.length === 0 ? (
+            <Empty>書きかけの記事はありません。</Empty>
+          ) : (
+            <ul className="divide-y divide-neutral-100">
+              {board.draftPosts.map((p) => (
+                <li key={p.id} className="flex items-center gap-3 py-2.5">
+                  <Link
+                    href={`/admin/posts/${p.id}`}
+                    className="flex-1 text-[12.5px] text-neutral-700 hover:underline"
+                  >
+                    {p.title}
+                  </Link>
+                  <span className="shrink-0 text-[11px] tabular-nums text-neutral-400">
+                    {p.days}日
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Card>
       </div>
+
+      <Card
+        title="🕒 直近の下書き"
+        aside={board.activity.map((a) => `${a.label} ${a.value}`).join(" ／ ")}
+      >
+        {board.recentDrafts.length === 0 ? (
+          <Empty>
+            {board.draftsAvailable
+              ? "まだ下書きが届いていません。週3回（月・水・金 朝9時）のスケジュール実行で追加されます。"
+              : "下書きを読み取れませんでした。"}
+          </Empty>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[560px] text-left text-[12.5px]">
+              <thead>
+                <tr className="border-b border-neutral-200 text-[10.5px] uppercase tracking-wide text-neutral-400">
+                  <th className="py-2 pr-3 font-semibold">種別</th>
+                  <th className="py-2 pr-3 font-semibold">状態</th>
+                  <th className="py-2 pr-3 font-semibold">内容</th>
+                  <th className="py-2 font-semibold whitespace-nowrap">受信</th>
+                </tr>
+              </thead>
+              <tbody>
+                {board.recentDrafts.map((d) => (
+                  <tr key={d.id} className="border-b border-neutral-100 last:border-b-0">
+                    <td className="py-2.5 pr-3 align-top">
+                      <Badge>{CHANNEL_LABEL[d.channel]}</Badge>
+                    </td>
+                    <td className="py-2.5 pr-3 align-top">
+                      <Badge tone={STATUS_TONE[d.status]}>
+                        {STATUS_LABEL[d.status]}
+                      </Badge>
+                    </td>
+                    <td className="py-2.5 pr-3 align-top leading-relaxed text-neutral-700">
+                      {d.text}
+                    </td>
+                    <td className="py-2.5 align-top whitespace-nowrap tabular-nums text-neutral-400">
+                      {d.at}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Card>
+
+      <Card title="🛠 やりたいことから探す">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {SHORTCUTS.map((s) => (
+            <Link
+              key={s.title}
+              href={s.href}
+              className="rounded-[14px] border border-neutral-200 p-4 transition-colors hover:bg-neutral-50"
+            >
+              <p className="mb-1 text-[12.5px] font-bold">{s.title}</p>
+              <p className="text-[11.5px] leading-relaxed text-neutral-500">
+                {s.body}
+              </p>
+            </Link>
+          ))}
+        </div>
+        <div className="mt-4 border-t border-neutral-100 pt-4">
+          <RevalidateButton />
+        </div>
+      </Card>
     </div>
   );
 }
