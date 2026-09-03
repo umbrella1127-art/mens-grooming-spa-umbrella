@@ -12,6 +12,9 @@ const TABS = [
   { href: "/admin/faqs", label: "よくある質問" },
   { href: "/admin/posts", label: "ブログ" },
   { href: "/admin/images", label: "写真" },
+  { href: "/admin/reports", label: "業務日報" },
+  { href: "/admin/knowledge", label: "ナレッジ" },
+  { href: "/admin/wiki", label: "決まりごと" },
 ];
 
 export default function AdminNav() {
