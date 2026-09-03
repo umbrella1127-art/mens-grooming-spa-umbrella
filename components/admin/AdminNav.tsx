@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 
 const TABS = [
   { href: "/admin", label: "業務ボード" },
+  { href: "/admin/approvals", label: "承認" },
+  { href: "/admin/team", label: "部署・担当" },
   { href: "/admin/settings", label: "サイト設定" },
   { href: "/admin/menus", label: "メニュー・料金" },
   { href: "/admin/faqs", label: "よくある質問" },

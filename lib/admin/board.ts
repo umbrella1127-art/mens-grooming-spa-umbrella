@@ -202,6 +202,7 @@ export async function getBoardData(): Promise<BoardData> {
           : oldestPendingDays >= 1
             ? "bad"
             : "info",
+      href: "/admin/approvals",
     },
     {
       n: String(editing.length),
@@ -211,6 +212,7 @@ export async function getBoardData(): Promise<BoardData> {
           ? "直し待ちはありません"
           : `最長 ${oldestEditingDays}日 反映待ち`,
       tone: oldestEditingDays >= 3 ? "warn" : "info",
+      href: "/admin/approvals",
     },
     {
       n: String(approved.length),
@@ -250,7 +252,8 @@ export async function getBoardData(): Promise<BoardData> {
   if (pending.length > 0 && oldestPendingDays >= 1) {
     alerts.push({
       tone: "bad",
-      text: `承認待ちの下書きが ${pending.length}件（最長 ${oldestPendingDays}日）止まっています。Discordで承認・修正・却下してください。`,
+      text: `承認待ちの下書きが ${pending.length}件（最長 ${oldestPendingDays}日）止まっています。`,
+      href: "/admin/approvals",
     });
   }
 
