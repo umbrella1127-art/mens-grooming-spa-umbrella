@@ -1,3 +1,4 @@
+import { after } from "next/server";
 import { verifyKey } from "discord-interactions";
 import { editDiscordMessage } from "@/lib/discord";
 import { getServiceClient } from "@/lib/supabase/service";
@@ -8,6 +9,27 @@ const STATUS_LABEL: Record<string, string> = {
   approved: "✅ 承認済み",
   rejected: "❌ 却下",
 };
+
+/**
+ * Discordは3秒以内の応答を要求するが、サーバーレスの起動遅延で
+ * 間に合わないことがある。そのため「受け取った」ことだけ即座に返し
+ * （DEFERRED応答）、実際の処理はレスポンス送信後にafter()で行い、
+ * 完了後にWebhook経由で元のメッセージを編集する。
+ */
+async function editOriginalInteractionResponse(
+  interactionToken: string,
+  payload: Record<string, unknown>,
+) {
+  const applicationId = process.env.DISCORD_APPLICATION_ID!;
+  await fetch(
+    `https://discord.com/api/v10/webhooks/${applicationId}/${interactionToken}/messages/@original`,
+    {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    },
+  );
+}
 
 export async function POST(req: Request) {
   const signature = req.headers.get("x-signature-ed25519");
@@ -35,26 +57,30 @@ export async function POST(req: Request) {
   if (body.type === 3) {
     const customId: string = body.data.custom_id;
     const [action, draftId] = customId.split(":");
-    const supabase = getServiceClient();
 
     if (action === "approve" || action === "reject") {
       const status = action === "approve" ? "approved" : "rejected";
-      await supabase
-        .from("content_drafts")
-        .update({ status, updated_at: new Date().toISOString() })
-        .eq("id", draftId);
-
       const originalContent: string = body.message?.content ?? "";
-      return Response.json({
-        type: 7, // UPDATE_MESSAGE
-        data: {
+      const interactionToken: string = body.token;
+
+      after(async () => {
+        const supabase = getServiceClient();
+        await supabase
+          .from("content_drafts")
+          .update({ status, updated_at: new Date().toISOString() })
+          .eq("id", draftId);
+
+        await editOriginalInteractionResponse(interactionToken, {
           content: `${STATUS_LABEL[status]}\n\n${originalContent}`,
           components: [],
-        },
+        });
       });
+
+      return Response.json({ type: 6 }); // DEFERRED_UPDATE_MESSAGE
     }
 
     if (action === "edit") {
+      // モーダル表示は非同期処理なしで即座に返せるのでそのまま
       return Response.json({
         type: 9, // MODAL
         data: {
@@ -86,36 +112,40 @@ export async function POST(req: Request) {
     const [, draftId] = customId.split(":");
     const editNote: string =
       body.data.components[0].components[0].value ?? "";
-    const supabase = getServiceClient();
+    const interactionToken: string = body.token;
 
-    const { data: draft } = await supabase
-      .from("content_drafts")
-      .select("discord_channel_id, discord_message_id, content_text")
-      .eq("id", draftId)
-      .single();
+    after(async () => {
+      const supabase = getServiceClient();
+      const { data: draft } = await supabase
+        .from("content_drafts")
+        .select("discord_channel_id, discord_message_id, content_text")
+        .eq("id", draftId)
+        .single();
 
-    await supabase
-      .from("content_drafts")
-      .update({
-        status: "editing",
-        edit_note: editNote,
-        updated_at: new Date().toISOString(),
-      })
-      .eq("id", draftId);
+      await supabase
+        .from("content_drafts")
+        .update({
+          status: "editing",
+          edit_note: editNote,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", draftId);
 
-    if (draft?.discord_channel_id && draft?.discord_message_id) {
-      await editDiscordMessage(draft.discord_channel_id, draft.discord_message_id, {
-        content: `✏️ 修正依頼あり：${editNote}\n\n${draft.content_text}`,
-        components: [],
+      if (draft?.discord_channel_id && draft?.discord_message_id) {
+        await editDiscordMessage(draft.discord_channel_id, draft.discord_message_id, {
+          content: `✏️ 修正依頼あり：${editNote}\n\n${draft.content_text}`,
+          components: [],
+        });
+      }
+
+      await editOriginalInteractionResponse(interactionToken, {
+        content: "修正リクエストを受け付けました。反映して改めてお送りします。",
       });
-    }
+    });
 
     return Response.json({
-      type: 4,
-      data: {
-        content: "修正リクエストを受け付けました。反映して改めてお送りします。",
-        flags: 64, // ephemeral（本人にだけ見える）
-      },
+      type: 5, // DEFERRED_CHANNEL_MESSAGE_WITH_SOURCE
+      data: { flags: 64 }, // ephemeral（本人にだけ見える）
     });
   }
 
