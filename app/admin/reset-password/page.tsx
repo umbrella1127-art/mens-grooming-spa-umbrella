@@ -48,7 +48,8 @@ export default function ResetPasswordPage() {
       const supabase = getBrowserClient();
       const { error } = await supabase.auth.updateUser({ password });
       if (error) {
-        setError("設定できませんでした。リンクの有効期限が切れている場合は、もう一度パスワード再設定をお試しください。");
+        // 原因を切り分けられるようにSupabaseのメッセージをそのまま出す
+        setError(`設定できませんでした（${error.message}）`);
         return;
       }
       setDone(true);
