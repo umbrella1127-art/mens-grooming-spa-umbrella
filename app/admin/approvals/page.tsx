@@ -1,3 +1,4 @@
+import Link from "next/link";
 import CopyButton from "@/components/admin/CopyButton";
 import { Badge, Card, Empty } from "@/components/admin/board";
 import {
@@ -13,7 +14,7 @@ import { approveDraft, rejectDraft } from "../actions/drafts";
 /** 各チャンネルの使い道を、迷わないよう画面上に書いておく */
 const CHANNEL_NOTE: Record<ChannelType, string> = {
   threads: "承認後、Threadsに手動で投稿します。",
-  blog: "承認後、ブログ記事として書き起こします。",
+  blog: "承認すると、記事がそのままサイトに公開されます。",
   gbp: "承認後、Googleビジネスプロフィールの「投稿」に貼り付けます。",
 };
 
@@ -85,6 +86,16 @@ export default async function ApprovalsPage() {
                 <p className="mb-4 whitespace-pre-wrap text-[13px] leading-relaxed text-charcoal">
                   {d.content_text}
                 </p>
+                {d.post_id && (
+                  <p className="mb-4">
+                    <Link
+                      href={`/admin/posts/${d.post_id}`}
+                      className="text-[12.5px] text-brown underline underline-offset-4"
+                    >
+                      記事の全文を読む・手直しする →
+                    </Link>
+                  </p>
+                )}
                 <div className="flex flex-wrap items-center gap-2 border-t border-beige/60 pt-3">
                   <form action={approveDraft}>
                     <input type="hidden" name="id" value={d.id} />

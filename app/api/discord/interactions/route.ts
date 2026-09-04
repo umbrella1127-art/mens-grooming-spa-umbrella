@@ -1,7 +1,11 @@
+import { revalidatePath, revalidateTag } from "next/cache";
 import { after } from "next/server";
 import { verifyKey } from "discord-interactions";
+import { CACHE_TAGS } from "@/lib/cms";
 import { editDiscordMessage } from "@/lib/discord";
+import { publishLinkedPost } from "@/lib/publish-draft";
 import { getServiceClient } from "@/lib/supabase/service";
+import { SITE_URL } from "@/lib/seo";
 
 export const runtime = "nodejs";
 
@@ -71,7 +75,7 @@ export async function POST(req: Request) {
           .update({ status, updated_at: new Date().toISOString() })
           .eq("id", draftId)
           .eq("status", "pending")
-          .select("status")
+          .select("status, post_id")
           .maybeSingle();
 
         if (!updated) {
@@ -92,8 +96,19 @@ export async function POST(req: Request) {
           return;
         }
 
+        // ブログ記事に紐づく下書きは、承認された時点でそのまま公開する
+        let published = "";
+        if (status === "approved" && updated.post_id) {
+          const result = await publishLinkedPost(supabase, updated.post_id);
+          if (result.published) {
+            revalidateTag(CACHE_TAGS.posts, "max");
+            revalidatePath("/", "layout");
+            published = `\n\n公開しました：${SITE_URL}/blog/${result.slug}`;
+          }
+        }
+
         await editOriginalInteractionResponse(interactionToken, {
-          content: `${STATUS_LABEL[status]}\n\n${originalContent}`,
+          content: `${STATUS_LABEL[status]}${published}\n\n${originalContent}`,
           components: [],
         });
       });

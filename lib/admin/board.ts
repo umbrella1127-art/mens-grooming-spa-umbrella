@@ -14,6 +14,8 @@ export interface ContentDraft {
   content_text: string;
   status: DraftStatus;
   edit_note: string | null;
+  /** ブログ記事に紐づく下書きのとき、その記事のid。承認すると公開される */
+  post_id: string | null;
   created_at: string;
   updated_at: string;
 }
