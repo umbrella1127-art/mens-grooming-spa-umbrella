@@ -238,6 +238,10 @@ export default async function FacialPage() {
 
             {HERBPEEL_PHOTOS.some((pair) => images[pair.before]) && (
               <div className="mx-auto mt-10 max-w-2xl space-y-8">
+                <p className="mx-auto max-w-2xl text-center text-xs leading-loose text-greige">
+                  ハーブピーリングは輪郭を引き上げる施術ではなく、毛穴・皮脂・ざらつきなど肌質を整える施術です。
+                  写真は毛穴の目立ちにくさや、肌表面のなめらかさの変化を中心にご覧ください。
+                </p>
                 {HERBPEEL_PHOTOS.map((pair) => {
                   const before = images[pair.before];
                   const after = images[pair.after];
