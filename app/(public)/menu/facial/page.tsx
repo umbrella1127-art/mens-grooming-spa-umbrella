@@ -69,16 +69,6 @@ const HERBPEEL_BENEFITS = [
 
 const HERBPEEL_PHOTOS = [
   {
-    label: "頬",
-    before: "facial_herbpeel_before" as const,
-    after: "facial_herbpeel_after" as const,
-  },
-  {
-    label: "顎",
-    before: "facial_herbpeel_before2" as const,
-    after: "facial_herbpeel_after2" as const,
-  },
-  {
     label: "口元",
     before: "facial_herbpeel_before3" as const,
     after: "facial_herbpeel_after3" as const,
