@@ -78,6 +78,21 @@ const HERBPEEL_PHOTOS = [
     before: "facial_herbpeel_before2" as const,
     after: "facial_herbpeel_after2" as const,
   },
+  {
+    label: "口元",
+    before: "facial_herbpeel_before3" as const,
+    after: "facial_herbpeel_after3" as const,
+  },
+  {
+    label: "フェイスライン",
+    before: "facial_herbpeel_before4" as const,
+    after: "facial_herbpeel_after4" as const,
+  },
+  {
+    label: "顎アップ",
+    before: "facial_herbpeel_before5" as const,
+    after: "facial_herbpeel_after5" as const,
+  },
 ];
 
 export default async function FacialPage() {
@@ -221,8 +236,7 @@ export default async function FacialPage() {
               </p>
             </div>
 
-            {(images[HERBPEEL_PHOTOS[0].before] ||
-              images[HERBPEEL_PHOTOS[1].before]) && (
+            {HERBPEEL_PHOTOS.some((pair) => images[pair.before]) && (
               <div className="mx-auto mt-10 max-w-2xl space-y-8">
                 {HERBPEEL_PHOTOS.map((pair) => {
                   const before = images[pair.before];
