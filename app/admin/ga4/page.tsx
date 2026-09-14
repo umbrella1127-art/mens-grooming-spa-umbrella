@@ -1,11 +1,27 @@
+import Link from "next/link";
 import { Card, Empty } from "@/components/admin/board";
 import { getGa4Data } from "@/lib/admin/ga4";
 
 // GA4への外部fetchだけだと動的判定されずビルド時に固定化されてしまうため明示する
 export const dynamic = "force-dynamic";
 
-export default async function Ga4Page() {
-  const ga4 = await getGa4Data(30);
+const PERIODS = [
+  { days: 7, label: "7日" },
+  { days: 30, label: "30日" },
+  { days: 90, label: "90日" },
+  { days: 180, label: "180日" },
+] as const;
+
+export default async function Ga4Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ days?: string }>;
+}) {
+  const params = await searchParams;
+  const days = PERIODS.some((p) => String(p.days) === params.days)
+    ? Number(params.days)
+    : 30;
+  const ga4 = await getGa4Data(days);
 
   return (
     <div className="space-y-6">
@@ -14,11 +30,28 @@ export default async function Ga4Page() {
         <h1 className="font-serif-jp text-[20px] tracking-wide text-ink">
           アクセス解析
         </h1>
-        <p className="mt-1 text-[12.5px] text-charcoal-light">
-          {ga4.available
-            ? `${ga4.rangeStart} 〜 ${ga4.rangeEnd}（過去30日）`
-            : "チャネル別セッション・ランディングページ・LINEクリック(line_click)の実績"}
-        </p>
+        <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
+          <p className="text-[12.5px] text-charcoal-light">
+            {ga4.available
+              ? `${ga4.rangeStart} 〜 ${ga4.rangeEnd}`
+              : "チャネル別セッション・ランディングページ・LINEクリック(line_click)の実績"}
+          </p>
+          <div className="flex gap-1">
+            {PERIODS.map((p) => (
+              <Link
+                key={p.days}
+                href={`/admin/ga4?days=${p.days}`}
+                className={`rounded-sm px-2 py-0.5 text-[11.5px] tracking-wide transition-colors ${
+                  days === p.days
+                    ? "bg-brown text-paper"
+                    : "border border-beige text-charcoal-light hover:bg-paper-dark"
+                }`}
+              >
+                過去{p.label}
+              </Link>
+            ))}
+          </div>
+        </div>
       </div>
 
       {!ga4.available ? (
