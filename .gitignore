@@ -33,6 +33,15 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# GA4 サービスアカウント鍵（絶対にコミットしない）
+/secrets/
+
+# 集客KPI基盤（HPB分析）— 店舗設定と実データ（Salon Report PDF・履歴JSON）はコミットしない
+/scripts/hpb/config.json
+/data/
+__pycache__/
+.claude/settings.local.json
+
 # vercel
 .vercel
 

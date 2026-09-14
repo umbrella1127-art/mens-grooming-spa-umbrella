@@ -1,0 +1,19 @@
+{
+  "_readme": "scripts/hpb/config.json としてコピーして使う（Gitでは追跡しない）。python scripts/hpb/db_migrate.py が stores テーブルへ登録する。hpb_cd はホットペッパーの店舗コード（https://beauty.hotpepper.jp/sln<hpb_cd>/ の sln 以降）。plan_cost_yen は掲載プランごとの月額で、請求書で確定するまでの暫定値は plan_cost_note に経緯を残すこと。",
+  "stores": {
+    "umbrella-mens": {
+      "name": "MEN'S GROOMING SPA umbrella",
+      "genre": "mens",
+      "hpb_cd": "H000000000",
+      "area": "前橋",
+      "sub_area": "",
+      "seats": 0,
+      "plan_cost_yen": {
+        "ライト": 35000
+      },
+      "plan_cost_note": "掲載プランと月額を請求書で確認して確定値を入れること。未確定の間はその旨をここに書き残す",
+      "variable_cost_rate": 0.1,
+      "notes": ""
+    }
+  }
+}

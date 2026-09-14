@@ -13,6 +13,10 @@ const TABS = [
   { href: "/admin/posts", label: "ブログ" },
   { href: "/admin/images", label: "写真" },
   { href: "/admin/reports", label: "業務日報" },
+  { href: "/admin/ga4", label: "GA4" },
+  { href: "/admin/gbp", label: "GBP" },
+  { href: "/admin/kpi", label: "KPI" },
+  { href: "/admin/seo", label: "SEO" },
   { href: "/admin/knowledge", label: "ナレッジ" },
   { href: "/admin/wiki", label: "決まりごと" },
 ];

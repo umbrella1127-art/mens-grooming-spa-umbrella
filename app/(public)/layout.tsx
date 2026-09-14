@@ -1,4 +1,5 @@
 import { GoogleAnalytics } from "@next/third-parties/google";
+import Clarity from "@/components/analytics/Clarity";
 import ScrollTracker from "@/components/analytics/ScrollTracker";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
@@ -12,6 +13,7 @@ export default async function PublicLayout({
 }) {
   const settings = await getSettings();
   const gaId = process.env.NEXT_PUBLIC_GA_ID;
+  const clarityId = process.env.NEXT_PUBLIC_CLARITY_ID;
 
   return (
     <>
@@ -25,6 +27,7 @@ export default async function PublicLayout({
       <MobileLineBar settings={settings} />
       <ScrollTracker />
       {gaId && <GoogleAnalytics gaId={gaId} />}
+      {clarityId && <Clarity projectId={clarityId} />}
     </>
   );
 }
