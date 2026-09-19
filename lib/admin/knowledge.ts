@@ -6,5 +6,6 @@ export const KNOWLEDGE_CATEGORIES = [
   "接客・オペレーション",
   "Threadsで効いた型",
   "Threadsで外れた型",
+  "Threads運用の学び",
   "その他",
 ];

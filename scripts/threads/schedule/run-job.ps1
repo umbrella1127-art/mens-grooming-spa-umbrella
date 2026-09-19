@@ -13,6 +13,9 @@ $log = Join-Path $logDir ("{0}-{1}.log" -f (Get-Date -Format 'yyyy-MM-dd'), $Job
 Get-ChildItem $logDir -Filter '*.log' | Where-Object { $_.LastWriteTime -lt (Get-Date).AddDays(-30) } | Remove-Item -Force
 
 $env:PYTHONIOENCODING = 'utf-8'
+# 子プロセス(claude/python)のUTF-8出力を文字化けさせずに受け取る
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
 $tools = @(
     'Agent', 'Read', 'Write', 'Grep', 'Glob', 'WebSearch', 'WebFetch',
     'Bash(python scripts/threads/*)', 'Bash(mkdir *)'

@@ -44,3 +44,8 @@ NGは必ず直す。「要確認」（価格らしき数字）は自分で根拠
 
 DBへは `python scripts/threads/tdb.py`（threads_topics / threads_trials のみ）と
 `python scripts/threads/save_blog.py`（記事の下書き保存）だけを使う。posts を直接触らない。
+
+## 実行記録
+
+`agent_runs`（業務日報）は **スケジューラ（`run-job.ps1` → `run_log.py`）が1回ごとに書く**。担当は自分では書かない（二重に記録される）。
+日付を扱うSQLは日本時間で書く: `(now() at time zone 'Asia/Tokyo')::date`（`current_date` はUTC）。

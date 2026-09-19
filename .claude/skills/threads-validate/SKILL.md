@@ -50,8 +50,9 @@ python scripts/threads/tdb.py "UPDATE knowledge SET body = body || E'\n2026-09-2
 ## D. 検査して登録
 ```
 python scripts/threads/check_article.py --text "投稿文"     # NGなら書き直す
-python scripts/threads/tdb.py "INSERT INTO threads_trials (trial_date, slot, topic_id, post_text, hook, predicted_note) VALUES (current_date, 1, 12, '...', '問いかけ', '...')" --write
+python scripts/threads/tdb.py "INSERT INTO threads_trials (trial_date, slot, topic_id, post_text, hook, predicted_note) VALUES ((now() at time zone 'Asia/Tokyo')::date, 1, 12, '...', '問いかけ', '...')" --write
 ```
+**日付は必ず日本時間で書く。** SQL の `current_date` はUTCなので、朝9時前に実行すると1日前になる。
 今日すでに同じ slot があれば作り直さない（`unique(trial_date, slot)`）。
 
 ## E. 投稿は自分でしない
