@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Badge, Card, Empty } from "@/components/admin/board";
 import { getHpbData } from "@/lib/admin/hpb";
+import { getThreadsData } from "@/lib/admin/threads";
 
 const SEVERITY_TONE = {
   critical: "bad",
@@ -10,7 +11,7 @@ const SEVERITY_TONE = {
 } as const;
 
 export default async function KpiPage() {
-  const hpb = await getHpbData();
+  const [hpb, threads] = await Promise.all([getHpbData(), getThreadsData()]);
   const latestByStore = new Map<string, (typeof hpb.monthlyKpi)[number]>();
   for (const row of hpb.monthlyKpi) {
     if (!latestByStore.has(row.store)) latestByStore.set(row.store, row);
@@ -32,6 +33,38 @@ export default async function KpiPage() {
         <Empty>
           月間目標などの数値はまだ決まっていません。実績は<Link href="/admin/ga4" className="text-brown underline underline-offset-4">GA4タブ</Link>を参照してください。
         </Empty>
+      </Card>
+
+      <Card
+        eyebrow="THREADS"
+        title="Threads検証 → 公式ブログ"
+        aside={
+          <Link href="/admin/kpi/threads" className="underline underline-offset-4">
+            詳細を見る →
+          </Link>
+        }
+      >
+        {!threads.available ? (
+          <Empty>
+            Threads基盤のテーブルが読み取れません。Supabaseでマイグレーション 0029・0030 を実行してください。
+          </Empty>
+        ) : (
+          <dl className="grid grid-cols-2 gap-x-6 gap-y-2 text-[12.5px] sm:grid-cols-4">
+            <dt className="text-greige">未テストの種ネタ</dt>
+            <dd className="tabular-nums text-charcoal">{threads.stock}件</dd>
+            <dt className="text-greige">記事化待ちの勝者</dt>
+            <dd className="tabular-nums text-charcoal">{threads.winnersWaiting}件</dd>
+            <dt className="text-greige">承認待ちの記事</dt>
+            <dd className="tabular-nums text-charcoal">{threads.pendingBlogDrafts}件</dd>
+            <dt className="text-greige">未解決の異常</dt>
+            <dd className="tabular-nums text-charcoal">
+              {threads.issues.length}件
+              {threads.issues.some((i) => i.severity === "critical") && (
+                <Badge tone="bad">重要あり</Badge>
+              )}
+            </dd>
+          </dl>
+        )}
       </Card>
 
       <Card

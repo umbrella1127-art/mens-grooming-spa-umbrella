@@ -52,3 +52,13 @@
   `data/`（Salon Report PDF・history.json）は untracked
 - ここで扱う実売上・掲載料などの数値は **公開サイト側のコード・seed・文言に絶対に転記しない**
   （サイトの未確定価格ルールとは別管理）
+
+## Threads検証 → 公式ブログ化パイプライン
+
+30〜50代男性の悩みをリサーチし、Threadsに1日3投稿 → 最も反応が良かった1本のテーマだけを翌日ブログ記事にする。
+記事は `posts`（draft, source=ai）に入り、Discord承認（`content_drafts`）で公開する。**自動公開はしない**。
+運用・接続手順は [scripts/threads/GUIDE.md](scripts/threads/GUIDE.md)、エージェントは `.claude/agents/threads-*.md`、
+実行は `/threads-run`。書く前に必ず `.claude/skills/threads-blog-rules/SKILL.md` を読む。
+DBは `0029_threads_pipeline.sql`（`threads_topics` / `threads_trials`）と `0030_threads_ops.sql`（`pipeline_issues` ほか）。書き込みは `scripts/threads/tdb.py` 経由のみ。
+担当は6名（統括・リサーチ・検証・執筆・点検・知識整理）。人格は `.claude/agents/`、手順は `.claude/skills/threads-*`、名簿は `agent_roster`。
+管理画面は `/admin/kpi/threads`。点検（自分自身を直すループ）は `scripts/threads/health.py` → `pipeline_issues`、学びは `knowledge`（source=threads）。

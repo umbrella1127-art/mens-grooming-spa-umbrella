@@ -4,5 +4,7 @@ export const KNOWLEDGE_CATEGORIES = [
   "効いた施策",
   "うまくいかなかったこと",
   "接客・オペレーション",
+  "Threadsで効いた型",
+  "Threadsで外れた型",
   "その他",
 ];

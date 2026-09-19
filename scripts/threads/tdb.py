@@ -1,0 +1,102 @@
+# -*- coding: utf-8 -*-
+"""Threads→ブログ基盤のDB窓口。エージェントはこれ経由でしか書かない。
+
+    python scripts/threads/tdb.py --context                 # 今の状態（在庫・直近の投稿・勝者）
+    python scripts/threads/tdb.py "SELECT ..." [--format json]
+    python scripts/threads/tdb.py "INSERT ..." --write      # threads_topics / threads_trials のみ
+
+更新系は threads_topics / threads_trials にしか効かない。posts と content_drafts は読み取り専用
+（記事の保存は save_blog.py が行う）。
+"""
+import argparse
+import json
+import re
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "hpb"))
+from hpb_db import connect  # noqa: E402
+
+# knowledge は threads-librarian / strategist が「効いた型・外れた型」を書く。pipeline_issues は caretaker が書く
+WRITABLE = {"threads_topics", "threads_trials", "pipeline_issues", "knowledge"}
+BAD = ("drop", "alter", "create", "truncate", "grant")
+
+
+def write_targets(sql):
+    return {m.lower() for m in re.findall(
+        r"(?:insert\s+into|update|delete\s+from)\s+\"?([a-zA-Z_][a-zA-Z0-9_]*)\"?", sql, re.I)}
+
+
+def show(rows, fmt):
+    if fmt == "json":
+        print(json.dumps(rows, ensure_ascii=False, default=str, indent=1))
+        return
+    if not rows:
+        print("(0件)")
+        return
+    for r in rows:
+        print(" | ".join(f"{k}={'' if v is None else str(v)[:120]}" for k, v in r.items()))
+    print(f"({len(rows)}件)")
+
+
+def context(con):
+    def q(s):
+        return con.execute(s).fetchall()
+
+    print("== 種ネタ在庫（status別）")
+    show(q("select status, priority, count(*) n from threads_topics group by 1,2 order by 1,2"), "t")
+    print("== 未テストの新鮮ネタ（active・priority=false）")
+    show(q("select id, age_band, pain_keyword, title from threads_topics "
+           "where status='active' and priority=false and id not in "
+           "(select topic_id from threads_trials where topic_id is not null) order by id"), "t")
+    print("== 直近7日の投稿")
+    show(q("select trial_date, slot, status, reaction_score, is_winner, topic_id, left(post_text,40) txt "
+           "from threads_trials where trial_date >= current_date - 7 order by trial_date desc, slot"), "t")
+    print("== ブログ化待ちの勝者（priority=true・未記事化）")
+    show(q("select id, age_band, pain_keyword, title from threads_topics "
+           "where priority and post_id is null and status <> 'closed' order by id"), "t")
+    print("== 未解決の異常（pipeline_issues）")
+    show(q("select id, severity, kind, title, detected_at::date d from pipeline_issues "
+           "where channel='threads' and status='open' order by detected_at desc limit 10"), "t")
+    print("== 直近の実行記録（agent_runs threads:*）")
+    show(q("select ran_at, routine, status, left(summary,60) s from agent_runs "
+           "where routine like 'threads:%' order by ran_at desc limit 8"), "t")
+    print("== Threadsの知識（knowledge source=threads）")
+    show(q("select id, category, title, updated_at::date d from knowledge where source='threads' "
+           "order by updated_at desc limit 10"), "t")
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("sql", nargs="?")
+    ap.add_argument("--format", choices=["table", "json"], default="table")
+    ap.add_argument("--write", action="store_true")
+    ap.add_argument("--context", action="store_true")
+    a = ap.parse_args()
+    con = connect()
+    if a.context:
+        context(con)
+        return
+    if not a.sql:
+        ap.error("SQL か --context を指定してください")
+    low = a.sql.lower()
+    if any(re.search(rf"\b{w}\b", low) for w in BAD):
+        sys.exit("この種類のSQLは実行できません")
+    targets = write_targets(a.sql)
+    if targets:
+        if not a.write:
+            sys.exit("更新系SQLには --write が必要です")
+        if not targets <= WRITABLE:
+            sys.exit(f"書き込めるのは {sorted(WRITABLE)} だけです（指定: {sorted(targets)}）")
+        cur = con.execute(a.sql)
+        rows = cur.fetchall() if cur.description else []
+        con.commit()
+        print(f"OK {cur.rowcount}行")
+        if rows:
+            show(rows, a.format)
+        return
+    show(con.execute(a.sql).fetchall(), a.format)
+
+
+if __name__ == "__main__":
+    main()

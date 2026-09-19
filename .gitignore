@@ -48,3 +48,7 @@ __pycache__/
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Threads基盤の実行ログ・作業ファイル
+scripts/threads/logs/
+scripts/threads/_work/
