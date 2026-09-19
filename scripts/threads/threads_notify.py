@@ -8,11 +8,11 @@
     python scripts/threads/threads_notify.py plan --dry-run                # 送らずに内容と送り先の設定名だけ表示
 
 チャンネル（.env.local）。上から順に、最初に設定されているものへ送る:
-    plan  今日の3本        DISCORD_CHANNEL_THREADS_POST → DISCORD_CHANNEL_KPI → DISCORD_CHANNEL_NOTICE
-    post  投稿の結果       DISCORD_CHANNEL_THREADS_POST → DISCORD_CHANNEL_KPI → DISCORD_CHANNEL_NOTICE
-    care  点検・異常       DISCORD_CHANNEL_THREADS_CARE → DISCORD_CHANNEL_KPI → DISCORD_CHANNEL_NOTICE
-    learn 週次の知識整理   DISCORD_CHANNEL_THREADS_LEARN → DISCORD_CHANNEL_KPI → DISCORD_CHANNEL_NOTICE
-    blog  記事の承認依頼   DISCORD_CHANNEL_BLOG（save_blog.py が送る。ボタン付き）
+    plan  今日の3本        DISCORD_CHANNEL_THREADS_POST → DISCORD_CHANNEL_THREADS(#threads-下書き) → DISCORD_CHANNEL_NOTICE
+    post  投稿の結果       同上
+    care  点検・異常       DISCORD_CHANNEL_THREADS_CARE → DISCORD_CHANNEL_NOTICE(#お知らせ) → DISCORD_CHANNEL_KPI
+    learn 週次の知識整理   DISCORD_CHANNEL_THREADS_LEARN → DISCORD_CHANNEL_NOTICE(#お知らせ) → DISCORD_CHANNEL_KPI
+    blog  記事の承認依頼   DISCORD_CHANNEL_BLOG(#blog-ネタ帳)（save_blog.py が送る。ボタン付き）
 ダッシュボード: NEXT_PUBLIC_SITE_URL + /admin/kpi/threads（承認依頼は /admin/approvals も添える）
 """
 import argparse
@@ -26,10 +26,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "hpb"))
 from hpb_db import JST, connect, env  # noqa: E402
 
 CHAINS = {
-    "plan": ("DISCORD_CHANNEL_THREADS_POST", "DISCORD_CHANNEL_KPI", "DISCORD_CHANNEL_NOTICE"),
-    "post": ("DISCORD_CHANNEL_THREADS_POST", "DISCORD_CHANNEL_KPI", "DISCORD_CHANNEL_NOTICE"),
-    "care": ("DISCORD_CHANNEL_THREADS_CARE", "DISCORD_CHANNEL_KPI", "DISCORD_CHANNEL_NOTICE"),
-    "learn": ("DISCORD_CHANNEL_THREADS_LEARN", "DISCORD_CHANNEL_KPI", "DISCORD_CHANNEL_NOTICE"),
+    "plan": ("DISCORD_CHANNEL_THREADS_POST", "DISCORD_CHANNEL_THREADS", "DISCORD_CHANNEL_NOTICE"),
+    "post": ("DISCORD_CHANNEL_THREADS_POST", "DISCORD_CHANNEL_THREADS", "DISCORD_CHANNEL_NOTICE"),
+    "care": ("DISCORD_CHANNEL_THREADS_CARE", "DISCORD_CHANNEL_NOTICE", "DISCORD_CHANNEL_KPI"),
+    "learn": ("DISCORD_CHANNEL_THREADS_LEARN", "DISCORD_CHANNEL_NOTICE", "DISCORD_CHANNEL_KPI"),
     "blog": ("DISCORD_CHANNEL_BLOG", "DISCORD_CHANNEL_NOTICE"),
 }
 DEFAULT_SITE = "https://mens.umbrella1127.com"

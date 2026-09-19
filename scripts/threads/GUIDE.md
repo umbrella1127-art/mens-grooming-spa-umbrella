@@ -92,16 +92,16 @@ B 自分自身を直す   ログ・DB → health.py → 異常の記録(pipeline
 
 ## Discord通知（チャンネル分け）
 
-種類ごとに送り先を分け、**末尾に必ずダッシュボードのURL**（`NEXT_PUBLIC_SITE_URL` + `/admin/kpi/threads`）を付ける。
+種類ごとに既存のチャンネルへ振り分け、**末尾に必ずダッシュボードのURL**（`NEXT_PUBLIC_SITE_URL` + `/admin/kpi/threads`）を付ける。
 記事の承認依頼には、承認画面（`/admin/approvals`）のURLも添える。実装は `scripts/threads/threads_notify.py`。
 
-| 種類 | いつ届くか | `.env.local` の設定名（上から順に、最初に設定されているものへ送る） |
-|---|---|---|
-| 今日の3本 | 毎朝、検証のあと（06:00頃） | `DISCORD_CHANNEL_THREADS_POST` → `DISCORD_CHANNEL_KPI` → `DISCORD_CHANNEL_NOTICE` |
-| 投稿の結果 | 投稿のたび（8:00 / 12:30 / 19:00） | 同上 |
-| 点検・異常 | 毎朝7:00の点検、実行や投稿の失敗 | `DISCORD_CHANNEL_THREADS_CARE` → `DISCORD_CHANNEL_KPI` → `DISCORD_CHANNEL_NOTICE` |
-| 週次の学び | 日曜の知識整理 | `DISCORD_CHANNEL_THREADS_LEARN` → `DISCORD_CHANNEL_KPI` → `DISCORD_CHANNEL_NOTICE` |
-| 記事の承認依頼（ボタン付き） | 勝者の記事ができたとき | `DISCORD_CHANNEL_BLOG` |
+| 種類 | いつ届くか | 送り先チャンネル | `.env.local` の設定名 |
+|---|---|---|---|
+| 今日の3本 | 毎朝、検証のあと（06:00頃） | **#threads-下書き** | `DISCORD_CHANNEL_THREADS` |
+| 投稿の結果 | 投稿のたび（8:00 / 12:30 / 19:00。成功・失敗とも） | **#threads-下書き** | 同上 |
+| 点検・異常 | 毎朝7:00の点検、実行や投稿の失敗 | **#お知らせ** | `DISCORD_CHANNEL_NOTICE` |
+| 週次の学び | 日曜の知識整理 | **#お知らせ** | 同上 |
+| 記事の承認依頼（ボタン付き） | 勝者の記事ができたとき | **#blog-ネタ帳** | `DISCORD_CHANNEL_BLOG` |
 
-チャンネルを作って ID を `.env.local` に書くまでは、`DISCORD_CHANNEL_KPI`（無ければ `NOTICE`）にまとめて届く。
+将来チャンネルを分けたくなったら、`DISCORD_CHANNEL_THREADS_POST` / `_THREADS_CARE` / `_THREADS_LEARN` を `.env.local` に足すだけで、そちらが優先される。
 送信内容の確認: `python scripts/threads/threads_notify.py plan --dry-run`（送らずに本文と送り先の設定名を表示）。
