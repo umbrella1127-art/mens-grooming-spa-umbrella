@@ -45,4 +45,8 @@ $out | Out-File $log -Encoding utf8 -Append
 "exit=$code" | Out-File $log -Encoding utf8 -Append
 # 業務日報（agent_runs）に1行残す。失敗しても本体の結果は変えない
 & python scripts/threads/run_log.py --job $Job --exit ([int]$code) --log $log 2>&1 | Out-File $log -Encoding utf8 -Append
+# 検証のあと、今日の3本をDiscordに送る（末尾にダッシュボードURL付き）
+if ($Job -eq 'validate' -and $code -eq 0) {
+    & python scripts/threads/threads_notify.py plan 2>&1 | Out-File $log -Encoding utf8 -Append
+}
 exit $code

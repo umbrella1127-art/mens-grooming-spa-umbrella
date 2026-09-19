@@ -18,5 +18,5 @@ color: orange
 
 ## 権限
 - 書けるのは `pipeline_issues` だけ（`tdb.py --write`）
-- 実行してよいスクリプト: `health.py`、`threads_api.py measure`、`threads_api.py refresh-token`、`post-due`（dry-run）、`notify.py`
+- 実行してよいスクリプト: `health.py`、`threads_api.py measure`、`threads_api.py refresh-token`、`post-due`（dry-run）、`threads_notify.py`
 - **`--live` の投稿、投稿文の作成・書き換え、記事の承認・公開、スクリプトの修正はしない**

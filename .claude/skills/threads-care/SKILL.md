@@ -39,6 +39,7 @@ python scripts/threads/tdb.py "UPDATE pipeline_issues SET status='fixed', resolv
 ## 3. 報告する
 critical か warning が1件でもあれば Discord に送る（info だけなら送らない）:
 ```
-python scripts/threads/notify.py --text "🩺 Threads基盤の点検 (MM/DD)\n・[critical] ...\n・[warning] ...\n直したこと: ...\nお願い: ..."
+python scripts/threads/threads_notify.py --kind care --text "🩺 Threads基盤の点検 (MM/DD)\n・[critical] ...\n・[warning] ...\n直したこと: ...\nお願い: ..."
 ```
+末尾のダッシュボードURLは `threads_notify.py` が自動で付ける（本文に書かない）。
 最後に、見つけた件数・直したこと・オーナーに頼むことを短く返す。異常なしなら「異常なし」と1行。

@@ -22,6 +22,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "hpb"))
 from hpb_db import ENV_PATH, JST, connect, env  # noqa: E402
+from threads_notify import send as notify  # noqa: E402
 from psycopg.types.json import Json  # noqa: E402
 
 BASE = "https://graph.threads.net/v1.0"
@@ -80,11 +81,19 @@ def cmd_post_due(a):
             con.execute("update threads_trials set status='failed', result_note=%s where id=%s",
                         (str(e)[:300], r["id"]))
             con.commit()
+            notify(f"⚠️ Threads slot{r['slot']} の投稿に失敗しました" + chr(10) + str(e)[:300], "care")
             raise
         con.execute("update threads_trials set status='posted', threads_post_id=%s, posted_at=now() "
                     "where id=%s", (pid, r["id"]))
         con.commit()
         print(f"posted slot{r['slot']} -> {pid}")
+        link = ""
+        try:
+            tok, _ = creds()
+            link = call("GET", f"{BASE}/{pid}", {"fields": "permalink", "access_token": tok}).get("permalink", "")
+        except SystemExit:
+            pass
+        notify(f"✅ Threads slot{r['slot']} を投稿しました" + chr(10) + r["post_text"] + (chr(10) + link if link else ""), "post")
 
 
 def cmd_measure(a):

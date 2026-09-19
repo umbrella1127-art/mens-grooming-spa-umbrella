@@ -16,6 +16,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "hpb"))
 from hpb_db import connect  # noqa: E402
+from threads_notify import send as notify  # noqa: E402
 
 NOISE = re.compile(r"^(===|exit=|\[exited|Ignoring \d+ permissions)")
 
@@ -47,6 +48,8 @@ def main():
                 (f"threads:{a.job}", status, summary, detail))
     con.commit()
     print(f"agent_runs に記録: threads:{a.job} status={status}")
+    if status == "error":
+        notify(f"⚠️ Threads定期実行が失敗しました（{a.job}）" + chr(10) + summary, "care")
 
 
 if __name__ == "__main__":

@@ -37,5 +37,5 @@ python scripts/threads/tdb.py "DELETE FROM knowledge WHERE id='<uuid>' AND sourc
 category `Threadsで効いた型`、title `週次まとめ YYYY-MM-DD`、body に「今週の結論3行」「来週試す型1つ」「データが足りないこと」。
 
 ## 5. 報告
-Discord に短く送る（`python scripts/threads/notify.py --text "📚 Threads 週次の学び (MM/DD)\n..."`）。
+Discord に短く送る（`python scripts/threads/threads_notify.py --kind learn --text "📚 Threads 週次の学び (MM/DD)\n..."`）。
 チャットには、統合した件数・今週の結論・来週試す型を返す。

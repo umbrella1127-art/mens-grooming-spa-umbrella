@@ -21,6 +21,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "hpb"))
 from check_article import check  # noqa: E402
+from threads_notify import with_footer  # noqa: E402
 from hpb_db import JST, connect, env  # noqa: E402
 
 DISCORD_API = "https://discord.com/api/v10"
@@ -31,7 +32,7 @@ def discord_send(channel_id, content, draft_id):
     if not token or not channel_id:
         return None
     body = {
-        "content": content[:1900],
+        "content": with_footer(content, "blog"),
         "allowed_mentions": {"parse": []},
         "components": [{"type": 1, "components": [
             {"type": 2, "style": 3, "label": "承認", "custom_id": f"approve:{draft_id}"},
