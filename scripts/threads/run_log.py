@@ -3,10 +3,11 @@
 
     python scripts/threads/run_log.py --job research --exit 0 --log scripts/threads/logs/2026-09-19-research.log
 
-routine は 'threads:<job>'。status は exit code と本文から判定:
-  error   … exit != 0、または本文に Traceback / ERROR / エラー
-  partial … 本文に「失敗」「止まり」「未実行」
-  ok      … それ以外
+routine は 'threads:<job>'。status は exit code と機械的な印だけで判定する
+（エージェントの報告文に「エラー」「失敗」等の語が出ても反応しない。以前はそれで誤報が出ていた）:
+  error   … exit != 0、または行頭に Python の Traceback
+  それ以外 … 報告の最終行 `RESULT: ok|partial|error`（run-job.ps1 がエージェントに指示）に従う。
+            無ければ ok
 summary はログの最終行付近（エージェントの報告の冒頭）、detail はログ末尾40行。
 """
 import argparse
@@ -18,7 +19,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "hpb"))
 from hpb_db import connect  # noqa: E402
 from threads_notify import send as notify  # noqa: E402
 
-NOISE = re.compile(r"^(===|exit=|\[exited|Ignoring \d+ permissions)")
+NOISE = re.compile(r"^(===|exit=|\[exited|Ignoring \d+ permissions|`?RESULT:)")
+RESULT = re.compile(r"^[`*\s]*RESULT:\s*(ok|partial|error)\b", flags=re.M | re.I)
 
 
 def main():
@@ -34,10 +36,11 @@ def main():
     body = parts[-1] if parts else text
     lines = [ln.rstrip() for ln in body.splitlines() if ln.strip() and not NOISE.match(ln.strip())]
 
-    if a.exit != 0 or re.search(r"Traceback|\bERROR\b|エラー", body):
+    results = RESULT.findall(body)
+    if a.exit != 0 or re.search(r"^Traceback \(most recent call last\)", body, flags=re.M):
         status = "error"
-    elif re.search(r"失敗|止まり|未実行|できませんでした", body):
-        status = "partial"
+    elif results:
+        status = results[-1].lower()
     else:
         status = "ok"
     summary = (lines[0] if lines else f"{a.job}: 出力なし")[:200]

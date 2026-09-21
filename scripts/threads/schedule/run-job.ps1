@@ -23,7 +23,8 @@ $tools = @(
 
 function Invoke-Claude([string]$Step) {
     $prompt = ".claude/skills/threads-run/SKILL.md の手順に従って、Threads→ブログ基盤の「$Step」工程だけを実行してください。" +
-        "実際の Threads への投稿（--live）は、この工程では絶対にしないでください。完了したら結果を短く報告してください。"
+        "実際の Threads への投稿（--live）は、この工程では絶対にしないでください。完了したら結果を短く報告してください。" +
+        "報告の最後の1行は必ず RESULT: ok（工程を完了）/ RESULT: partial（一部できなかった）/ RESULT: error（工程を完了できなかった）のどれか1つだけにしてください。"
     & claude -p $prompt --allowedTools ($tools -join ',') 2>&1
 }
 
