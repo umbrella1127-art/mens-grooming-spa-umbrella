@@ -19,6 +19,7 @@
 | 実行 | `/threads-run`（`research` `validate` `blog` `care` `library`） |
 | 名簿 | `python scripts/threads/roster.py`（agent_roster。名前・年齢・性格） |
 | 点検（ループB） | `python scripts/threads/health.py`（異常の候補）→ caretaker が `pipeline_issues` に記録・安全な修正・Discord報告 |
+| 未投稿の見張り | `python scripts/threads/watch.py`（09:30/14:00/20:30。Claudeを呼ばない。未投稿を記録＋Discord通知、再投稿はしない） |
 | 実行記録 | `run-job.ps1` が毎回 `agent_runs`（routine=`threads:<job>`）に1行残す（`run_log.py`） |
 | 管理画面 | `/admin/kpi/threads`（在庫・今日の3本・反応・異常・実行記録・効いた型・名簿） |
 | DB窓口 | `python scripts/threads/tdb.py`（`--context` で現状） |

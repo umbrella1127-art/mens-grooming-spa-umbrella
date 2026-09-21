@@ -40,6 +40,12 @@ function Register-One($name, $trigger, $job, $note) {
 foreach ($j in $jobs) {
     Register-One $j.Job (New-ScheduledTaskTrigger -Daily -At $j.At) $j.Job $j.Note
 }
+# 未投稿の見張り（各投稿の1.5時間後）。朝の care では当日の未投稿を検知できないため
+Register-One 'watch' @(
+    (New-ScheduledTaskTrigger -Daily -At '09:30'),
+    (New-ScheduledTaskTrigger -Daily -At '14:00'),
+    (New-ScheduledTaskTrigger -Daily -At '20:30')
+) 'watch' '未投稿の見張り（検知したら記録＋Discord通知。再投稿はしない）'
 # 週1回（日曜）: 投稿結果と学びを「効いた型・外れた型」に整理
 Register-One 'library' (New-ScheduledTaskTrigger -Weekly -DaysOfWeek Sunday -At '07:30') 'library' '週次の知識整理（knowledge）'
 # 長期トークンは60日で失効するため、4週間ごとに更新

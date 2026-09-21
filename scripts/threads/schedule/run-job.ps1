@@ -1,6 +1,6 @@
 # Threads→ブログ基盤の定期実行ジョブ（タスクスケジューラから呼ばれる）
 #   pwsh -File run-job.ps1 <job>
-# job: research | validate | blog | care | library | post1 | post2 | post3 | refresh-token
+# job: research | validate | blog | care | library | post1 | post2 | post3 | watch | refresh-token
 # ログ: scripts/threads/logs/<日付>-<job>.log（古いものは30日で削除）
 param([Parameter(Mandatory = $true)][string]$Job)
 
@@ -38,6 +38,7 @@ $out = switch ($Job) {
     'post1'         { & python scripts/threads/threads_api.py post-due --slot 1 --live 2>&1 }
     'post2'         { & python scripts/threads/threads_api.py post-due --slot 2 --live 2>&1 }
     'post3'         { & python scripts/threads/threads_api.py post-due --slot 3 --live 2>&1 }
+    'watch'         { & python scripts/threads/watch.py 2>&1 }
     'refresh-token' { & python scripts/threads/threads_api.py refresh-token 2>&1 }
     default         { "unknown job: $Job" }
 }

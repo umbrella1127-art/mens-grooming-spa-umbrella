@@ -8,7 +8,8 @@
 見るもの:
   post_failed      … 直近3日で status=failed の投稿
   no_draft_today   … 06:30 を過ぎても今日の draft/posted が3本未満
-  not_posted       … 投稿時刻を1時間以上過ぎても draft のまま（08:00/12:30/19:00）
+  not_posted       … 投稿時刻を1時間以上過ぎても draft のまま（08:00/12:30/19:00）。前日以前3日分の draft も対象
+                     （即時の検知と通知は watch.py が投稿時刻の後に行う）
   no_winner_streak … 直近3日以上、実測済みなのに勝者なし
   unmeasured       … 前日分が posted のまま実測されていない（06:00以降）
   stock_low        … 未テストの新鮮ネタが9件未満
@@ -51,12 +52,15 @@ def run_checks(con):
     if now.hour * 60 + now.minute >= 6 * 60 + 30 and len(todays) < 3:
         add("no_draft_today", "warning", f"今日の投稿が {len(todays)}本しか用意されていない",
             {"slots": [t["slot"] for t in todays]})
-    for t in todays:
-        h, m = SLOT_TIMES.get(t["slot"], (99, 0))
-        due = now.replace(hour=h, minute=m, second=0, microsecond=0) if h < 24 else None
-        if due and t["status"] == "draft" and now > due + timedelta(hours=1):
-            add("not_posted", "critical", f"slot{t['slot']} が投稿時刻を過ぎても draft のまま",
-                {"slot": t["slot"], "due": due.isoformat()})
+    # 今日の分は投稿時刻+1時間を過ぎたもの、前日以前（3日分）は draft が残っていれば全部
+    drafts = q("select id, trial_date, slot from threads_trials where status='draft' "
+               "and trial_date between %s and %s order by trial_date, slot", today - timedelta(days=3), today)
+    for t in drafts:
+        h, m = SLOT_TIMES.get(t["slot"], (0, 0))
+        due = datetime(t["trial_date"].year, t["trial_date"].month, t["trial_date"].day, h, m, tzinfo=JST)
+        if now > due + timedelta(hours=1):
+            add("not_posted", "critical", f"{t['trial_date']} slot{t['slot']} が投稿時刻を過ぎても draft のまま",
+                {"trial_id": t["id"], "slot": t["slot"], "due": due.isoformat()})
 
     yday = today - timedelta(days=1)
     unmeasured = q("select count(*) n from threads_trials where trial_date=%s and status='posted' "
