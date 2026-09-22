@@ -7,7 +7,8 @@ export type CtaType =
   | "line_inline"
   | "line_hero"
   | "line_header"
-  | "line_footer";
+  | "line_footer"
+  | "line_campaign";
 
 export interface EventParams {
   page?: string;

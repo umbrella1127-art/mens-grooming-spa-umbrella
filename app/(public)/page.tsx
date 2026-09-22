@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import LineCtaLink from "@/components/analytics/LineCtaLink";
+import CampaignBanner from "@/components/sections/CampaignBanner";
 import CampaignPriceCard from "@/components/sections/CampaignPriceCard";
 import CtaSection from "@/components/sections/CtaSection";
 import FaqList from "@/components/sections/FaqList";
@@ -8,6 +9,7 @@ import Container from "@/components/ui/Container";
 import FadeIn from "@/components/ui/FadeIn";
 import SectionHeading from "@/components/ui/SectionHeading";
 import StarRating from "@/components/ui/StarRating";
+import { isCampaignActive } from "@/lib/campaign";
 import { getFaqs, getImages, getSettings } from "@/lib/cms";
 import {
   FIRST_GROOMING_COURSES,
@@ -99,6 +101,10 @@ export default async function TopPage() {
           </FadeIn>
         </Container>
       </section>
+
+      {isCampaignActive() && (
+        <CampaignBanner settings={settings} image={images.campaign_facial} />
+      )}
 
       {/* ③ 共感 */}
       <section className="py-16 md:py-24">

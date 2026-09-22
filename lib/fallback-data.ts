@@ -372,6 +372,7 @@ export const fallbackImages: ImageSlot[] = [
   ["facial_herbpeel_after4", "/images/facial_herbpeel_after4.jpg", "ハーブピーリング施術後の肌（フェイスライン）", "フェイシャルページ：ハーブピーリング施術後（フェイスライン）"],
   ["facial_herbpeel_before5", "/images/facial_herbpeel_before5.jpg", "ハーブピーリング施術前の肌（顎アップ）", "フェイシャルページ：ハーブピーリング施術前（顎アップ）"],
   ["facial_herbpeel_after5", "/images/facial_herbpeel_after5.jpg", "ハーブピーリング施術後の肌（顎アップ）", "フェイシャルページ：ハーブピーリング施術後（顎アップ）"],
+  ["campaign_facial", "/images/facial.jpg", "フェイシャル施術の様子", "トップページ：期間限定キャンペーンバナーの写真"],
 ].map(([slot_key, url, alt, label]) => ({
   slot_key,
   url,
