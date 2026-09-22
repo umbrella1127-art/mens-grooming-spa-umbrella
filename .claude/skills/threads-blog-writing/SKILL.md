@@ -11,7 +11,8 @@ user-invocable: false
 ## 0. 最初に読む
 1. `.claude/skills/threads-blog-rules/SKILL.md`
 2. `scripts/threads/persona.md`
-3. `python scripts/threads/tdb.py --context` の「ブログ化待ちの勝者」。**無ければ何も書かず「勝者なし」と報告して終了**
+3. `python scripts/threads/tdb.py --knowledge`（知識。**採用だけを型として使う**。保留は仮説、退役は理由を見て繰り返さない）
+4. `python scripts/threads/tdb.py --context` の「ブログ化待ちの勝者」。**無ければ何も書かず「勝者なし」と報告して終了**
 4. 勝者が複数なら最新の1件だけ（1日1記事）
 
 ## 1. 材料を集める

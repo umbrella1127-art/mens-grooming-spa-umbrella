@@ -12,6 +12,7 @@ user-invocable: false
 1. `python scripts/threads/tdb.py --context`（未解決の異常と直近の実行記録）
 2. `python scripts/threads/health.py --json`（異常の候補。事実だけ）
 3. 必要なら `scripts/threads/logs/` の当日ログ（`Read`）
+4. `python scripts/threads/tdb.py --knowledge`（知識。運用の決めごと（ops）と退役の理由を確認する）
 
 ## 1. 候補を判断する
 候補ごとに「本当に異常か」「重要度」「直せるか」を決める。

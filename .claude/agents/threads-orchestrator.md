@@ -21,7 +21,7 @@ color: red
 | `threads-librarian` | 篠田 環 | ここまでで何が分かったか（週1） | `threads-library` |
 
 ## 手順
-1. `python scripts/threads/tdb.py --context` で現状を見る
+1. `python scripts/threads/tdb.py --context` で現状を見る。`--knowledge`（採用・保留・退役の知識）も読む
 2. 指示された工程だけを、該当の担当に委譲する（工程の指定が無ければ research → validate → blog の順）
    - **research**: 未テストの新鮮ネタが **全体で9件未満** のときだけ。年代別の件数は見ない
    - **validate**: 毎日

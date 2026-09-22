@@ -12,6 +12,7 @@ user-invocable: false
 1. `.claude/skills/threads-blog-rules/SKILL.md`（絶対ルール）
 2. `scripts/threads/persona.md`（3タイプ p40/p47/p53 と5本柱。参考の一つ）
 3. `python scripts/threads/tdb.py --context`
+4. `python scripts/threads/tdb.py --knowledge`（知識。**採用だけを型として使う**。保留は仮説、退役は理由を見て繰り返さない）
 
 ## 1. 在庫を数える
 「未テストの新鮮ネタ」（`--context` の2番目の表）が **全体で9件未満** のときだけ補充する。

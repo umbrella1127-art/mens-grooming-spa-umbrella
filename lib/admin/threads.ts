@@ -48,12 +48,19 @@ export interface ThreadsRun {
   summary: string | null;
 }
 
+export type KnowledgeStatus = "candidate" | "adopted" | "retired";
+
 export interface ThreadsKnowledge {
   id: string;
   title: string;
   body: string;
   category: string;
   updatedAt: string;
+  kind: "pattern" | "summary" | "ops" | null;
+  status: KnowledgeStatus | null;
+  retiredReason: string | null;
+  support: number;
+  contradict: number;
 }
 
 export interface RosterMember {
@@ -138,10 +145,10 @@ export async function getThreadsData(): Promise<ThreadsData> {
         .limit(12),
       supabase
         .from("knowledge")
-        .select("id, title, body, category, updated_at")
+        .select("id, title, body, category, updated_at, kind, status, retired_reason, knowledge_evidence(outcome)")
         .eq("source", "threads")
         .order("updated_at", { ascending: false })
-        .limit(12),
+        .limit(30),
       supabase
         .from("agent_roster")
         .select("agent, display_name, kana, age, role_title, team, icon, catchphrase, personality, channel")
@@ -211,6 +218,12 @@ export async function getThreadsData(): Promise<ThreadsData> {
       body: k.body,
       category: k.category,
       updatedAt: k.updated_at,
+      kind: k.kind,
+      status: k.status,
+      retiredReason: k.retired_reason,
+      support: (k.knowledge_evidence ?? []).filter((e: { outcome: string }) => e.outcome === "support").length,
+      contradict: (k.knowledge_evidence ?? []).filter((e: { outcome: string }) => e.outcome === "contradict")
+        .length,
     })),
     roster: (rosterRes.data ?? []).map((m) => ({
       agent: m.agent,

@@ -79,4 +79,5 @@ DBは `0029_threads_pipeline.sql`（`threads_topics` / `threads_trials`）と `0
 担当は6名（統括・リサーチ・検証・執筆・点検・知識整理）。人格は `.claude/agents/`、手順は `.claude/skills/threads-*`、名簿は `agent_roster`。
 答え合わせは T+1（翌朝）と T+7（1週間後）の2点で、`threads_trial_snapshots` に残し、前の7日間の平均と比べて判定する
 （`scripts/threads/judge.py`、`0033_threads_t7.sql`）。下書きは `predicted_metric`・`predicted_vs_baseline` が無いとDBが拒否する。
+知識（`knowledge` source=threads）は3つのルールで運用する（`0034_knowledge_rules.sql`）: 型は保留で始まり、根拠（`knowledge_evidence`）の支持が3件以上かつ反証より多いときだけ採用できる／自動で書いた知識は削除できず、退役させて理由を残す／全担当が最初に `tdb.py --knowledge` を読む。
 管理画面は `/admin/kpi/threads`。点検（自分自身を直すループ）は `scripts/threads/health.py` → `pipeline_issues`、学びは `knowledge`（source=threads）。

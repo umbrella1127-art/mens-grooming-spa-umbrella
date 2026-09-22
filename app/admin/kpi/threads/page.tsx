@@ -4,7 +4,13 @@ import RunReflections from "@/components/admin/RunReflections";
 import { getReflections } from "@/lib/admin/reflections";
 import type { Stage, Tone } from "@/lib/admin/board";
 import { TEAM_AVATARS } from "@/lib/admin/team-avatars";
-import { getThreadsData, type RosterMember, type ThreadsTrial, type TrialVerdict } from "@/lib/admin/threads";
+import {
+  getThreadsData,
+  type RosterMember,
+  type ThreadsKnowledge,
+  type ThreadsTrial,
+  type TrialVerdict,
+} from "@/lib/admin/threads";
 
 const SEVERITY_TONE: Record<"info" | "warning" | "critical", Tone> = {
   critical: "bad",
@@ -106,6 +112,18 @@ function TrialJudgement({ t }: { t: ThreadsTrial }) {
     </div>
   );
 }
+
+const KNOWLEDGE_GROUPS: {
+  key: string;
+  label: string;
+  tone: Tone;
+  match: (k: ThreadsKnowledge) => boolean;
+}[] = [
+  { key: "adopted", label: "採用（再現した型・決めごと）", tone: "ok", match: (k) => k.status === "adopted" && k.kind !== "summary" },
+  { key: "candidate", label: "保留（まだ3件未満）", tone: "info", match: (k) => k.status === "candidate" },
+  { key: "summary", label: "週次まとめ", tone: "info", match: (k) => k.kind === "summary" },
+  { key: "retired", label: "退役（もう使わない）", tone: "warn", match: (k) => k.status === "retired" },
+];
 
 export default async function ThreadsKpiPage() {
   const [d, reflections] = await Promise.all([getThreadsData(), getReflections("threads")]);
@@ -315,22 +333,51 @@ export default async function ThreadsKpiPage() {
             }
           >
             {d.knowledge.length === 0 ? (
-              <Empty>勝者が出ると、検証担当が型を書き始めます。日曜に知識整理担当がまとめます。</Empty>
+              <Empty>T+7 の判定が出ると、検証担当が根拠を積み始めます。日曜に知識整理担当が採用・退役を決めます。</Empty>
             ) : (
-              <dl className="space-y-3">
-                {d.knowledge.map((k) => (
-                  <div key={k.id} className="border-l-2 border-beige pl-4">
-                    <dt className="flex flex-wrap items-baseline gap-2 text-[13px] text-ink">
-                      <Badge tone={k.category.includes("外れ") ? "warn" : "ok"}>{k.category}</Badge>
-                      {k.title}
-                      <span className="ml-auto text-[11px] text-greige">{jst(k.updatedAt, false)}</span>
-                    </dt>
-                    <dd className="mt-1 whitespace-pre-wrap text-[12px] leading-relaxed text-charcoal">
-                      {k.body}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
+              <div className="space-y-5">
+                <p className="text-[11.5px] leading-relaxed text-greige">
+                  型は「保留」で始まり、支持する投稿が3件以上たまって反証より多くなったときだけ「採用」になります。
+                  使わなくなった型は消さずに「退役」させ、理由を残します。
+                </p>
+                {KNOWLEDGE_GROUPS.map((g) => {
+                  const items = d.knowledge.filter((k) => g.match(k));
+                  if (items.length === 0) return null;
+                  return (
+                    <section key={g.key} className="space-y-3">
+                      <h3 className="text-[12px] tracking-wide text-charcoal-light">
+                        {g.label}（{items.length}）
+                      </h3>
+                      <dl className="space-y-3">
+                        {items.map((k) => (
+                          <div key={k.id} className="border-l-2 border-beige pl-4">
+                            <dt className="flex flex-wrap items-baseline gap-2 text-[13px] text-ink">
+                              <Badge tone={g.tone}>{k.category}</Badge>
+                              {k.title}
+                              {k.kind === "pattern" && (
+                                <span className="text-[11px] tabular-nums text-greige">
+                                  支持{k.support}・反証{k.contradict}
+                                  {k.status === "candidate" && k.support < 3 && `（あと${3 - k.support}件で判定）`}
+                                </span>
+                              )}
+                              <span className="ml-auto text-[11px] text-greige">{jst(k.updatedAt, false)}</span>
+                            </dt>
+                            {k.status === "retired" ? (
+                              <dd className="mt-1 text-[12px] leading-relaxed text-charcoal-light">
+                                もう使わない理由: {k.retiredReason}
+                              </dd>
+                            ) : (
+                              <dd className="mt-1 whitespace-pre-wrap text-[12px] leading-relaxed text-charcoal">
+                                {k.body}
+                              </dd>
+                            )}
+                          </div>
+                        ))}
+                      </dl>
+                    </section>
+                  );
+                })}
+              </div>
             )}
           </Card>
 

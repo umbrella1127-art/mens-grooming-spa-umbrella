@@ -13,6 +13,8 @@ interface Note {
   body: string;
   category: string;
   updated_at: string;
+  source?: string;
+  status?: string | null;
 }
 
 function when(iso: string) {
@@ -140,15 +142,22 @@ export default async function KnowledgePage() {
                   </button>
                 </form>
 
-                <form action={deleteKnowledge} className="mt-2">
-                  <input type="hidden" name="id" value={n.id} />
-                  <button
-                    type="submit"
-                    className="text-[11px] text-greige underline underline-offset-4 hover:text-[#8f3826]"
-                  >
-                    削除する
-                  </button>
-                </form>
+                {n.source && n.source !== "manual" ? (
+                  // 自動で書いた知識は消さずに退役させる（0034_knowledge_rules.sql。DBも削除を拒否する）
+                  <p className="mt-2 text-[11px] text-greige">
+                    自動で書いた知識は削除できません。使わなくなったものは、知識整理担当が理由を付けて退役させます。
+                  </p>
+                ) : (
+                  <form action={deleteKnowledge} className="mt-2">
+                    <input type="hidden" name="id" value={n.id} />
+                    <button
+                      type="submit"
+                      className="text-[11px] text-greige underline underline-offset-4 hover:text-[#8f3826]"
+                    >
+                      削除する
+                    </button>
+                  </form>
+                )}
               </details>
             ))}
           </div>

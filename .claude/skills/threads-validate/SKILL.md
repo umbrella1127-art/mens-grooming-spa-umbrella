@@ -11,7 +11,8 @@ user-invocable: false
 ## 0. 最初に読む
 1. `.claude/skills/threads-blog-rules/SKILL.md`
 2. `scripts/threads/persona.md`
-3. `python scripts/threads/tdb.py --context`（過去の勝者と、`knowledge source=threads` の「効いた型」も見る）
+3. `python scripts/threads/tdb.py --context`（過去の勝者・直近7日の平均・T+7 の判定）
+4. `python scripts/threads/tdb.py --knowledge`（知識。**採用だけを型として使う**。保留は仮説、退役は理由を見て繰り返さない）
 
 ## A. 答え合わせ（T+1 = 昨日の投稿 ／ T+7 = 7日前の投稿）
 ```
@@ -40,19 +41,28 @@ python scripts/threads/threads_api.py measure
   ```
 - 勝者が無い日は「勝者なし」でよい。無理に選ばない
 
-## B. 学びを知識に残す（T+7 の判定が出た投稿と、T+1 で勝者が決まった投稿）
-**知識に書くのは T+7 の確定判定が基本**（T+1 は暫定。T+1 の勝者だけは例外で書いてよい）。
-- 予測どおり（hit）かつ 反応あり・表示が伸びた → `Threadsで効いた型`
-- 予測と逆（miss）、または 表示が落ちた → `Threadsで外れた型`（なぜ外れたかを書く）
-- 平均並み・比べる投稿が足りない → 書かない
-型（フック・長さ・柱・年代・時間枠）ごとに1行ずつ `knowledge` に書く。
-- 既に同じ型の項目（`source='threads'`、同じ title）があれば **本文に日付付きで追記**（新規作成しない）
-- category は `Threadsで効いた型` または `Threadsで外れた型`
-```
-python scripts/threads/tdb.py "SELECT id, title, body FROM knowledge WHERE source='threads' ORDER BY updated_at DESC" --format json
-python scripts/threads/tdb.py "INSERT INTO knowledge (title, body, category, source) VALUES ('問いかけ×疲労（40s）', '2026-09-20: 表示120・返信3で勝者。夕方の具体的な場面を入れた。', 'Threadsで効いた型', 'threads')" --write
-python scripts/threads/tdb.py "UPDATE knowledge SET body = body || E'\n2026-09-21: ...', updated_at=now() WHERE id='<uuid>'" --write
-```
+## B. 根拠を積む（T+7 の確定判定が出た投稿ごと）
+知識は **根拠（knowledge_evidence）を1投稿1行ずつ積む** だけにする。**採用・退役は知識整理担当の仕事なので、ここではしない**。
+T+1 の判定は暫定なので根拠にしない（T+1 の勝者も T+7 を待つ）。
+
+1. 投稿の型を決める。title は `<フック>×<柱>（<年代>・<時間枠>）` の形（例 `あるある共感×疲労・休息（40s・朝）`）
+2. `--knowledge` で同じ型があるか探す（採用・保留とも）。**無ければ保留で作る**:
+   ```
+   python scripts/threads/tdb.py "INSERT INTO knowledge (title, body, category, source, kind, status) VALUES ('あるある共感×疲労・休息（40s・朝）', '2026-09-26: 初出。<T+7の結果を1行>', 'Threadsで効いた型', 'threads', 'pattern', 'candidate') RETURNING id" --write
+   ```
+   category は「効くはず」なら `Threadsで効いた型`、「避けるべき」なら `Threadsで外れた型`
+3. 根拠を1行足す。その型の向きと結果が合えば `support`、逆なら `contradict`:
+   | 型の category | support にする結果 | contradict にする結果 |
+   |---|---|---|
+   | Threadsで効いた型 | 反応あり・表示が伸びた（かつ予測と逆でない） | 表示が落ちた・予測と逆 |
+   | Threadsで外れた型 | 表示が落ちた・予測と逆 | 反応あり・表示が伸びた |
+   平均並み・比較対象不足は根拠にしない。
+   ```
+   python scripts/threads/tdb.py "INSERT INTO knowledge_evidence (knowledge_id, trial_id, outcome, days_after, note, added_by) VALUES ('<uuid>', <trial_id>, 'support', 7, 'T+7 表示140（平均71の2.0倍）・予測どおり', 'threads-strategist')" --write
+   python scripts/threads/tdb.py "UPDATE knowledge SET body = body || E'
+2026-09-26: ...', updated_at=now() WHERE id='<uuid>'" --write
+   ```
+**採用された型に反証が出たら**、根拠を contradict で足すだけでよい（退役させるかは知識整理担当が決める）。
 断言しない。「今のところ」「n回中m回」のように、根拠の数を添える。
 
 ## C. 今日の3本を作る

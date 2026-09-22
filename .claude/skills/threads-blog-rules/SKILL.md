@@ -40,6 +40,15 @@ python scripts/threads/check_article.py path/to/file.md    # 記事
 NGは必ず直す。「要確認」（価格らしき数字）は自分で根拠を確認する。
 これは最低ライン。上の1〜7を通っているかは書き手が自分で確認する。
 
+## 知識（knowledge）の3つのルール
+1. **3件たまるまで一般化しない** — 型（kind=pattern）は「保留（candidate）」で始まる。支持する投稿が3件以上、かつ反証より多くなって
+   初めて「採用（adopted）」にできる（DBが強制する）。保留の型を「効く」と断言しない
+2. **消さない** — 自動で書いた知識は削除できない（DBが拒否する）。使わなくなったら「退役（retired）」にして、
+   `retired_reason` に **もう使わない理由** を残す。重複は統合先へ根拠を移してから退役させる
+3. **全員が最初に読む** — 作業の最初に `python scripts/threads/tdb.py --knowledge`。採用だけを型として使い、退役した型を繰り返さない
+
+根拠の記録（knowledge_evidence）は検証担当、採用・退役・統合は知識整理担当（週1）だけが行う。
+
 ## データの書き込み
 
 DBへは `python scripts/threads/tdb.py`（threads_topics / threads_trials のみ）と

@@ -2,6 +2,7 @@
 """Threads→ブログ基盤のDB窓口。エージェントはこれ経由でしか書かない。
 
     python scripts/threads/tdb.py --context                 # 今の状態（在庫・直近の投稿・勝者）
+    python scripts/threads/tdb.py --knowledge               # 知識（全担当が最初に読む。採用・保留・退役）
     python scripts/threads/tdb.py "SELECT ..." [--format json]
     python scripts/threads/tdb.py "INSERT ..." --write      # threads_topics / threads_trials のみ
 
@@ -18,7 +19,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "hpb"))
 from hpb_db import connect  # noqa: E402
 
 # knowledge は threads-librarian / strategist が「効いた型・外れた型」を書く。pipeline_issues は caretaker が書く
-WRITABLE = {"threads_topics", "threads_trials", "threads_trial_snapshots", "pipeline_issues", "knowledge"}
+WRITABLE = {"threads_topics", "threads_trials", "threads_trial_snapshots", "pipeline_issues", "knowledge",
+            "knowledge_evidence"}
 BAD = ("drop", "alter", "create", "truncate", "grant")
 
 
@@ -73,9 +75,45 @@ def context(con):
     print("== 未処理の改善案（振り返り③仕組み / ④事業。詳細は reflect.py open）")
     show(q("select kind, status, count(*) n from improvement_proposals "
            "where channel='threads' and status in ('open','reported') group by 1,2 order by 1,2"), "t")
-    print("== Threadsの知識（knowledge source=threads）")
-    show(q("select id, category, title, updated_at::date d from knowledge where source='threads' "
-           "order by updated_at desc limit 10"), "t")
+    print("== Threadsの知識（件数。中身は --knowledge）")
+    show(q("select kind, status, count(*) n from knowledge where source='threads' group by 1,2 order by 1,2"), "t")
+
+
+KNOWLEDGE_SQL = (
+    "select k.id, k.kind, k.status, k.category, k.title, k.body, k.retired_reason, "
+    "count(e.id) filter (where e.outcome='support') support, "
+    "count(e.id) filter (where e.outcome='contradict') contra "
+    "from knowledge k left join knowledge_evidence e on e.knowledge_id=k.id "
+    "where k.source='threads' and k.status=%s and k.kind<>'summary' group by k.id order by k.category, k.updated_at desc")
+
+
+def knowledge(con):
+    """全担当が作業の最初に読む。採用だけを「型」として使い、保留は仮説、退役は使わない。"""
+    def block(status, heading, full):
+        rows = con.execute(KNOWLEDGE_SQL, (status,)).fetchall()
+        print(f"== {heading}（{len(rows)}件）")
+        if not rows:
+            print("(なし)")
+        for r in rows:
+            ev = f"支持{r['support']}・反証{r['contra']}" if r["kind"] == "pattern" else r["kind"]
+            print(f"- [{r['category']}] {r['title']}（{ev}）  id={r['id']}")
+            if status == "retired":
+                print(f"    もう使わない理由: {r['retired_reason']}")
+            elif full:
+                for line in (r["body"] or "").strip().splitlines()[:6]:
+                    print(f"    {line}")
+    block("adopted", "採用（3件以上で再現した型・運用の決めごと。これに従う）", True)
+    block("candidate", "保留（まだ3件未満。仮説として扱い、断言しない）", False)
+    block("retired", "退役（もう使わない。同じことを繰り返さない）", False)
+    last = con.execute("select title, body from knowledge where source='threads' and kind='summary' "
+                       "order by updated_at desc limit 1").fetchone()
+    print("== 直近の週次まとめ")
+    if last:
+        print(f"- {last['title']}")
+        for line in (last["body"] or "").strip().splitlines()[:8]:
+            print(f"    {line}")
+    else:
+        print("(なし)")
 
 
 def main():
@@ -84,10 +122,14 @@ def main():
     ap.add_argument("--format", choices=["table", "json"], default="table")
     ap.add_argument("--write", action="store_true")
     ap.add_argument("--context", action="store_true")
+    ap.add_argument("--knowledge", action="store_true")
     a = ap.parse_args()
     con = connect()
     if a.context:
         context(con)
+        return
+    if a.knowledge:
+        knowledge(con)
         return
     if not a.sql:
         ap.error("SQL か --context を指定してください")
