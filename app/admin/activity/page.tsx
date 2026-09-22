@@ -1,7 +1,9 @@
 import AutoRefresh from "@/components/admin/AutoRefresh";
+import ImprovementChanges from "@/components/admin/ImprovementChanges";
 import { Badge, Card, Empty } from "@/components/admin/board";
 import type { Tone } from "@/lib/admin/board";
 import { getActivity, type Slot, type SlotState, type TreeNode } from "@/lib/admin/activity";
+import { getImprovements } from "@/lib/admin/improvements";
 
 // 毎回DBを読み直す（静的化しない）
 export const dynamic = "force-dynamic";
@@ -73,7 +75,7 @@ function Tree({ node, depth = 0 }: { node: TreeNode; depth?: number }) {
 }
 
 export default async function ActivityPage() {
-  const d = await getActivity();
+  const [d, improvements] = await Promise.all([getActivity(), getImprovements()]);
   const problems = d.slots.filter((s) => ["error", "stalled", "missing"].includes(s.state));
   const next = d.slots.find((s) => s.state === "planned" || s.state === "waiting");
 
@@ -237,6 +239,8 @@ export default async function ActivityPage() {
               )}
             </Card>
           </div>
+
+          <ImprovementChanges data={improvements} />
         </>
       )}
     </div>

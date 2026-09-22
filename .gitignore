@@ -52,4 +52,5 @@ next-env.d.ts
 # Threads基盤の実行ログ・作業ファイル
 scripts/threads/logs/
 scripts/site/logs/
+scripts/improve/_work/
 scripts/threads/_work/

@@ -39,6 +39,7 @@ function isClosingFriday(x: JstDay) {
 
 const SCHEDULE: ScheduleDef[] = [
   { time: "04:30", routine: "site:daily", label: "GA4の取り込み・サイト実験の判定", team: "サイト", on: every },
+  { time: "05:00", routine: "threads:improve", label: "自律改善（起草・反映・効果確認）", team: "Threads", agent: "auto-improver", on: every },
   { time: "05:30", routine: "threads:research", label: "種ネタの補充", team: "Threads", agent: "threads-researcher", on: every },
   { time: "06:00", routine: "threads:validate", label: "答え合わせ（T+1・T+7）と今日の3本", team: "Threads", agent: "threads-strategist", on: every },
   { time: "06:30", routine: "threads:blog", label: "勝者のブログ化", team: "Threads", agent: "threads-blog-writer", on: every },

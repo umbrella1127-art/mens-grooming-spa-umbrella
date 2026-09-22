@@ -60,6 +60,15 @@
 `improvement_proposals` に分けて入る（`0032_run_reflections.sql`）。③は点検担当（threads-caretaker）が毎朝、
 ④は知識整理（threads-librarian・週1）と戦略担当（hpb-strategist・月1）が読んで仕分ける。管理画面は `/admin/kpi/threads`・`/admin/kpi/hpb`。
 
+## 自律改善（仕組みが自分を直す。でも安全に）
+
+毎朝5:00（`mensumbrella-threads-improve`）に修繕担当（`.claude/agents/auto-improver.md`、手順 `.claude/skills/self-improve/SKILL.md`）が
+「仕組みの改善案」から直したいファイルの新しい中身を `scripts/improve/_work/` に書き、`scripts/improve/improve.py draft` に渡す。
+`scripts/improve/gate.py` が auto（Threads手順書の小さな文言・judge.py のしきい値）/ approval / forbidden（公開サイト・DB・絶対ルール・権限・この仕組み自身）に仕分け、
+`auto-improve/<id>` ブランチにコミットする（作業フォルダは切り替えない）。**今は全件オーナーの承認制**（`improve.py` の `AUTO_APPLY=False`。
+全自動への切り替えはオーナーの判断でのみ行う）。承認は `/admin/activity` の「仕組みの修正」。反映は `improve.py tick`（5:00と見張りのあと）が
+`git merge --ff-only` で行い、7日後に効果（失敗率・異常件数・ルール要確認率）を前後比較して、良くなっていなければ自動で元に戻す（`0036_auto_improve.sql`）。
+
 ## 稼働タイムライン
 
 `/admin/activity`（管理画面タブ「稼働状況」）が、いま動いている担当・今日の時間割（予定と実際の実行の突き合わせ）・
