@@ -1,5 +1,8 @@
 import { saveGbpMonth } from "@/app/admin/actions/gbp";
 import { Card, Empty } from "@/components/admin/board";
+import ChannelFindings from "@/components/admin/ChannelFindings";
+import GbpTrend from "@/components/admin/GbpTrend";
+import { getChannelFindings } from "@/lib/admin/findings";
 import { GBP_METRICS, getGbpData } from "@/lib/admin/gbp";
 
 export default async function GbpPage({
@@ -8,7 +11,7 @@ export default async function GbpPage({
   searchParams: Promise<{ saved?: string }>;
 }) {
   const { saved } = await searchParams;
-  const gbp = await getGbpData();
+  const [gbp, findings] = await Promise.all([getGbpData(), getChannelFindings(["gbp"])]);
   const thisMonth = new Date().toISOString().slice(0, 7);
 
   return (
@@ -44,6 +47,14 @@ export default async function GbpPage({
         </Card>
       ) : (
         <>
+          {gbp.months.length > 0 && (
+            <Card eyebrow="TREND" title="月次推移">
+              <GbpTrend months={gbp.months} />
+            </Card>
+          )}
+
+          <ChannelFindings findings={findings} />
+
           <Card eyebrow="INPUT" title="月次実績の入力">
             <form action={saveGbpMonth} className="space-y-4">
               <input type="hidden" name="store" value={gbp.storeCode} />
@@ -85,7 +96,7 @@ export default async function GbpPage({
             </form>
           </Card>
 
-          <Card eyebrow="HISTORY" title="月次推移">
+          <Card eyebrow="HISTORY" title="入力済みの数字">
             {gbp.months.length === 0 ? (
               <Empty>まだ入力がありません。上のフォームから入力してください。</Empty>
             ) : (

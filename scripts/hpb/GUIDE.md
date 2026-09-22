@@ -61,7 +61,9 @@
 13体のサブエージェントは互いに会話しない。つながっているのはDBだけ。
 そのため全員が例外なく次を守る:
 
-1. **行動する前に、必ずDBを読む** — `python scripts/hpb/context.py`（対象エージェントは `--for <agent>` を付ける）
+1. **行動する前に、必ずDBを読む** — `python scripts/hpb/context.py`（対象エージェントは `--for <agent>` を付ける）。
+   営業体制の変更など店舗固有の前提は `stores.notes`（`config.json` → `db_migrate.py`）に書けば
+   `context.py` が毎回「★店舗の前提」として全エージェントに提示する
 2. **行動したら、必ずDBに書く** — findings / strategies / strategy_options / page_observations 等
 3. **作業の最初と最後に、必ずチーム全員へ「今の状態」を書く** —
    ```bash
@@ -114,6 +116,15 @@ Discordに新規数・CPA・課題・施策のサマリと管理画面のレポ�
 `scripts/hpb/notify.py send` がサイトのDiscord Bot（`DISCORD_BOT_TOKEN`）で
 `DISCORD_CHANNEL_KPI`（無ければ `DISCORD_CHANNEL_NOTICE`）へ要約＋レポートURLを送る。
 送信結果は `notifications` テーブルに残る。未読管理は管理画面側で行う。
+
+### HPBブログ下書きの通知
+
+HPBの管理画面（サロンボード）にはブログ投稿APIが無いため自動投稿はできない。
+サイト/GBPのブログと同じテーマでHPB用の下書き（タイトル全角25文字以内・本文全角1000文字以内）を
+作ったら `scripts/hpb/notify_blog.py` でDiscordの `#hpb-ブログ下書き`
+（`.env.local` の `DISCORD_CHANNEL_HPB_BLOG`）へ送る。店舗側はそれをコピーして
+サロンボードのブログ編集画面に貼り付ける運用。DBへの記録は無い（`content_drafts` は
+`channel_type` が `threads`/`blog`/`gbp` のみでHPB分は未対応）。
 
 ## 分析が育つ仕組み
 

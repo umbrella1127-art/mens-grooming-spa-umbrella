@@ -1,5 +1,9 @@
 import Link from "next/link";
 import { Badge, Card, Empty } from "@/components/admin/board";
+import ChannelFindings from "@/components/admin/ChannelFindings";
+import GbpTrend from "@/components/admin/GbpTrend";
+import { getChannelFindings } from "@/lib/admin/findings";
+import { getGbpData } from "@/lib/admin/gbp";
 import { getHpbData } from "@/lib/admin/hpb";
 import { getThreadsData } from "@/lib/admin/threads";
 
@@ -11,7 +15,13 @@ const SEVERITY_TONE = {
 } as const;
 
 export default async function KpiPage() {
-  const [hpb, threads] = await Promise.all([getHpbData(), getThreadsData()]);
+  const [hpb, threads, gbp, channelFindings] = await Promise.all([
+    getHpbData(),
+    getThreadsData(),
+    getGbpData(),
+    getChannelFindings(["ga4", "gbp", "seo"]),
+  ]);
+  const gbpLatest = gbp.months.find((m) => m.values.interactions != null);
   const latestByStore = new Map<string, (typeof hpb.monthlyKpi)[number]>();
   for (const row of hpb.monthlyKpi) {
     if (!latestByStore.has(row.store)) latestByStore.set(row.store, row);
@@ -25,13 +35,49 @@ export default async function KpiPage() {
           集客KPIハブ
         </h1>
         <p className="mt-1 text-[12.5px] text-charcoal-light">
-          最重要KPIはLINEクリック(line_click)。数値目標は未設定です。あわせてHPB(ホットペッパービューティー)の新規獲得実績もここから確認できます。
+          最重要KPIはLINEクリック(line_click)。GA4・GBP・SEOの分析結果、Threads、HPB(ホットペッパービューティー)の新規獲得実績をここでまとめて確認できます。
         </p>
       </div>
 
-      <Card eyebrow="LINE" title="LINE誘導(GA4)">
+      <ChannelFindings
+        findings={channelFindings}
+        title="GA4・GBP・SEOの分析結果(未確認の所見)"
+        showChannel
+      />
+
+      <Card
+        eyebrow="GBP"
+        title="Googleビジネスプロフィール"
+        aside={
+          <Link href="/admin/gbp" className="underline underline-offset-4">
+            入力・詳細 →
+          </Link>
+        }
+      >
+        {!gbpLatest ? (
+          <Empty>
+            まだ入力がありません。<Link href="/admin/gbp" className="text-brown underline underline-offset-4">GBPタブ</Link>から月次の数字を入力してください。
+          </Empty>
+        ) : (
+          <div className="space-y-4">
+            <GbpTrend months={gbp.months} />
+            <dl className="grid grid-cols-2 gap-x-6 gap-y-2 text-[12.5px] sm:grid-cols-4">
+              <dt className="text-greige">ルート検索({gbpLatest.month})</dt>
+              <dd className="tabular-nums text-charcoal">{gbpLatest.values.direction_requests ?? "—"}</dd>
+              <dt className="text-greige">サイトクリック</dt>
+              <dd className="tabular-nums text-charcoal">{gbpLatest.values.website_clicks ?? "—"}</dd>
+              <dt className="text-greige">通話</dt>
+              <dd className="tabular-nums text-charcoal">{gbpLatest.values.calls ?? "—"}</dd>
+              <dt className="text-greige">予約</dt>
+              <dd className="tabular-nums text-charcoal">{gbpLatest.values.bookings ?? "—"}</dd>
+            </dl>
+          </div>
+        )}
+      </Card>
+
+      <Card eyebrow="LINE / SEO" title="LINE誘導(GA4)・検索(Search Console)">
         <Empty>
-          月間目標などの数値はまだ決まっていません。実績は<Link href="/admin/ga4" className="text-brown underline underline-offset-4">GA4タブ</Link>を参照してください。
+          LINEクリック(line_click)などの実績は<Link href="/admin/ga4" className="text-brown underline underline-offset-4">GA4タブ</Link>、検索語句・掲載順位は<Link href="/admin/seo" className="text-brown underline underline-offset-4">SEOタブ</Link>で確認できます(どちらもGoogleから自動取得)。
         </Empty>
       </Card>
 

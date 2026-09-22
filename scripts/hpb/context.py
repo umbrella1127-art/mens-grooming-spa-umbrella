@@ -26,11 +26,12 @@ def gather(con, store=None, month=None):
     ctx = {"generated_at": now_iso(), "db": "supabase (HPB_DATABASE_URL)"}
 
     stores = [dict(r) for r in con.execute(
-        "SELECT code, name, genre, hpb_cd, plan_cost_yen, variable_cost_rate "
+        "SELECT code, name, genre, hpb_cd, plan_cost_yen, variable_cost_rate, notes "
         "FROM stores WHERE active ORDER BY code")]
     ctx["stores"] = stores
     targets = [store] if store else [s["code"] for s in stores]
 
+    stores_by_code = {s["code"]: s for s in stores}
     ctx["by_store"] = {}
     for st in targets:
         months = [r["month"] for r in con.execute(
@@ -40,7 +41,8 @@ def gather(con, store=None, month=None):
 
         s = {"months_available": len(months),
              "range": f"{months[0]}〜{months[-1]}" if months else None,
-             "latest_month": latest, "focus_month": cur}
+             "latest_month": latest, "focus_month": cur,
+             "notes": stores_by_code.get(st, {}).get("notes") or None}
 
         if cur:
             row = con.execute(
@@ -116,6 +118,8 @@ def render(ctx, for_agent=None):
                    "python scripts/hpb/db_migrate.py を実行してください。")
     for st, s in ctx["by_store"].items():
         out.append(f"\n■ 店舗: {st}")
+        if s.get("notes"):
+            out.append(f"  ★店舗の前提: {s['notes']}")
         out.append(f"  KPI蓄積: {s['months_available']}ヶ月 ({s['range']})  最新月号: {s['latest_month']}")
         if s.get("focus_kpi"):
             k = s["focus_kpi"]

@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { Card, Empty } from "@/components/admin/board";
+import ChannelFindings from "@/components/admin/ChannelFindings";
+import { getChannelFindings } from "@/lib/admin/findings";
 import { getSearchConsoleData } from "@/lib/admin/searchconsole";
 
 export const dynamic = "force-dynamic";
@@ -19,7 +21,7 @@ export default async function SeoPage({
   const days = PERIODS.some((p) => String(p.days) === params.days)
     ? Number(params.days)
     : 28;
-  const sc = await getSearchConsoleData(days);
+  const [sc, findings] = await Promise.all([getSearchConsoleData(days), getChannelFindings(["seo"])]);
 
   return (
     <div className="space-y-6">
@@ -51,6 +53,8 @@ export default async function SeoPage({
           </div>
         </div>
       </div>
+
+      {findings.length > 0 && <ChannelFindings findings={findings} />}
 
       {!sc.available ? (
         <Card eyebrow="STATUS" title="未接続">

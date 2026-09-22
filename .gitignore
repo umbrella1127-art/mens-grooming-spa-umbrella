@@ -54,3 +54,6 @@ scripts/threads/logs/
 scripts/site/logs/
 scripts/improve/_work/
 scripts/threads/_work/
+
+# 作業用の一時ファイル（Salon Reportの抜き出しなど実数値を含むことがある。公開リポジトリなので絶対に入れない）
+scratch_*
