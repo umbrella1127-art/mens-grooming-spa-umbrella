@@ -60,6 +60,13 @@
 `improvement_proposals` に分けて入る（`0032_run_reflections.sql`）。③は点検担当（threads-caretaker）が毎朝、
 ④は知識整理（threads-librarian・週1）と戦略担当（hpb-strategist・月1）が読んで仕分ける。管理画面は `/admin/kpi/threads`・`/admin/kpi/hpb`。
 
+## 稼働タイムライン
+
+`/admin/activity`（管理画面タブ「稼働状況」）が、いま動いている担当・今日の時間割（予定と実際の実行の突き合わせ）・
+実行ツリー（工程→振り返り、HPB統括→担当）・直近48時間の出来事を60秒ごとに更新して出す。
+時間割の定義は `lib/admin/activity-build.ts` の `SCHEDULE`（定期実行の時刻を変えたらここも直す）。
+定期実行は開始時に `run_log.py --start` で `agent_runs` に status=running を書き、終了時に同じ行を更新する（`0035_activity_timeline.sql`）。
+
 ## サイト改善ループ（公開サイト自体を良くする）
 
 サイトの変更を「実験」として登録し、変更前後の同じ日数を比べて判定する。最重要KPIは line_click（訪問あたりの率で比較）。

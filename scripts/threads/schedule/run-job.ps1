@@ -29,6 +29,8 @@ function Invoke-Claude([string]$Step) {
 }
 
 "=== $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') job=$Job ===" | Out-File $log -Encoding utf8 -Append
+# 稼働タイムライン（/admin/activity）に「実行中」を出す。失敗しても本体は続ける
+& python scripts/threads/run_log.py --job $Job --start 2>&1 | Out-File $log -Encoding utf8 -Append
 $out = switch ($Job) {
     'research'      { Invoke-Claude 'research' }
     'validate'      { Invoke-Claude 'validate' }

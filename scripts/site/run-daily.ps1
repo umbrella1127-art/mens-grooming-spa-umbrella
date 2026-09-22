@@ -14,8 +14,11 @@ $env:PYTHONIOENCODING = 'utf-8'
 $OutputEncoding = [System.Text.Encoding]::UTF8
 
 "=== $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') site-daily ===" | Out-File $log -Encoding utf8 -Append
+& python scripts/threads/run_log.py --routine site:daily --start 2>&1 | Out-File $log -Encoding utf8 -Append
 $out = & python scripts/site/daily.py 2>&1
 $code = $LASTEXITCODE
 $out | Out-File $log -Encoding utf8 -Append
 "exit=$code" | Out-File $log -Encoding utf8 -Append
+# 業務日報（agent_runs）に残す（/admin/activity の時間割がこれを読む）
+& python scripts/threads/run_log.py --routine site:daily --exit ([int]$code) --log $log 2>&1 | Out-File $log -Encoding utf8 -Append
 exit $code
