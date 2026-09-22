@@ -1,5 +1,9 @@
 import Link from "next/link";
 import { Card, Empty } from "@/components/admin/board";
+import ChannelFindings from "@/components/admin/ChannelFindings";
+import SiteExperiments from "@/components/admin/SiteExperiments";
+import { getSiteExperiments } from "@/lib/admin/experiments";
+import { getChannelFindings } from "@/lib/admin/findings";
 import { getGa4Data } from "@/lib/admin/ga4";
 
 // GA4への外部fetchだけだと動的判定されずビルド時に固定化されてしまうため明示する
@@ -15,13 +19,17 @@ const PERIODS = [
 export default async function Ga4Page({
   searchParams,
 }: {
-  searchParams: Promise<{ days?: string }>;
+  searchParams: Promise<{ days?: string; exp?: string }>;
 }) {
   const params = await searchParams;
   const days = PERIODS.some((p) => String(p.days) === params.days)
     ? Number(params.days)
     : 30;
-  const ga4 = await getGa4Data(days);
+  const [ga4, findings, experiments] = await Promise.all([
+    getGa4Data(days),
+    getChannelFindings(["ga4"]),
+    getSiteExperiments(),
+  ]);
 
   return (
     <div className="space-y-6">
@@ -53,6 +61,10 @@ export default async function Ga4Page({
           </div>
         </div>
       </div>
+
+      {findings.length > 0 && <ChannelFindings findings={findings} />}
+
+      <SiteExperiments data={experiments} saved={params.exp === "saved"} />
 
       {!ga4.available ? (
         <Card eyebrow="STATUS" title="未接続">

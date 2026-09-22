@@ -53,6 +53,15 @@
 - ここで扱う実売上・掲載料などの数値は **公開サイト側のコード・seed・文言に絶対に転記しない**
   （サイトの未確定価格ルールとは別管理）
 
+## サイト改善ループ（公開サイト自体を良くする）
+
+サイトの変更を「実験」として登録し、変更前後の同じ日数を比べて判定する。最重要KPIは line_click（訪問あたりの率で比較）。
+
+- **毎日 04:30**: `scripts/site/run-daily.ps1` → `scripts/site/daily.py`（Windowsタスク `mensumbrella-site-daily`、登録は `scripts/site/register-task.ps1`）。
+  GA4（`scripts/site/ga4-daily.mjs`）→ `site_metrics_daily`（日×ページ）と `channel_metrics`(ga4, 月合計) に保存し、期間の終わった実験を判定してDiscordへ通知
+- **登録**: `/admin/ga4` の「サイト改善の実験」フォーム（`experiments` テーブル、`0031_site_experiments.sql`）。何を変えた・なぜ・どうなるはず・ページ・指標がないとDBが拒否する
+- 数が少ない（LINEクリック前後合計10件未満など）ときは勝ち負けを付けず期間を延長（最長28日）。採用／元に戻すの判断と作業は人が行う（自動で戻さない）
+
 ## Threads検証 → 公式ブログ化パイプライン
 
 30〜50代男性の悩みをリサーチし、Threadsに1日3投稿 → 最も反応が良かった1本のテーマだけを翌日ブログ記事にする。
