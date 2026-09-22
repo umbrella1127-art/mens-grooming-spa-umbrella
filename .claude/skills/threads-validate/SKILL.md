@@ -13,19 +13,39 @@ user-invocable: false
 2. `scripts/threads/persona.md`
 3. `python scripts/threads/tdb.py --context`（過去の勝者と、`knowledge source=threads` の「効いた型」も見る）
 
-## A. 前日の答え合わせ
+## A. 答え合わせ（T+1 = 昨日の投稿 ／ T+7 = 7日前の投稿）
 ```
 python scripts/threads/threads_api.py measure
 ```
-- その日の最高スコアが `is_winner`、その種ネタに `priority=true` が付く（アカウント未接続なら飛ばす）
-- 前日の各投稿の `result_note` に **なぜ伸びた／伸びなかったか** を1〜2文で書く（`predicted_note` と比べる）
+1回で両方を測る（アカウント未接続なら飛ばす）。それぞれ「その投稿より前の7日間に出した投稿の、同じ日数後の平均」と比べて
+判定が付く（ルールは `scripts/threads/judge.py`）:
+
+| 判定 | 意味 |
+|---|---|
+| 反応あり（win） | いいね・返信などが平均を上回った。T+1 はその日の最高が勝者→ブログ化候補。T+7 で初めて上回ったものも勝者に追加される |
+| 表示が伸びた（lead） | 反応は無いが、表示が平均の1.5倍以上 |
+| 平均並み（flat） / 表示が落ちた（lose） | 表示が平均の0.5倍超〜1.5倍未満 / 0.5倍以下 |
+| 比べる投稿が足りない（insufficient） | 前の7日間に3本未満。判定しない |
+
+予測（`predicted_metric` × `predicted_vs_baseline`）がある投稿には **予測どおり／一部当たり／予測と逆** が出る。
+
+- **T+1**: 昨日の各投稿の `result_note` に **なぜそうなったか** を1〜2文で書く（暫定。`predicted_note` と比べる）
   ```
   python scripts/threads/tdb.py "UPDATE threads_trials SET result_note='...' WHERE id=<ID>" --write
   ```
+- **T+7**: 7日前の各投稿の確定所見を `note` に1〜2文で書く。**T+1 から伸びたか・止まったか**も見る
+  ```
+  python scripts/threads/tdb.py "SELECT t.id, t.trial_date, t.slot, t.hook, t.predicted_note, s1.views v1, s7.views v7, s7.verdict, s7.prediction_hit FROM threads_trials t JOIN threads_trial_snapshots s7 ON s7.trial_id=t.id AND s7.days_after=7 LEFT JOIN threads_trial_snapshots s1 ON s1.trial_id=t.id AND s1.days_after=1 WHERE t.trial_date=(now() at time zone 'Asia/Tokyo')::date - 7" --format json
+  python scripts/threads/tdb.py "UPDATE threads_trial_snapshots SET note='...' WHERE trial_id=<ID> AND days_after=7" --write
+  ```
 - 勝者が無い日は「勝者なし」でよい。無理に選ばない
 
-## B. 学びを知識に残す（勝者が決まった日だけ）
-勝った投稿・負けた投稿から **型（フック・長さ・柱・年代）** を1行ずつ `knowledge` に書く。
+## B. 学びを知識に残す（T+7 の判定が出た投稿と、T+1 で勝者が決まった投稿）
+**知識に書くのは T+7 の確定判定が基本**（T+1 は暫定。T+1 の勝者だけは例外で書いてよい）。
+- 予測どおり（hit）かつ 反応あり・表示が伸びた → `Threadsで効いた型`
+- 予測と逆（miss）、または 表示が落ちた → `Threadsで外れた型`（なぜ外れたかを書く）
+- 平均並み・比べる投稿が足りない → 書かない
+型（フック・長さ・柱・年代・時間枠）ごとに1行ずつ `knowledge` に書く。
 - 既に同じ型の項目（`source='threads'`、同じ title）があれば **本文に日付付きで追記**（新規作成しない）
 - category は `Threadsで効いた型` または `Threadsで外れた型`
 ```
@@ -39,6 +59,10 @@ python scripts/threads/tdb.py "UPDATE knowledge SET body = body || E'\n2026-09-2
 - 素材は「未テストの新鮮ネタ」から3件。persona と pillar を偏らせず、同じ pillar を同じ日に重ねない
 - `knowledge` の「効いた型」があれば1本は寄せ、1本は別の型を試す（同じ型を3日続けない）
 - 1本ごとに `post_text`（**80〜200字**）・`hook`（型名）・`predicted_note`（伸びそうな指標と根拠）
+- さらに **測れる予測を2つ必須で付ける**（無いとDBが登録を拒否する）:
+  - `predicted_metric` … `views`（表示）か `reaction_score`（いいね・返信など）
+  - `predicted_vs_baseline` … 直近7日の平均と比べて `above`（1.2倍以上）／ `same` ／ `below`（0.8倍以下）
+  - 平均は `--context` の「直近7日の平均」を見る。T+1 と T+7 の両方でこの予測と答え合わせされる
 - 声はサロン公式・共感型。「〜ですよね」「実は多いです」。説教・断定・上から目線は禁止
 - サロンの宣伝は3本に1本まで。LINE誘導ではなく「月に一度、自分を整える。」の世界観で軽く
 - **理容室**であり美容室ではない。身だしなみ・コンディションの言葉で。限定・選別表現を使わない
@@ -50,7 +74,7 @@ python scripts/threads/tdb.py "UPDATE knowledge SET body = body || E'\n2026-09-2
 ## D. 検査して登録
 ```
 python scripts/threads/check_article.py --text "投稿文"     # NGなら書き直す
-python scripts/threads/tdb.py "INSERT INTO threads_trials (trial_date, slot, topic_id, post_text, hook, predicted_note) VALUES ((now() at time zone 'Asia/Tokyo')::date, 1, 12, '...', '問いかけ', '...')" --write
+python scripts/threads/tdb.py "INSERT INTO threads_trials (trial_date, slot, topic_id, post_text, hook, predicted_note, predicted_metric, predicted_vs_baseline) VALUES ((now() at time zone 'Asia/Tokyo')::date, 1, 12, '...', '問いかけ', '...', 'views', 'above')" --write
 ```
 **日付は必ず日本時間で書く。** SQL の `current_date` はUTCなので、朝9時前に実行すると1日前になる。
 今日すでに同じ slot があれば作り直さない（`unique(trial_date, slot)`）。

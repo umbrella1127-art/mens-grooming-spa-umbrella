@@ -4,7 +4,7 @@ import RunReflections from "@/components/admin/RunReflections";
 import { getReflections } from "@/lib/admin/reflections";
 import type { Stage, Tone } from "@/lib/admin/board";
 import { TEAM_AVATARS } from "@/lib/admin/team-avatars";
-import { getThreadsData, type RosterMember } from "@/lib/admin/threads";
+import { getThreadsData, type RosterMember, type ThreadsTrial, type TrialVerdict } from "@/lib/admin/threads";
 
 const SEVERITY_TONE: Record<"info" | "warning" | "critical", Tone> = {
   critical: "bad",
@@ -78,6 +78,31 @@ function Person({ m }: { m: RosterMember }) {
         <p className="mt-1 text-[11.5px] leading-relaxed text-greige">「{m.catchphrase}」</p>
       )}
       </div>
+    </div>
+  );
+}
+
+const VERDICT: Record<TrialVerdict, { label: string; tone: Tone }> = {
+  win: { label: "反応あり", tone: "ok" },
+  lead: { label: "表示が伸びた", tone: "ok" },
+  flat: { label: "平均並み", tone: "info" },
+  lose: { label: "表示が落ちた", tone: "bad" },
+  insufficient: { label: "比較対象不足", tone: "info" },
+};
+const HIT_LABEL = { hit: "予測どおり", partial: "一部当たり", miss: "予測と逆" } as const;
+
+/** T+7 の確定判定があればそれを、無ければ T+1 の暫定判定を出す */
+function TrialJudgement({ t }: { t: ThreadsTrial }) {
+  const snap = t.t7 ?? t.t1;
+  if (!snap?.verdict) return <span className="text-greige">—</span>;
+  const v = VERDICT[snap.verdict];
+  return (
+    <div className="flex flex-col items-start gap-0.5">
+      <Badge tone={v.tone}>
+        {t.t7 ? "確定" : "暫定"}・{v.label}
+      </Badge>
+      {snap.hit && <span className="text-[11px] text-greige">{HIT_LABEL[snap.hit]}</span>}
+      {t.t7?.note && <span className="text-[11px] text-greige">{t.t7.note}</span>}
     </div>
   );
 }
@@ -184,15 +209,16 @@ export default async function ThreadsKpiPage() {
               <Empty>実測はまだありません。投稿の翌朝6:00に反応を取り込みます。</Empty>
             ) : (
               <div className="overflow-x-auto">
-                <table className="w-full min-w-[720px] text-left text-[12.5px]">
+                <table className="w-full min-w-[820px] text-left text-[12.5px]">
                   <thead>
                     <tr className="border-b border-beige text-[10.5px] uppercase tracking-wide text-greige">
                       <th className="py-2 pr-3 font-semibold">日付</th>
                       <th className="py-2 pr-3 font-semibold">slot</th>
                       <th className="py-2 pr-3 font-semibold">状態</th>
                       <th className="py-2 pr-3 font-semibold">型</th>
-                      <th className="py-2 pr-3 font-semibold">表示</th>
-                      <th className="py-2 pr-3 font-semibold">スコア</th>
+                      <th className="py-2 pr-3 font-semibold">表示 T+1→T+7</th>
+                      <th className="py-2 pr-3 font-semibold">反応</th>
+                      <th className="py-2 pr-3 font-semibold">判定・予測</th>
                       <th className="py-2 pr-3 font-semibold">投稿文</th>
                     </tr>
                   </thead>
@@ -214,8 +240,14 @@ export default async function ThreadsKpiPage() {
                           )}
                         </td>
                         <td className="py-2 pr-3 align-top text-charcoal-light">{t.hook ?? "—"}</td>
-                        <td className="py-2 pr-3 align-top tabular-nums">{t.views ?? "—"}</td>
+                        <td className="py-2 pr-3 align-top tabular-nums">
+                          {t.t1?.views ?? t.views ?? "—"}
+                          {t.t7 && <span className="text-greige"> → {t.t7.views}</span>}
+                        </td>
                         <td className="py-2 pr-3 align-top tabular-nums">{t.score ?? "—"}</td>
+                        <td className="py-2 pr-3 align-top">
+                          <TrialJudgement t={t} />
+                        </td>
                         <td className="py-2 pr-3 align-top text-charcoal">
                           <span className="line-clamp-2">{t.postText}</span>
                           {t.resultNote && (

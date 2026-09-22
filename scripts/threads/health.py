@@ -11,7 +11,7 @@
   not_posted       … 投稿時刻を1時間以上過ぎても draft のまま（08:00/12:30/19:00）。前日以前3日分の draft も対象
                      （即時の検知と通知は watch.py が投稿時刻の後に行う）
   no_winner_streak … 直近3日以上、実測済みなのに勝者なし
-  unmeasured       … 前日分が posted のまま実測されていない（06:00以降）
+  unmeasured       … 前日分（T+1）または7日前の分（T+7）が実測されていない（06:00以降）
   stock_low        … 未テストの新鮮ネタが9件未満
   draft_stale      … ブログ下書き（content_drafts blog/pending）が3日以上放置
   run_error        … 直近48時間の agent_runs（threads:*）で error/partial
@@ -67,6 +67,13 @@ def run_checks(con):
                    "and measured_at is null", yday)[0]["n"]
     if now.hour >= 6 and unmeasured:
         add("unmeasured", "warning", f"前日（{yday}）の投稿 {unmeasured}本が未実測", {"date": str(yday)})
+    d7 = today - timedelta(days=7)
+    unmeasured7 = q("select count(*) n from threads_trials t where trial_date=%s and status='posted' "
+                    "and not exists (select 1 from threads_trial_snapshots s where s.trial_id=t.id and s.days_after=7)",
+                    d7)[0]["n"]
+    if now.hour >= 6 and unmeasured7:
+        add("unmeasured", "warning", f"7日前（{d7}）の投稿 {unmeasured7}本が T+7 未実測",
+            {"date": str(d7), "days_after": 7})
 
     days = q("select trial_date, bool_or(is_winner) won, count(*) filter (where measured_at is not null) measured "
              "from threads_trials where trial_date >= %s and trial_date < %s group by 1 order by 1 desc",

@@ -17,6 +17,18 @@ export interface ThreadsTrial {
   ageBand: string | null;
   pillar: string | null;
   resultNote: string | null;
+  t1: TrialSnapshot | null;
+  t7: TrialSnapshot | null;
+}
+
+export type TrialVerdict = "win" | "lead" | "flat" | "lose" | "insufficient";
+
+/** T+1 / T+7 の実測と判定（scripts/threads/judge.py） */
+export interface TrialSnapshot {
+  views: number;
+  verdict: TrialVerdict | null;
+  hit: "hit" | "partial" | "miss" | null;
+  note: string | null;
 }
 
 export interface ThreadsIssue {
@@ -69,6 +81,25 @@ export interface ThreadsData {
   roster: RosterMember[];
 }
 
+type SnapshotRow = {
+  days_after: number;
+  views: number | string;
+  verdict: string | null;
+  prediction_hit: string | null;
+  note: string | null;
+};
+
+function snapshotOf(rows: SnapshotRow[] | null | undefined, daysAfter: number): TrialSnapshot | null {
+  const s = (rows ?? []).find((x) => x.days_after === daysAfter);
+  if (!s) return null;
+  return {
+    views: Number(s.views),
+    verdict: s.verdict as TrialVerdict | null,
+    hit: s.prediction_hit as TrialSnapshot["hit"],
+    note: s.note,
+  };
+}
+
 export async function getThreadsData(): Promise<ThreadsData> {
   const supabase = await getServerClient();
   const since = new Date(Date.now() - 14 * 86400_000).toISOString().slice(0, 10);
@@ -82,7 +113,7 @@ export async function getThreadsData(): Promise<ThreadsData> {
       supabase
         .from("threads_trials")
         .select(
-          "id, trial_date, slot, status, hook, post_text, metrics, reaction_score, is_winner, topic_id, result_note",
+          "id, trial_date, slot, status, hook, post_text, metrics, reaction_score, is_winner, topic_id, result_note, threads_trial_snapshots(days_after, views, verdict, prediction_hit, note)",
         )
         .gte("trial_date", since)
         .order("trial_date", { ascending: false })
@@ -148,6 +179,8 @@ export async function getThreadsData(): Promise<ThreadsData> {
       ageBand: topic?.age_band ?? null,
       pillar: notes?.pillar ?? null,
       resultNote: r.result_note,
+      t1: snapshotOf(r.threads_trial_snapshots, 1),
+      t7: snapshotOf(r.threads_trial_snapshots, 7),
     };
   });
 

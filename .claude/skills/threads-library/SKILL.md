@@ -14,7 +14,7 @@ user-invocable: false
 
 ## 1. 材料を出す
 ```
-python scripts/threads/tdb.py "SELECT r.trial_date, r.slot, r.hook, r.reaction_score, r.is_winner, r.result_note, r.predicted_note, t.age_band, t.research_notes->>'pillar' pillar, t.research_notes->>'persona' persona, left(r.post_text,80) txt FROM threads_trials r LEFT JOIN threads_topics t ON t.id=r.topic_id WHERE r.measured_at IS NOT NULL AND r.trial_date >= current_date - 28 ORDER BY r.trial_date" --format json
+python scripts/threads/tdb.py "SELECT r.trial_date, r.slot, r.hook, r.reaction_score, r.is_winner, r.result_note, r.predicted_note, r.predicted_metric, r.predicted_vs_baseline, s1.views v1, s1.verdict verdict_t1, s7.views v7, s7.verdict verdict_t7, s7.prediction_hit hit_t7, s7.note note_t7, t.age_band, t.research_notes->>'pillar' pillar, t.research_notes->>'persona' persona, left(r.post_text,80) txt FROM threads_trials r LEFT JOIN threads_topics t ON t.id=r.topic_id LEFT JOIN threads_trial_snapshots s1 ON s1.trial_id=r.id AND s1.days_after=1 LEFT JOIN threads_trial_snapshots s7 ON s7.trial_id=r.id AND s7.days_after=7 WHERE r.measured_at IS NOT NULL AND r.trial_date >= (now() at time zone 'Asia/Tokyo')::date - 28 ORDER BY r.trial_date" --format json
 python scripts/threads/tdb.py "SELECT id, title, body, category, updated_at FROM knowledge WHERE source='threads' ORDER BY category, title" --format json
 ```
 
@@ -28,7 +28,9 @@ python scripts/reflect/reflect.py open --kind business --channel threads
 - まだ根拠が足りない案（同じ提案が3回未満・本数3未満）→ open のまま残す。翌週また読む
 
 ## 2. 集計する（自分で数える）
-- フック型別 / pillar 別 / persona 別に、本数・勝者数・平均スコアを出す
+- フック型別 / pillar 別 / persona 別 / 時間枠（slot）別に、本数・勝者数・平均スコアを出す
+- **判定は T+7 の確定（verdict_t7）を優先**する。T+7 が無い投稿（直近7日）は T+1 の暫定として別に数える
+- 予測の当たり率（hit_t7 の hit / partial / miss）も数える。外れ続ける予測の立て方は「外れた型」に書く
 - 本数が3未満の組み合わせは「まだ分からない」として扱う（断言しない）
 
 ## 3. 知識を整える

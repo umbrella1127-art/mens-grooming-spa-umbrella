@@ -18,7 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "hpb"))
 from hpb_db import connect  # noqa: E402
 
 # knowledge は threads-librarian / strategist が「効いた型・外れた型」を書く。pipeline_issues は caretaker が書く
-WRITABLE = {"threads_topics", "threads_trials", "pipeline_issues", "knowledge"}
+WRITABLE = {"threads_topics", "threads_trials", "threads_trial_snapshots", "pipeline_issues", "knowledge"}
 BAD = ("drop", "alter", "create", "truncate", "grant")
 
 
@@ -52,6 +52,15 @@ def context(con):
     print("== 直近7日の投稿")
     show(q("select trial_date, slot, status, reaction_score, is_winner, topic_id, left(post_text,40) txt "
            "from threads_trials where trial_date >= current_date - 7 order by trial_date desc, slot"), "t")
+    print("== 直近7日の平均（T+1。今日の予測 predicted_vs_baseline の比べる相手）")
+    show(q("select count(*) n, round(avg(s.views)) views, round(avg(s.reaction_score),1) score "
+           "from threads_trial_snapshots s join threads_trials t on t.id=s.trial_id where s.days_after=1 "
+           "and t.trial_date >= (now() at time zone 'Asia/Tokyo')::date - 7"), "t")
+    print("== T+7 の確定判定（直近14日）")
+    show(q("select t.trial_date, t.slot, t.hook, s1.views v1, s7.views v7, s7.verdict, s7.prediction_hit, "
+           "left(s7.note,40) note from threads_trial_snapshots s7 join threads_trials t on t.id=s7.trial_id "
+           "left join threads_trial_snapshots s1 on s1.trial_id=t.id and s1.days_after=1 "
+           "where s7.days_after=7 and s7.measured_at >= now() - interval '14 days' order by t.trial_date desc, t.slot"), "t")
     print("== ブログ化待ちの勝者（priority=true・未記事化）")
     show(q("select id, age_band, pain_keyword, title from threads_topics "
            "where priority and post_id is null and status <> 'closed' order by id"), "t")
