@@ -45,7 +45,8 @@ python scripts/threads/threads_api.py measure
 知識は **根拠（knowledge_evidence）を1投稿1行ずつ積む** だけにする。**採用・退役は知識整理担当の仕事なので、ここではしない**。
 T+1 の判定は暫定なので根拠にしない（T+1 の勝者も T+7 を待つ）。
 
-1. 投稿の型を決める。title は `<フック>×<柱>（<年代>・<時間枠>）` の形（例 `あるある共感×疲労・休息（40s・朝）`）
+1. 投稿の型を決める。title は `<フック>×<柱>（<年代>・<時間枠>）` の形（例 `あるある共感×疲労・休息（40s・朝）`）。
+   タグそのものの効き目は型に混ぜず、知識整理担当が週1でタグ別に集計する
 2. `--knowledge` で同じ型があるか探す（採用・保留とも）。**無ければ保留で作る**:
    ```
    python scripts/threads/tdb.py "INSERT INTO knowledge (title, body, category, source, kind, status) VALUES ('あるある共感×疲労・休息（40s・朝）', '2026-09-26: 初出。<T+7の結果を1行>', 'Threadsで効いた型', 'threads', 'pattern', 'candidate') RETURNING id" --write
@@ -73,6 +74,10 @@ T+1 の判定は暫定なので根拠にしない（T+1 の勝者も T+7 を待�
   - `predicted_metric` … `views`（表示）か `reaction_score`（いいね・返信など）
   - `predicted_vs_baseline` … 直近7日の平均と比べて `above`（1.2倍以上）／ `same` ／ `below`（0.8倍以下）
   - 平均は `--context` の「直近7日の平均」を見る。T+1 と T+7 の両方でこの予測と答え合わせされる
+- **トピックタグを1つ必須で付ける**（`topic_tag`。無いとDBが登録を拒否する）
+  - 選び方・候補・使わない言葉は `scripts/threads/tags.md`。本文に `#` を書かない
+  - `--context` の「タグ別の表示」を見て、伸びたタグは続け、3本に1本はまだ使っていないタグを試す
+  - `check_article.py --text` にはタグも本文の末尾に足して通す（禁止表現が無いか確かめる）
 - 声はサロン公式・共感型。「〜ですよね」「実は多いです」。説教・断定・上から目線は禁止
 - サロンの宣伝は3本に1本まで。LINE誘導ではなく「月に一度、自分を整える。」の世界観で軽く
 - **理容室**であり美容室ではない。身だしなみ・コンディションの言葉で。限定・選別表現を使わない
@@ -84,7 +89,7 @@ T+1 の判定は暫定なので根拠にしない（T+1 の勝者も T+7 を待�
 ## D. 検査して登録
 ```
 python scripts/threads/check_article.py --text "投稿文"     # NGなら書き直す
-python scripts/threads/tdb.py "INSERT INTO threads_trials (trial_date, slot, topic_id, post_text, hook, predicted_note, predicted_metric, predicted_vs_baseline) VALUES ((now() at time zone 'Asia/Tokyo')::date, 1, 12, '...', '問いかけ', '...', 'views', 'above')" --write
+python scripts/threads/tdb.py "INSERT INTO threads_trials (trial_date, slot, topic_id, post_text, hook, predicted_note, predicted_metric, predicted_vs_baseline, topic_tag) VALUES ((now() at time zone 'Asia/Tokyo')::date, 1, 12, '...', '問いかけ', '...', 'views', 'above', '40代の疲れ')" --write
 ```
 **日付は必ず日本時間で書く。** SQL の `current_date` はUTCなので、朝9時前に実行すると1日前になる。
 今日すでに同じ slot があれば作り直さない（`unique(trial_date, slot)`）。

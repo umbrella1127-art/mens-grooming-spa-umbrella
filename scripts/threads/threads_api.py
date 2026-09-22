@@ -53,10 +53,12 @@ def call(method, url, params):
         sys.exit(f"Threads API エラー {e.code}: {e.read().decode('utf-8', 'replace')[:400]}")
 
 
-def publish_text(text):
+def publish_text(text, topic_tag=None):
     tok, uid = creds()
-    c = call("POST", f"{BASE}/{uid}/threads",
-             {"media_type": "TEXT", "text": text, "access_token": tok})
+    params = {"media_type": "TEXT", "text": text, "access_token": tok}
+    if topic_tag:
+        params["topic_tag"] = topic_tag  # 1投稿に1つ。本文の外に付く（scripts/threads/tags.md）
+    c = call("POST", f"{BASE}/{uid}/threads", params)
     p = call("POST", f"{BASE}/{uid}/threads_publish",
              {"creation_id": c["id"], "access_token": tok})
     return p["id"]
@@ -65,7 +67,7 @@ def publish_text(text):
 def cmd_post_due(a):
     con = connect()
     day = a.date or datetime.now(JST).date().isoformat()
-    sql = "select id, slot, post_text from threads_trials where trial_date=%s and status='draft'"
+    sql = "select id, slot, post_text, topic_tag from threads_trials where trial_date=%s and status='draft'"
     args = [day]
     if a.slot:
         sql += " and slot=%s"
@@ -79,7 +81,7 @@ def cmd_post_due(a):
             print(f"[dry-run] slot{r['slot']}:\n{r['post_text']}\n")
             continue
         try:
-            pid = publish_text(r["post_text"])
+            pid = publish_text(r["post_text"], r["topic_tag"])
         except SystemExit as e:
             con.execute("update threads_trials set status='failed', result_note=%s where id=%s",
                         (str(e)[:300], r["id"]))
@@ -96,7 +98,8 @@ def cmd_post_due(a):
             link = call("GET", f"{BASE}/{pid}", {"fields": "permalink", "access_token": tok}).get("permalink", "")
         except SystemExit:
             pass
-        notify(f"✅ Threads slot{r['slot']} を投稿しました" + chr(10) + r["post_text"] + (chr(10) + link if link else ""), "post")
+        tag = f"（タグ: {r['topic_tag']}）" if r["topic_tag"] else ""
+        notify(f"✅ Threads slot{r['slot']} を投稿しました{tag}" + chr(10) + r["post_text"] + (chr(10) + link if link else ""), "post")
 
 
 def fetch_insights(tok, post_id):

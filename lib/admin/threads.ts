@@ -9,6 +9,7 @@ export interface ThreadsTrial {
   slot: number;
   status: string;
   hook: string | null;
+  topicTag: string | null;
   postText: string;
   views: number | null;
   score: number | null;
@@ -120,7 +121,7 @@ export async function getThreadsData(): Promise<ThreadsData> {
       supabase
         .from("threads_trials")
         .select(
-          "id, trial_date, slot, status, hook, post_text, metrics, reaction_score, is_winner, topic_id, result_note, threads_trial_snapshots(days_after, views, verdict, prediction_hit, note)",
+          "id, trial_date, slot, status, hook, topic_tag, post_text, metrics, reaction_score, is_winner, topic_id, result_note, threads_trial_snapshots(days_after, views, verdict, prediction_hit, note)",
         )
         .gte("trial_date", since)
         .order("trial_date", { ascending: false })
@@ -178,6 +179,7 @@ export async function getThreadsData(): Promise<ThreadsData> {
       slot: r.slot,
       status: r.status,
       hook: r.hook,
+      topicTag: r.topic_tag,
       postText: r.post_text,
       views: metrics?.views ?? null,
       score: r.reaction_score === null ? null : Number(r.reaction_score),

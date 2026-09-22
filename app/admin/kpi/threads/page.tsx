@@ -257,7 +257,10 @@ export default async function ThreadsKpiPage() {
                             </Badge>
                           )}
                         </td>
-                        <td className="py-2 pr-3 align-top text-charcoal-light">{t.hook ?? "—"}</td>
+                        <td className="py-2 pr-3 align-top text-charcoal-light">
+                          {t.hook ?? "—"}
+                          {t.topicTag && <span className="block text-[11px] text-greige">タグ: {t.topicTag}</span>}
+                        </td>
                         <td className="py-2 pr-3 align-top tabular-nums">
                           {t.t1?.views ?? t.views ?? "—"}
                           {t.t7 && <span className="text-greige"> → {t.t7.views}</span>}

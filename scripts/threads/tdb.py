@@ -52,12 +52,19 @@ def context(con):
            "where status='active' and priority=false and id not in "
            "(select topic_id from threads_trials where topic_id is not null) order by id"), "t")
     print("== 直近7日の投稿")
-    show(q("select trial_date, slot, status, reaction_score, is_winner, topic_id, left(post_text,40) txt "
+    show(q("select trial_date, slot, status, reaction_score, is_winner, topic_id, topic_tag, left(post_text,40) txt "
            "from threads_trials where trial_date >= current_date - 7 order by trial_date desc, slot"), "t")
     print("== 直近7日の平均（T+1。今日の予測 predicted_vs_baseline の比べる相手）")
     show(q("select count(*) n, round(avg(s.views)) views, round(avg(s.reaction_score),1) score "
            "from threads_trial_snapshots s join threads_trials t on t.id=s.trial_id where s.days_after=1 "
            "and t.trial_date >= (now() at time zone 'Asia/Tokyo')::date - 7"), "t")
+    print("== タグ別の表示（直近28日。今日のタグ選びに使う。scripts/threads/tags.md）")
+    show(q("select t.topic_tag, count(*) n, round(avg(s1.views)) v1, round(avg(s7.views)) v7, "
+           "count(*) filter (where s7.verdict in ('win','lead')) good7, count(*) filter (where s7.verdict='lose') bad7 "
+           "from threads_trials t left join threads_trial_snapshots s1 on s1.trial_id=t.id and s1.days_after=1 "
+           "left join threads_trial_snapshots s7 on s7.trial_id=t.id and s7.days_after=7 "
+           "where t.topic_tag is not null and t.status='posted' "
+           "and t.trial_date >= (now() at time zone 'Asia/Tokyo')::date - 28 group by 1 order by v1 desc nulls last"), "t")
     print("== T+7 の確定判定（直近14日）")
     show(q("select t.trial_date, t.slot, t.hook, s1.views v1, s7.views v7, s7.verdict, s7.prediction_hit, "
            "left(s7.note,40) note from threads_trial_snapshots s7 join threads_trials t on t.id=s7.trial_id "
