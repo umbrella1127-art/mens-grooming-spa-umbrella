@@ -61,5 +61,9 @@ python scripts/threads/threads_api.py post-due      # dry-run（内容表示の�
 ```
 `--live` は付けない。本番投稿はタスクスケジューラ（`scripts/threads/schedule/`）が時刻どおりに行う。
 
+## 振り返りを書く（完了報告の直前に必ず1回）
+`.claude/skills/run-reflection/SKILL.md` の手順で、`--channel threads --agent threads-strategist --run-ref threads:validate:<日本時間の日付>` として記録する。
+③ 仕組みの改善案と ④ 事業の改善案は分けて書く。無ければ `--no-system` / `--no-business`。
+
 ## F. 報告
 勝者（あれば）と理由、知識に書いた型、今日の3本の要約（persona・pillar・フック・予測）。

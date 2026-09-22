@@ -53,6 +53,13 @@
 - ここで扱う実売上・掲載料などの数値は **公開サイト側のコード・seed・文言に絶対に転記しない**
   （サイトの未確定価格ルールとは別管理）
 
+## 振り返り（4層）— 全エージェント共通
+
+担当は作業の最後、完了報告の直前に1回 `scripts/reflect/reflect.py add` で振り返りを書く（手順: `.claude/skills/run-reflection/SKILL.md`）。
+①成果 ②やったこと＋自己診断 は `run_reflections`、③仕組みの改善案（kind=system）と ④事業の改善案（kind=business）は
+`improvement_proposals` に分けて入る（`0032_run_reflections.sql`）。③は点検担当（threads-caretaker）が毎朝、
+④は知識整理（threads-librarian・週1）と戦略担当（hpb-strategist・月1）が読んで仕分ける。管理画面は `/admin/kpi/threads`・`/admin/kpi/hpb`。
+
 ## サイト改善ループ（公開サイト自体を良くする）
 
 サイトの変更を「実験」として登録し、変更前後の同じ日数を比べて判定する。最重要KPIは line_click（訪問あたりの率で比較）。

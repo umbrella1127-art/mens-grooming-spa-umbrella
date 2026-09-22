@@ -48,4 +48,5 @@ DBへは `python scripts/threads/tdb.py`（threads_topics / threads_trials の�
 ## 実行記録
 
 `agent_runs`（業務日報）は **スケジューラ（`run-job.ps1` → `run_log.py`）が1回ごとに書く**。担当は自分では書かない（二重に記録される）。
+その代わり、各担当は作業の最後に **振り返り（4層）** を `scripts/reflect/reflect.py` で1回書く（手順は `.claude/skills/run-reflection/SKILL.md`）。
 日付を扱うSQLは日本時間で書く: `(now() at time zone 'Asia/Tokyo')::date`（`current_date` はUTC）。

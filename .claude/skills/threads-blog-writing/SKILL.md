@@ -40,5 +40,9 @@ python scripts/threads/tdb.py "SELECT title, body FROM knowledge WHERE source='t
    ```
    posts に下書きで入り、Discordに承認依頼が飛ぶ。承認はオーナーの判断
 
+## 振り返りを書く（完了報告の直前に必ず1回）
+`.claude/skills/run-reflection/SKILL.md` の手順で、`--channel threads --agent threads-blog-writer --run-ref threads:blog:<日本時間の日付>` として記録する。
+③ 仕組みの改善案と ④ 事業の改善案は分けて書く。無ければ `--no-system` / `--no-business`。
+
 ## 4. 報告
 記事タイトル・想定読者（persona）・「要確認」が出た項目・保存結果。

@@ -44,5 +44,9 @@ python scripts/threads/tdb.py "INSERT INTO threads_topics (title, age_band, pain
 ```
 シングルクォートは `''` でエスケープ。登録後 `--context` で件数を確かめる。
 
+## 振り返りを書く（完了報告の直前に必ず1回）
+`.claude/skills/run-reflection/SKILL.md` の手順で、`--channel threads --agent threads-researcher --run-ref threads:research:<日本時間の日付>` として記録する。
+③ 仕組みの改善案と ④ 事業の改善案は分けて書く。無ければ `--no-system` / `--no-business`。
+
 ## 5. 報告
 登録件数、persona 別・pillar 別の内訳、拾った悩みキーワードの一覧、要確認事項。

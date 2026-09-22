@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Badge, Card, Empty } from "@/components/admin/board";
+import RunReflections from "@/components/admin/RunReflections";
 import { getHpbData } from "@/lib/admin/hpb";
+import { getReflections } from "@/lib/admin/reflections";
 
 const SEVERITY_TONE = {
   critical: "bad",
@@ -17,7 +19,7 @@ const STATUS_LABEL: Record<string, string> = {
 };
 
 export default async function HpbPage() {
-  const hpb = await getHpbData();
+  const [hpb, reflections] = await Promise.all([getHpbData(), getReflections("hpb")]);
 
   return (
     <div className="space-y-6">
@@ -175,6 +177,8 @@ export default async function HpbPage() {
               </ul>
             )}
           </Card>
+
+          <RunReflections data={reflections} />
         </>
       )}
     </div>

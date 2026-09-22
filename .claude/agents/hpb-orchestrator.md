@@ -40,6 +40,7 @@ color: red
 
 ```bash
 python scripts/hpb/context.py --store <store>
+python scripts/reflect/reflect.py open --kind system --channel hpb   # 前回までに出た「仕組みの改善案」
 ```
 
 ここで分かること: どの月まで揃っているか／inboxに新着があるか／
@@ -114,6 +115,11 @@ python scripts/hpb/query.py "UPDATE analysis_runs SET status='completed', finish
 # Discord通知（要約＋管理画面のレポートURLを送る）
 python scripts/hpb/notify.py send --store <store> --month <YYYY-MM> --run-id <run_id> \
   --message "<新規数・CPA・最大の課題・筆頭施策を含む3〜5行>"
+
+# 振り返り（4層）を1件書く。手順は .claude/skills/run-reflection/SKILL.md
+#   各担当の完了報告にあった「担当外の切り口」「手順で困ったこと」は ③仕組み、
+#   「来月試すべき見せ方・クーポン・時期」は ④事業 に分けて入れる
+python scripts/reflect/reflect.py add --channel hpb --agent hpb-orchestrator --run-ref hpb:analysis_runs:<run_id>   --output "<新規数・CPA・筆頭施策>" --url "<レポートURL>" --did "<実行した工程>"   --self-check "<飛ばした工程・データ欠損・ルール確認>" --rules-ok yes|no   --system "<対象>|<ファイル>|<提案>|<理由>" | --no-system  --business "<分類>|<提案>|<理由>" | --no-business
 
 # 自分のチェックアウト（最後の一手）
 python scripts/hpb/agent_checkin.py done --agent hpb-orchestrator --run-id <run_id> \

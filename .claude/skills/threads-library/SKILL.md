@@ -18,6 +18,15 @@ python scripts/threads/tdb.py "SELECT r.trial_date, r.slot, r.hook, r.reaction_s
 python scripts/threads/tdb.py "SELECT id, title, body, category, updated_at FROM knowledge WHERE source='threads' ORDER BY category, title" --format json
 ```
 
+## 1.5 事業の改善案を読む（振り返り④）
+各担当が日々出した「事業の改善案」を週1回ここで仕分ける。
+```
+python scripts/reflect/reflect.py open --kind business --channel threads
+```
+- 手順2の集計で裏付けられた案 → 知識に反映し `resolve --id N --status accepted --by threads-librarian --note "knowledge「<title>」に反映"`
+- データで否定された案 → `resolve --id N --status rejected --by threads-librarian --note "<n本中m本で逆の結果>"`（消さずに理由を残す）
+- まだ根拠が足りない案（同じ提案が3回未満・本数3未満）→ open のまま残す。翌週また読む
+
 ## 2. 集計する（自分で数える）
 - フック型別 / pillar 別 / persona 別に、本数・勝者数・平均スコアを出す
 - 本数が3未満の組み合わせは「まだ分からない」として扱う（断言しない）
@@ -35,6 +44,10 @@ python scripts/threads/tdb.py "DELETE FROM knowledge WHERE id='<uuid>' AND sourc
 
 ## 4. 週次サマリーを1本残す
 category `Threadsで効いた型`、title `週次まとめ YYYY-MM-DD`、body に「今週の結論3行」「来週試す型1つ」「データが足りないこと」。
+
+## 振り返りを書く（完了報告の直前に必ず1回）
+`.claude/skills/run-reflection/SKILL.md` の手順で、`--channel threads --agent threads-librarian --run-ref threads:library:<日本時間の日付>` として記録する。
+③ 仕組みの改善案と ④ 事業の改善案は分けて書く。無ければ `--no-system` / `--no-business`。
 
 ## 5. 報告
 Discord に短く送る（`python scripts/threads/threads_notify.py --kind learn --text "📚 Threads 週次の学び (MM/DD)\n..."`）。

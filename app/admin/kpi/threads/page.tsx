@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { Badge, Card, Empty, Flow } from "@/components/admin/board";
+import RunReflections from "@/components/admin/RunReflections";
+import { getReflections } from "@/lib/admin/reflections";
 import type { Stage, Tone } from "@/lib/admin/board";
 import { TEAM_AVATARS } from "@/lib/admin/team-avatars";
 import { getThreadsData, type RosterMember } from "@/lib/admin/threads";
@@ -81,7 +83,7 @@ function Person({ m }: { m: RosterMember }) {
 }
 
 export default async function ThreadsKpiPage() {
-  const d = await getThreadsData();
+  const [d, reflections] = await Promise.all([getThreadsData(), getReflections("threads")]);
   const today = new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Tokyo" }).format(new Date());
   const todays = d.trials.filter((t) => t.trialDate === today);
   const past = d.trials.filter((t) => t.trialDate !== today);
@@ -268,6 +270,8 @@ export default async function ThreadsKpiPage() {
               )}
             </Card>
           </div>
+
+          <RunReflections data={reflections} />
 
           <Card
             eyebrow="KNOWLEDGE"

@@ -18,7 +18,7 @@ $env:PYTHONIOENCODING = 'utf-8'
 $OutputEncoding = [System.Text.Encoding]::UTF8
 $tools = @(
     'Agent', 'Read', 'Write', 'Grep', 'Glob', 'WebSearch', 'WebFetch',
-    'Bash(python scripts/threads/*)', 'Bash(mkdir *)'
+    'Bash(python scripts/threads/*)', 'Bash(python scripts/reflect/*)', 'Bash(mkdir *)'
 )
 
 function Invoke-Claude([string]$Step) {

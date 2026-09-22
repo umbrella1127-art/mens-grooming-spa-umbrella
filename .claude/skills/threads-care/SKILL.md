@@ -30,14 +30,30 @@ user-invocable: false
 | run_error | ログを読んで原因を1行にまとめる。ワークスペース信頼の警告は無視 | スクリプトの修正 |
 | rule_violation | 該当の trial を記録し、報告で削除を提案 | Threads上の投稿削除 |
 
+## 1.5 仕組みの改善案を読む（振り返り③）
+各担当が振り返りで出した「仕組みの改善案」を毎朝ここで仕分ける。これが次回すぐ反映されるための入口。
+```
+python scripts/reflect/reflect.py open --kind system
+```
+案ごとに次のどれかにする（**スクリプト・手順書・担当の定義を自分で書き換えてはいけない**。書き換えるのはオーナーかオーナーが起動した修正作業）:
+| 状態 | こうする |
+|---|---|
+| 同じ案が既に reported / 状況が解消済み / 絶対ルールに触れる | `resolve --id N --status rejected --by threads-caretaker --note "<理由>"` |
+| 直す価値がある | 報告（手順3）の「直したほうがいいところ」に1行で載せ、`resolve --id N --status reported --by threads-caretaker` |
+同じ提案が別の日にも出ている（`open` の表示で件数が分かる）ものは優先度を上げて報告する。
+
 ## 2. 記録する
 ```
 python scripts/threads/tdb.py "INSERT INTO pipeline_issues (kind, severity, title, detail, evidence, action_taken) VALUES ('not_posted','critical','...','...','{\"slot\":1}', 'refresh-token を実行。再投稿は未実施')" --write
 python scripts/threads/tdb.py "UPDATE pipeline_issues SET status='fixed', resolved_at=now(), resolve_note='...' WHERE id=<ID>" --write
 ```
 
+## 振り返りを書く（完了報告の直前に必ず1回）
+`.claude/skills/run-reflection/SKILL.md` の手順で、`--channel threads --agent threads-caretaker --run-ref threads:care:<日本時間の日付>` として記録する。
+③ 仕組みの改善案と ④ 事業の改善案は分けて書く。無ければ `--no-system` / `--no-business`。
+
 ## 3. 報告する
-critical か warning が1件でもあれば Discord に送る（info だけなら送らない）:
+critical か warning が1件でもあるか、手順1.5で reported にした改善案があれば Discord に送る（info だけなら送らない）。改善案は「直したほうがいいところ:」として1件1行で書く:
 ```
 python scripts/threads/threads_notify.py --kind care --text "🩺 Threads基盤の点検 (MM/DD)\n・[critical] ...\n・[warning] ...\n直したこと: ...\nお願い: ..."
 ```

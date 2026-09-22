@@ -61,6 +61,9 @@ def context(con):
     print("== 直近の実行記録（agent_runs threads:*）")
     show(q("select ran_at, routine, status, left(summary,60) s from agent_runs "
            "where routine like 'threads:%' order by ran_at desc limit 8"), "t")
+    print("== 未処理の改善案（振り返り③仕組み / ④事業。詳細は reflect.py open）")
+    show(q("select kind, status, count(*) n from improvement_proposals "
+           "where channel='threads' and status in ('open','reported') group by 1,2 order by 1,2"), "t")
     print("== Threadsの知識（knowledge source=threads）")
     show(q("select id, category, title, updated_at::date d from knowledge where source='threads' "
            "order by updated_at desc limit 10"), "t")

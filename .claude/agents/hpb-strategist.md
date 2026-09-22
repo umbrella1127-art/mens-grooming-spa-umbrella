@@ -125,6 +125,16 @@ python scripts/hpb/query.py "SELECT agent, category, severity, title, detail, ev
 分析担当・コンテンツ分析担当の所見を統合する。単独では小さく見える所見が
 組み合わさると大きな打ち手になることがあるので、必ず横断して考える。
 
+### 2.5 これまでの「事業の改善案」を読む（振り返り④）
+
+```bash
+python scripts/reflect/reflect.py open --kind business --channel hpb
+```
+
+各担当が過去の実行で出した事業の改善案。今月の所見で裏付けられたものは採点の候補に加え、
+戦略に採用したら `resolve --id N --status accepted --by hpb-strategist --note "strategies #<id> に採用"`、
+データで否定されたら `--status rejected --note "<理由>"`。根拠がまだ無いものは open のまま残す。
+
 ### 3. 採用案を戦略として確定する（3〜5個）
 
 **必ずパネルが出した案から選ぶ。** 扱われていない論点があれば、
