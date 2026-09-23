@@ -15,6 +15,7 @@
   stock_low        … 未テストの新鮮ネタが9件未満
   draft_stale      … ブログ下書き（content_drafts blog/pending）が3日以上放置
   run_error        … 直近48時間の agent_runs（threads:*）で error/partial
+  run_stuck        … 直近48時間の agent_runs（threads:*）で running のまま2時間以上（途中で止まった疑い）
   rule_violation   … 投稿済み本文が今の禁止表現チェックに引っかかる（ルールを後から強めた場合）
   open_issues      … pipeline_issues の未解決件数
 """
@@ -99,10 +100,18 @@ def run_checks(con):
             {"draft_ids": [str(s["id"]) for s in stale]})
 
     runs = q("select routine, status, summary, ran_at from agent_runs where routine like 'threads:%%' "
-             "and ran_at > now() - interval '48 hours' and status <> 'ok' order by ran_at desc")
+             "and ran_at > now() - interval '48 hours' and status not in ('ok', 'running') order by ran_at desc")
     for r in runs:
         add("run_error", "critical" if r["status"] == "error" else "warning",
             f"{r['routine']} が {r['status']}（{r['ran_at']:%m/%d %H:%M}）", {"summary": r["summary"]})
+    # running は「今まさに実行中」なので異常ではない（点検が自分自身を拾ってしまう）。
+    # 2時間を過ぎても running のままのものだけ、途中で止まった疑いとして拾う
+    stuck = q("select routine, summary, ran_at from agent_runs where routine like 'threads:%%' "
+              "and status='running' and ran_at > now() - interval '48 hours' "
+              "and ran_at < now() - interval '2 hours' order by ran_at desc")
+    for r in stuck:
+        add("run_stuck", "warning", f"{r['routine']} が running のまま2時間以上（{r['ran_at']:%m/%d %H:%M}）",
+            {"summary": r["summary"], "started_at": r["ran_at"].isoformat()})
 
     posted = q("select id, trial_date, slot, post_text from threads_trials where status='posted' "
                "and trial_date >= %s", today - timedelta(days=14))
