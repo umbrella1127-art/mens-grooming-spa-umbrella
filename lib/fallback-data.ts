@@ -5,9 +5,10 @@
 import type { Faq, ImageSlot, Menu, Post, Settings } from "./types";
 
 export const fallbackSettings: Settings = {
+  fv_eyebrow: "前橋の男性専用グルーミングサロン｜理容室 × ヘッドスパ",
   fv_copy_main: "頑張る男の為の休息地。",
   fv_copy_sub:
-    "極上ヘッドスパ × 肌ケアで、\n仕事の疲れも、見た目の年齢サインも、\nまとめてゼロリセット。",
+    "カット・シェービングの理容室に、極上ヘッドスパとフェイシャルを。\n仕事の疲れも、見た目の変化も、ひとつの場所で。",
   cta_primary_label: "LINEで相談・予約",
   cta_sub_label: "予約前のご相談だけでも大丈夫です。",
   line_url: "https://lin.ee/PLACEHOLDER",

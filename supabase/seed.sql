@@ -5,8 +5,9 @@
 -- ========== site_settings ==========
 insert into site_settings (key, value, label, group_name, input_type, sort_order) values
 -- FV（ファーストビュー）
+('fv_eyebrow',     '{"text": "前橋の男性専用グルーミングサロン｜理容室 × ヘッドスパ"}', 'アイキャッチ（何の店か一言で）', 'fv', 'text', 0),
 ('fv_copy_main',   '{"text": "頑張る男の為の休息地。"}', 'トップのキャッチコピー（メイン）', 'fv', 'textarea', 1),
-('fv_copy_sub',    '{"text": "極上ヘッドスパ × 肌ケアで、\n仕事の疲れも、見た目の年齢サインも、\nまとめてゼロリセット。"}', 'トップのキャッチコピー（サブ）', 'fv', 'textarea', 2),
+('fv_copy_sub',    '{"text": "カット・シェービングの理容室に、極上ヘッドスパとフェイシャルを。\n仕事の疲れも、見た目の変化も、ひとつの場所で。"}', 'トップのキャッチコピー（サブ）', 'fv', 'textarea', 2),
 -- CTA
 ('cta_primary_label', '{"text": "LINEで相談・予約"}', 'CTAボタンの文言', 'cta', 'text', 1),
 ('cta_sub_label',     '{"text": "予約前のご相談だけでも大丈夫です。"}', 'CTAの補足文言', 'cta', 'text', 2),

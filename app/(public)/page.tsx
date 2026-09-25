@@ -39,9 +39,40 @@ const FOR_YOU_POINTS = [
   "美容には詳しくないけれど、今より少しかっこよくなりたい",
 ];
 
+const HERO_SERVICE_TAGS = ["HEAD SPA", "FACIAL", "SHAVING", "HAIR CUT"];
+
+const SIGNATURE_CARE = [
+  {
+    imageKey: "head_spa_hero",
+    en: "HEAD SPA",
+    title: "ヘッドスパ",
+    body: "頭皮を整え、脳疲労までほどく、umbrellaの中心にあるケア。",
+    href: "/menu/head-spa",
+  },
+  {
+    imageKey: "facial_hero",
+    en: "FACIAL",
+    title: "フェイシャル",
+    body: "肌を測ってから整える、年齢サインに向き合うケア。",
+    href: "/menu/facial",
+  },
+  {
+    imageKey: "shaving_hero",
+    en: "SHAVING",
+    title: "シェービング",
+    body: "顔剃りで、清潔感と肌のコンディションを同時に整える。",
+    href: "/menu/shaving",
+  },
+  {
+    imageKey: "owner_cutting",
+    en: "HAIR CUT",
+    title: "カット",
+    body: "身だしなみの基本を、丁寧なカットで。",
+    href: "/menu/first-grooming",
+  },
+] as const;
+
 const OTHER_CARE = [
-  { href: "/menu/facial", title: "フェイシャル", body: "肌を測って、整える" },
-  { href: "/menu/shaving", title: "シェービング", body: "身だしなみを整える" },
   { href: "/menu/hair-growth", title: "育毛", body: "頭皮と向き合う集中ケア" },
   {
     href: "/menu/inner-beauty",
@@ -83,12 +114,25 @@ export default async function TopPage() {
         )}
         <Container className="relative pt-24 pb-16 md:pb-20">
           <FadeIn>
+            <p className="mb-4 text-xs tracking-[0.15em] text-beige md:text-sm">
+              {settings.fv_eyebrow}
+            </p>
             <h1 className="mb-6 whitespace-pre-line text-3xl leading-relaxed md:text-5xl md:leading-relaxed">
               {settings.fv_copy_main}
             </h1>
-            <p className="mb-10 max-w-xl text-sm text-beige md:text-base">
+            <p className="mb-6 max-w-xl whitespace-pre-line text-sm text-beige md:text-base">
               {settings.fv_copy_sub}
             </p>
+            <ul className="mb-10 flex flex-wrap gap-2">
+              {HERO_SERVICE_TAGS.map((tag) => (
+                <li
+                  key={tag}
+                  className="rounded-sm border border-beige/50 px-3 py-1 text-[11px] tracking-[0.15em] text-beige"
+                >
+                  {tag}
+                </li>
+              ))}
+            </ul>
             <LineCtaLink
               href={settings.line_url}
               ctaType="line_hero"
@@ -101,10 +145,6 @@ export default async function TopPage() {
           </FadeIn>
         </Container>
       </section>
-
-      {isCampaignActive() && (
-        <CampaignBanner settings={settings} image={images.campaign_facial} />
-      )}
 
       {/* ③ 共感 */}
       <section className="py-16 md:py-24">
@@ -190,6 +230,52 @@ export default async function TopPage() {
         </Container>
       </section>
 
+      {/* ④' 主力4サービス（ヘッドスパ・フェイシャル・シェービング・カット） */}
+      <section className="bg-paper-dark py-16 md:py-24">
+        <Container>
+          <SectionHeading en="Signature Care">
+            umbrellaの、4つの整え方。
+          </SectionHeading>
+          <FadeIn>
+            <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-4">
+              {SIGNATURE_CARE.map((care) => {
+                const image = images[care.imageKey];
+                return (
+                  <Link
+                    key={care.en}
+                    href={care.href}
+                    className="group block overflow-hidden rounded-sm border border-beige bg-paper transition-colors hover:border-brown"
+                  >
+                    {image && (
+                      <div className="relative aspect-[4/3] overflow-hidden">
+                        <Image
+                          src={image.url}
+                          alt={image.alt}
+                          fill
+                          sizes="(min-width: 768px) 25vw, 50vw"
+                          className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                      </div>
+                    )}
+                    <div className="p-5">
+                      <p className="mb-1 text-[11px] tracking-[0.25em] text-brown">
+                        {care.en}
+                      </p>
+                      <p className="mb-2 font-serif-jp text-base text-ink group-hover:text-brown">
+                        {care.title}
+                      </p>
+                      <p className="text-xs leading-relaxed text-greige">
+                        {care.body}
+                      </p>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          </FadeIn>
+        </Container>
+      </section>
+
       {/* ⑤ ヘッドスパ */}
       <section className="py-16 md:py-24">
         <Container>
@@ -232,6 +318,10 @@ export default async function TopPage() {
           </FadeIn>
         </Container>
       </section>
+
+      {isCampaignActive() && (
+        <CampaignBanner settings={settings} image={images.campaign_facial} />
+      )}
 
       {/* ⑥ 初回3コース */}
       <section className="bg-paper-dark py-16 md:py-24">
@@ -397,7 +487,7 @@ export default async function TopPage() {
         <Container>
           <SectionHeading en="Care Menu">その他のケア</SectionHeading>
           <FadeIn>
-            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-4">
               {OTHER_CARE.map((care) => (
                 <Link
                   key={care.title}
