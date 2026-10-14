@@ -67,7 +67,10 @@ T+1 の判定は暫定なので根拠にしない（T+1 の勝者も T+7 を待�
 断言しない。「今のところ」「n回中m回」のように、根拠の数を添える。
 
 ## C. 今日の3本を作る
-- 素材は「未テストの新鮮ネタ」から3件。persona と pillar を偏らせず、同じ pillar を同じ日に重ねない
+- **まず井上さんのメモ由来（`threads_topics.source='owner'`）で未使用の在庫を確認する。1件でもあれば、
+  最も古いもの1件を必ず3本のうち1本に使う**（無ければ通常どおり全て通常ネタでよい）。声のルール・写真の扱いは
+  `.claude/skills/threads-blog-rules/SKILL.md` の「井上さん本人のメモ由来の投稿」を見る（一人称OK・断定禁止は変わらず）
+- 残り（通常は2本、owner在庫が無ければ3本）は「未テストの新鮮ネタ」から。persona と pillar を偏らせず、同じ pillar を同じ日に重ねない
 - `knowledge` の「効いた型」があれば1本は寄せ、1本は別の型を試す（同じ型を3日続けない）
 - 1本ごとに `post_text`（**80〜200字**）・`hook`（型名）・`predicted_note`（伸びそうな指標と根拠）
 - さらに **測れる予測を2つ必須で付ける**（無いとDBが登録を拒否する）:
@@ -94,15 +97,29 @@ python scripts/threads/tdb.py "INSERT INTO threads_trials (trial_date, slot, top
 **日付は必ず日本時間で書く。** SQL の `current_date` はUTCなので、朝9時前に実行すると1日前になる。
 今日すでに同じ slot があれば作り直さない（`unique(trial_date, slot)`）。
 
+**井上さんのメモ由来の topic（source='owner'）を使うときだけ**、上のINSERTを次のように変える:
+- `status` に明示的に `'pending_approval'` を入れる（省略すると既定の `'draft'` になり、承認なしで投稿されてしまう）
+- topicの `research_notes->>'image_urls'` に画像があれば、その1枚目を `image_url` 列に入れる（無ければ省略してよい）
+```
+python scripts/threads/tdb.py "INSERT INTO threads_trials (trial_date, slot, topic_id, post_text, hook, predicted_note, predicted_metric, predicted_vs_baseline, topic_tag, status, image_url) VALUES ((now() at time zone 'Asia/Tokyo')::date, 1, 12, '...', '問いかけ', '...', 'views', 'above', '40代の疲れ', 'pending_approval', 'https://.../owner-notes/....jpg') RETURNING id" --write
+```
+登録できたら、返ってきた `id` で承認依頼を送る（必ず実行する。忘れると井上さんに届かず、そのまま投稿されずに終わる）:
+```
+python scripts/threads/owner_notes.py request-approval --trial-id <上のid>
+```
+
 ## E. 投稿は自分でしない
 ```
 python scripts/threads/threads_api.py post-due      # dry-run（内容表示のみ）で確認
 ```
 `--live` は付けない。本番投稿はタスクスケジューラ（`scripts/threads/schedule/`）が時刻どおりに行う。
+**`pending_approval` の投稿は dry-run の一覧に出ない**（`post-due` は `status='draft'` だけを見る）。
+井上さんの承認（Discordボタン or `/admin/approvals`）で `draft` に変わって初めて対象になる。却下されると `skipped` になり投稿されない。
 
 ## 振り返りを書く（完了報告の直前に必ず1回）
 `.claude/skills/run-reflection/SKILL.md` の手順で、`--channel threads --agent threads-strategist --run-ref threads:validate:<日本時間の日付>` として記録する。
 ③ 仕組みの改善案と ④ 事業の改善案は分けて書く。無ければ `--no-system` / `--no-business`。
 
 ## F. 報告
-勝者（あれば）と理由、知識に書いた型、今日の3本の要約（persona・pillar・フック・予測）。
+勝者（あれば）と理由、知識に書いた型、今日の3本の要約（persona・pillar・フック・予測）、
+井上さんのメモを使ったか（使った場合は承認依頼を送ったこと）。

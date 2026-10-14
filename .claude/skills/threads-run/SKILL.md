@@ -17,6 +17,11 @@ user-invocable: true
 
 `threads-orchestrator`（宮下 律）に委譲する。引数があればその工程だけを指示に含める。
 
+## Bash の打ち方（定期実行は無人。許可に合わない形は確認なしで拒否される）
+- 担当（統括も含む）は `python scripts/threads/…` と `python scripts/reflect/…` を**1コマンドずつ、この形のまま**打つ
+- `cd … &&`・パイプ（`| python -c` 等）・`python -c`・`$(…)`・複数コマンドの連結は使わない。JSON が欲しいときは `tdb.py` の出力をそのまま読む
+- それでも拒否されたら、別の方法で回避せず、打ったコマンド文字列をそのまま報告して止まる
+
 ## 事前確認
 - Supabase に `0029_threads_pipeline.sql` と `0030_threads_ops.sql` が適用済みか（未適用なら `tdb.py` が失敗する。適用を依頼して止まる）
 - **実投稿（`--live`）はここでは行わない**。本番投稿はタスクスケジューラ（`scripts/threads/schedule/`）の仕事

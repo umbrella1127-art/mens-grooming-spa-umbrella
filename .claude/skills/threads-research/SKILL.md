@@ -14,9 +14,28 @@ user-invocable: false
 3. `python scripts/threads/tdb.py --context`
 4. `python scripts/threads/tdb.py --knowledge`（知識。**採用だけを型として使う**。保留は仮説、退役は理由を見て繰り返さない）
 
+## 0.5 井上さんの記録メモを必ず topics化する（在庫が9件以上でも毎回行う）
+`--context` の「井上さんのメモ（owner_notes・未使用）」を見る。1件ごとに、Web検索の種ネタと同じ要領で
+`threads_topics` に変換する。**在庫の9件しきい値とは無関係に、毎回すべて処理する**（これが最優先の材料のため）。
+
+- `pain_keyword` はメモの言葉をできるだけそのまま使う（言い換えすぎない）
+- `age_band` / `pillar` / `persona` はメモの内容から判断する（迷ったら p47・40s でよい）
+- `material_text` にメモの内容を要約して入れる。事実として使えない（確認できない）部分は落とす
+- `research_notes` に `{"persona":"...","pillar":"...","source":"owner","owner_note_id":<owner_notesのid>}` を入れる
+- INSERT時に `source='owner'` を明示する（既定は 'research' なので、ここだけ明示しないと通常のリサーチ由来と区別できない）:
+  ```
+  python scripts/threads/tdb.py "INSERT INTO threads_topics (title, age_band, pain_keyword, angle, material_text, research_notes, source) VALUES ('...','40s','...','...','...','{\"persona\":\"p47\",\"pillar\":\"疲労・休息\",\"source\":\"owner\",\"owner_note_id\":12}','owner') RETURNING id" --write
+  ```
+- 変換したら、そのメモを使用済みにする（topic_id を紐づけて status を進める）:
+  ```
+  python scripts/threads/tdb.py "UPDATE owner_notes SET status='used', topic_id=<新しいtopics.id> WHERE id=<owner_notesのid>" --write
+  ```
+- 写真つきのメモ（`image_urls` が入っている）は、そのURLを `research_notes` に `"image_urls":[...]` として引き継ぐ（検証担当が投稿に使う）
+- 内容が薄すぎて種ネタにできない・意味が取れない場合だけ `status='skipped'` にし、理由を報告に書く（勝手に無視しない）
+
 ## 1. 在庫を数える
-「未テストの新鮮ネタ」（`--context` の2番目の表）が **全体で9件未満** のときだけ補充する。
-9件以上なら何もせず「在庫あり・補充なし」と報告して終わる。
+「未テストの新鮮ネタ」（`--context` の2番目の表）が **全体で9件未満** のときだけ、Web検索での補充を行う。
+9件以上なら（0.5の処理は済ませたうえで）「在庫あり・補充なし」と報告して終わる。
 補充するときは、既存在庫の persona / pillar の偏りを見て、足りない所を埋める（1回の補充は最大6件）。
 
 ## 2. 探す
@@ -50,4 +69,5 @@ python scripts/threads/tdb.py "INSERT INTO threads_topics (title, age_band, pain
 ③ 仕組みの改善案と ④ 事業の改善案は分けて書く。無ければ `--no-system` / `--no-business`。
 
 ## 5. 報告
-登録件数、persona 別・pillar 別の内訳、拾った悩みキーワードの一覧、要確認事項。
+**0.5で処理した井上さんのメモの件数（topics化・skip件数）**、Web検索での登録件数、persona 別・pillar 別の内訳、
+拾った悩みキーワードの一覧、要確認事項。
