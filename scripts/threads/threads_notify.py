@@ -46,7 +46,7 @@ def dashboard_url():
 def footer(kind):
     """末尾の案内。承認依頼は承認画面も添える。"""
     lines = []
-    if kind == "blog":
+    if kind in ("blog", "threads"):
         lines.append(f"✅ 承認・却下: {base_url()}/admin/approvals")
     lines.append(f"📊 ダッシュボード: {dashboard_url()}")
     return "\n".join(lines)
@@ -96,7 +96,7 @@ def plan_text():
     """今日（日本時間）の3本を、DBから組み立てる。"""
     today = datetime.now(JST).date()
     rows = connect().execute(
-        "select r.slot, r.hook, r.post_text, t.age_band, t.research_notes->>'pillar' pillar "
+        "select r.slot, r.hook, r.format, r.post_text, t.age_band, t.research_notes->>'pillar' pillar "
         "from threads_trials r left join threads_topics t on t.id=r.topic_id "
         "where r.trial_date=%s order by r.slot", (today,)).fetchall()
     if not rows:
@@ -104,7 +104,8 @@ def plan_text():
     times = {1: "08:00", 2: "12:30", 3: "19:00"}
     parts = [f"🗓️ 今日のThreads投稿（{today:%m/%d}）"]
     for r in rows:
-        meta = " / ".join(x for x in (r["hook"], r["age_band"], r["pillar"]) if x)
+        fmt = {"short": "一言", "standard": "標準", "long": "長文"}.get(r["format"], r["format"])
+        meta = " / ".join(x for x in (fmt, r["hook"], r["age_band"], r["pillar"]) if x)
         parts.append(f"\n【{times.get(r['slot'], r['slot'])}】{meta}\n{r['post_text']}")
     return "\n".join(parts)
 

@@ -10,6 +10,7 @@ $pwsh = (Get-Command pwsh).Source
 
 $jobs = @(
     @{ Job = 'improve';       At = '05:00'; Note = '自律改善（仕組みの改善案を起草→承認済みを反映→7日後に効果確認）' },
+    @{ Job = 'owner-fetch';   At = '05:25'; Note = '井上さんの記録メモ（#今日の店）を取り込み' },
     @{ Job = 'research';      At = '05:30'; Note = '種ネタの在庫補充（不足時のみ）' },
     @{ Job = 'account';       At = '05:50'; Note = 'アカウント全体のインサイト（表示・反応・リンククリック・フォロワー）を取り込み' },
     @{ Job = 'validate';      At = '06:00'; Note = '前日の実測→勝者→今日の3本を作成' },
@@ -50,6 +51,11 @@ Register-One 'watch' @(
 ) 'watch' '未投稿の見張り（検知したら記録＋Discord通知。再投稿はしない）'
 # 週1回（日曜）: 投稿結果と学びを「効いた型・外れた型」に整理
 Register-One 'library' (New-ScheduledTaskTrigger -Weekly -DaysOfWeek Sunday -At '07:30') 'library' '週次の知識整理（knowledge）'
+# 井上さんへの記録リマインド（営業終わりの少し後。火・金は23:10、土日は19:10。月・水・木は定休のため送らない）
+Register-One 'owner-remind' @(
+    (New-ScheduledTaskTrigger -Weekly -DaysOfWeek Tuesday, Friday -At '23:10'),
+    (New-ScheduledTaskTrigger -Weekly -DaysOfWeek Saturday, Sunday -At '19:10')
+) 'owner-remind' '井上さんへの記録リマインド（#今日の店へ送信。祝日の営業日は手動で書いてもらう想定）'
 # 長期トークンは60日で失効するため、4週間ごとに更新
 Register-One 'refresh-token' (New-ScheduledTaskTrigger -Weekly -WeeksInterval 4 -DaysOfWeek Monday -At '10:00') `
     'refresh-token' 'Threadsトークンの更新（4週間ごと）'

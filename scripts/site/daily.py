@@ -93,6 +93,17 @@ def rollup_months(con, start, end):
                 "VALUES (%s,'ga4',%s,%s,%s,'api',now()) ON CONFLICT (store, channel, month, metric) "
                 "DO UPDATE SET value=EXCLUDED.value, source='api', updated_at=now()",
                 (store["code"], m, metric, v))
+        # 年齢構成（page='(age:35-44)' 等）は metric='age_35-44_sessions' の形で月合計にする
+        rows = con.execute(
+            "SELECT substr(page, 6, length(page)-6) bracket, metric, COALESCE(SUM(value),0) v "
+            "FROM site_metrics_daily WHERE page LIKE '(age:%%' AND metric IN ('sessions','line_click') "
+            "AND to_char(day,'YYYY-MM')=%s GROUP BY 1, 2", (m,)).fetchall()
+        for r in rows:
+            con.execute(
+                "INSERT INTO channel_metrics (store, channel, month, metric, value, source, updated_at) "
+                "VALUES (%s,'ga4',%s,%s,%s,'api',now()) ON CONFLICT (store, channel, month, metric) "
+                "DO UPDATE SET value=EXCLUDED.value, source='api', updated_at=now()",
+                (store["code"], m, f"age_{r['bracket']}_{r['metric']}", r["v"]))
 
 
 # ---------- 判定 ----------

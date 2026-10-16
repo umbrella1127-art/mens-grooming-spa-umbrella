@@ -8,6 +8,7 @@ import type { Stage, Tone } from "@/lib/admin/board";
 import { TEAM_AVATARS } from "@/lib/admin/team-avatars";
 import {
   getThreadsData,
+  TRIAL_FORMAT_LABEL,
   type RosterMember,
   type ThreadsKnowledge,
   type ThreadsTrial,
@@ -36,6 +37,8 @@ const JOB_LABEL: Record<string, string> = {
   "threads:blog": "記事化",
   "threads:care": "点検",
   "threads:library": "知識整理",
+  "threads:owner-fetch": "記録メモ取り込み",
+  "threads:owner-remind": "記録リマインド",
   "threads:post1": "投稿1",
   "threads:post2": "投稿2",
   "threads:post3": "投稿3",
@@ -218,6 +221,7 @@ export default async function ThreadsKpiPage() {
                       <Badge tone={TRIAL_STATUS[t.status]?.tone ?? "info"}>
                         {TRIAL_STATUS[t.status]?.label ?? t.status}
                       </Badge>
+                      <span className="text-greige">{TRIAL_FORMAT_LABEL[t.format]}</span>
                       {t.hook && <span className="text-greige">{t.hook}</span>}
                       {t.ageBand && <span className="text-greige">{t.ageBand}</span>}
                       {t.pillar && <span className="text-greige">{t.pillar}</span>}
@@ -244,6 +248,7 @@ export default async function ThreadsKpiPage() {
                       <th className="py-2 pr-3 font-semibold">状態</th>
                       <th className="py-2 pr-3 font-semibold">型</th>
                       <th className="py-2 pr-3 font-semibold">表示 T+1→T+7</th>
+                      <th className="py-2 pr-3 font-semibold">いいね</th>
                       <th className="py-2 pr-3 font-semibold">反応</th>
                       <th className="py-2 pr-3 font-semibold">判定・予測</th>
                       <th className="py-2 pr-3 font-semibold">投稿文</th>
@@ -268,12 +273,14 @@ export default async function ThreadsKpiPage() {
                         </td>
                         <td className="py-2 pr-3 align-top text-charcoal-light">
                           {t.hook ?? "—"}
+                          <span className="block text-[11px] text-greige">{TRIAL_FORMAT_LABEL[t.format]}</span>
                           {t.topicTag && <span className="block text-[11px] text-greige">タグ: {t.topicTag}</span>}
                         </td>
                         <td className="py-2 pr-3 align-top tabular-nums">
                           {t.t1?.views ?? t.views ?? "—"}
                           {t.t7 && <span className="text-greige"> → {t.t7.views}</span>}
                         </td>
+                        <td className="py-2 pr-3 align-top tabular-nums">{t.likes ?? "—"}</td>
                         <td className="py-2 pr-3 align-top tabular-nums">{t.score ?? "—"}</td>
                         <td className="py-2 pr-3 align-top">
                           <TrialJudgement t={t} />

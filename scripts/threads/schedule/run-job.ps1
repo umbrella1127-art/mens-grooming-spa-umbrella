@@ -1,6 +1,7 @@
 # Threads→ブログ基盤の定期実行ジョブ（タスクスケジューラから呼ばれる）
 #   pwsh -File run-job.ps1 <job>
-# job: research | validate | blog | care | library | improve | post1 | post2 | post3 | watch | refresh-token | account
+# job: research | validate | blog | care | library | improve | owner-fetch | owner-remind |
+#      post1 | post2 | post3 | watch | refresh-token | account
 # ログ: scripts/threads/logs/<日付>-<job>.log（古いものは30日で削除）
 param([Parameter(Mandatory = $true)][string]$Job)
 
@@ -54,6 +55,8 @@ $out = switch ($Job) {
     'library'       { Invoke-Claude 'library' }
     # 起草のあと、承認済みの反映と7日たった変更の効果確認（悪化・変化なしは元に戻す）をスクリプトが行う
     'improve'       { Invoke-Improver; $first = $LASTEXITCODE; & python scripts/improve/improve.py tick 2>&1; if ($first -ne 0) { $global:LASTEXITCODE = $first } }
+    'owner-fetch'   { & python scripts/threads/owner_notes.py fetch 2>&1 }
+    'owner-remind'  { & python scripts/threads/owner_notes.py remind 2>&1 }
     'post1'         { & python scripts/threads/threads_api.py post-due --slot 1 --live 2>&1 }
     'post2'         { & python scripts/threads/threads_api.py post-due --slot 2 --live 2>&1 }
     'post3'         { & python scripts/threads/threads_api.py post-due --slot 3 --live 2>&1 }

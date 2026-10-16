@@ -40,6 +40,7 @@ function isClosingFriday(x: JstDay) {
 const SCHEDULE: ScheduleDef[] = [
   { time: "04:30", routine: "site:daily", label: "GA4の取り込み・サイト実験の判定", team: "サイト", on: every },
   { time: "05:00", routine: "threads:improve", label: "自律改善（起草・反映・効果確認）", team: "Threads", agent: "auto-improver", on: every },
+  { time: "05:25", routine: "threads:owner-fetch", label: "井上さんの記録メモを取り込み", team: "Threads", on: every },
   { time: "05:30", routine: "threads:research", label: "種ネタの補充", team: "Threads", agent: "threads-researcher", on: every },
   { time: "05:50", routine: "threads:account", label: "Threadsアカウント全体の数字を取り込み", team: "Threads", on: every },
   { time: "06:00", routine: "threads:validate", label: "答え合わせ（T+1・T+7）と今日の3本", team: "Threads", agent: "threads-strategist", on: every },
@@ -58,6 +59,8 @@ const SCHEDULE: ScheduleDef[] = [
   { time: "14:00", routine: "threads:watch", label: "未投稿の見張り", team: "Threads", on: every },
   { time: "19:00", routine: "threads:post3", label: "Threads 3本目を投稿", team: "Threads", on: every },
   { time: "20:30", routine: "threads:watch", label: "未投稿の見張り", team: "Threads", on: every },
+  { time: "19:10", routine: "threads:owner-remind", label: "井上さんへの記録リマインド", team: "Threads", on: dows(0, 6) },
+  { time: "23:10", routine: "threads:owner-remind", label: "井上さんへの記録リマインド", team: "Threads", on: dows(2, 5) },
 ];
 
 export interface Run {

@@ -2,10 +2,14 @@
 
 「リサーチ → 悩みキーワードを種ネタに → Threadsに1日3投稿 → 一番反応が良かったものだけ翌日ブログ化」を回す仕組み。
 ブログは公式サイトの `posts`（`/blog`）に**下書き**で入り、Discordで承認すると公開される。
+種ネタの最優先ソースは、井上さんがDiscord「#今日の店」に書く日々の記録（`threads_topics.source='owner'`）。
+この由来の投稿だけは、自動投稿の前に井上さんの承認を待つ（他はすべて承認なしで自動投稿される）。
 
 ```
-種ネタ(threads_topics) ─▶ 今日の3本(threads_trials) ─▶ 実測 ─▶ 勝者(priority=true)
-                                                               └─▶ 翌日: 記事化 → posts(draft) → Discord承認 → 公開
+井上さんのメモ(#今日の店) ─▶ owner_notes ─▶ topics化 ─┐
+                                                      ├─▶ 今日の3本(threads_trials) ─▶ 実測 ─▶ 勝者(priority=true)
+種ネタ(threads_topics・通常のリサーチ由来)  ─────────┘         │                              └─▶ 翌日: 記事化 → posts(draft) → Discord承認 → 公開
+                                                              └─▶ 井上さん由来だけ: 承認待ち(pending_approval) → 承認 → 自動投稿
 ```
 
 ## 構成
@@ -23,6 +27,7 @@
 | 実行記録 | `run-job.ps1` が毎回 `agent_runs`（routine=`threads:<job>`）に1行残す（`run_log.py`） |
 | 管理画面 | `/admin/kpi/threads`（在庫・今日の3本・反応・異常・実行記録・効いた型・名簿） |
 | DB窓口 | `python scripts/threads/tdb.py`（`--context` で現状） |
+| 井上さんの記録メモ | `scripts/threads/owner_notes.py`（`remind`=リマインド送信／`fetch`=取り込み／`request-approval`=承認依頼）。Discordチャンネルは `.env.local` の `DISCORD_CHANNEL_OWNER_NOTES` |
 | 禁止表現チェック | `python scripts/threads/check_article.py` |
 | Threads API | `python scripts/threads/threads_api.py post-due / measure / refresh-token` |
 | 記事の下書き保存 | `python scripts/threads/save_blog.py`（禁止表現チェック → posts → Discord承認依頼） |
@@ -32,6 +37,7 @@
 ## 初回セットアップ
 
 1. Supabase の SQL Editor で `0029_threads_pipeline.sql` と `0030_threads_ops.sql` を実行し、`python scripts/threads/roster.py` で名簿を入れる
+   （井上さんの記録メモを使うには `0039_owner_notes.sql` も実行し、Botの Message Content Intent をオンにする）
 2. `.env.local` の `DISCORD_CHANNEL_BLOG`（承認依頼の送り先）と `DISCORD_BOT_TOKEN` を確認（既存のブログ承認と同じ）
 3. `python scripts/threads/tdb.py --context` がエラーなく表示されればOK
 4. Claude Code で `/threads-run research` → 種ネタが入る
@@ -59,7 +65,9 @@
 
 | 時刻 | コマンド | 内容 |
 |---|---|---|
-| 05:30 | `claude -p "/threads-run research"` | 在庫が9件未満なら種ネタを補充 |
+| 19:10（土日）／23:10（火・金） | `python scripts/threads/owner_notes.py remind` | 井上さんへ「#今日の店」への記録を促すリマインド。白紙で止まらないよう、`QUESTION_POOL`（12種）から毎回ランダムに3問選んで聞く（Claudeを呼ばない） |
+| 05:25 | `python scripts/threads/owner_notes.py fetch` | 「#今日の店」の新着メモを取り込み（Claudeを呼ばない） |
+| 05:30 | `claude -p "/threads-run research"` | 井上さんのメモを種ネタ化（毎回）＋在庫が9件未満ならWeb検索で補充 |
 | 06:00 | `claude -p "/threads-run validate"` | 前日の実測→勝者→今日の3本（draft） |
 | 06:30 | `claude -p "/threads-run blog"` | 勝者の記事を下書き保存→Discord承認依頼 |
 | 07:00 | `claude -p "/threads-run care"` | 点検：異常を記録、安全な範囲を修正、critical/warning があればDiscord |
@@ -82,6 +90,23 @@
 - 絶対ルール（医療的断定・煽り・個室・電話・確定前の価格）は `check_article.py` が最低ラインで止める。
   機械で拾えない事実の捏造は、承認時に人が見る
 
+## 投稿の形式（一言／標準／長文）
+
+1日3本を毎回同じ長さ・同じ構造で書くと、読み手に「また同じ型だ」と思われ、AIっぽさも抜けない。
+そこで `threads_trials.format` で形式を分け、3本の中で混ぜる（`0041_threads_format.sql`）。
+
+| `format` | 字数 | 中身 |
+|---|---|---|
+| `short`（一言） | 〜40字 | 言い切りでも問いでもよい。気づき・情景を1つだけ。宣伝にしない |
+| `standard`（標準） | 80〜200字 | これまでの長さ。2026-10-16 までの57本はすべてこの形式 |
+| `long`（長文） | 350〜500字（Threadsの上限は500字） | 出来事→気づき→読者への一言、のように1本の中に起伏を入れる |
+
+- 組み合わせは「標準2＋一言1」か「標準1＋一言1＋長文1」。同じ形式を3本続けない。長文は週に2〜3本
+- どの形式を何本にするかは検証担当が毎朝 `tdb.py --context` の「形式別の表示」「直近3日の形式の並び」を見て決める
+  （手順は `.claude/skills/threads-validate/SKILL.md` の C-1）
+- **判定は形式で分けない**。`judge.py` は形式に関係なく「前7日間の投稿の平均」と比べる。形式ごとの効きは集計（`--context`、`/admin/kpi/threads`）で見る
+- 絶対ルール（医療的断定・煽り・事実の捏造・価格・電話番号・限定表現）は形式に関係なく同じ。一言でも `check_article.py` を通す
+
 ## 自己改善の2つのループ
 
 ```
@@ -103,6 +128,8 @@ B 自分自身を直す   ログ・DB → health.py → 異常の記録(pipeline
 | 点検・異常 | 毎朝7:00の点検、実行や投稿の失敗 | **#お知らせ** | `DISCORD_CHANNEL_NOTICE` |
 | 週次の学び | 日曜の知識整理 | **#お知らせ** | 同上 |
 | 記事の承認依頼（ボタン付き） | 勝者の記事ができたとき | **#blog-ネタ帳** | `DISCORD_CHANNEL_BLOG` |
+| 記録リマインド | 火・金23:10／土日19:10 | **#今日の店** | `DISCORD_CHANNEL_OWNER_NOTES` |
+| 井上さんのメモから作った投稿の承認依頼（ボタン付き） | 検証工程がメモを使ったとき | **#threads-下書き** | `DISCORD_CHANNEL_THREADS`（承認は `/admin/approvals` からも可） |
 
 将来チャンネルを分けたくなったら、`DISCORD_CHANNEL_THREADS_POST` / `_THREADS_CARE` / `_THREADS_LEARN` を `.env.local` に足すだけで、そちらが優先される。
 送信内容の確認: `python scripts/threads/threads_notify.py plan --dry-run`（送らずに本文と送り先の設定名を表示）。

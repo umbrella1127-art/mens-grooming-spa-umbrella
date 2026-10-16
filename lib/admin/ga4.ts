@@ -32,6 +32,13 @@ export interface Ga4CtaType {
   count: number;
 }
 
+export interface Ga4AgeBracket {
+  bracket: string;
+  sessions: number;
+  activeUsers: number;
+  lineClicks: number;
+}
+
 export interface Ga4Data {
   available: boolean;
   reason: string | null;
@@ -41,6 +48,8 @@ export interface Ga4Data {
   landingPages: Ga4LandingPage[];
   lineClicksByPage: Ga4LineClick[];
   lineClicksByCtaType: Ga4CtaType[] | null;
+  /** 年齢構成。Googleシグナル有効化(2026-09-27)以降に貯まる。null=取得失敗 */
+  ageBrackets: Ga4AgeBracket[] | null;
 }
 
 function rowsOf(res: {
@@ -59,6 +68,7 @@ export async function getGa4Data(days = 30): Promise<Ga4Data> {
     landingPages: [],
     lineClicksByPage: [],
     lineClicksByCtaType: null,
+    ageBrackets: null,
   };
 
   const propertyId = process.env.GA4_PROPERTY_ID;
@@ -125,6 +135,45 @@ export async function getGa4Data(days = 30): Promise<Ga4Data> {
       lineClicksByCtaType = null;
     }
 
+    // 年齢構成（Googleシグナル）。少人数だとGA4のしきい値で行が返らないので、空配列は「まだ出せる数に達していない」
+    let ageBrackets: Ga4AgeBracket[] | null = null;
+    try {
+      const [ageRes] = await client.runReport({
+        property,
+        dateRanges,
+        dimensions: [{ name: "userAgeBracket" }],
+        metrics: [{ name: "sessions" }, { name: "activeUsers" }],
+        orderBys: [{ dimension: { dimensionName: "userAgeBracket" } }],
+      });
+      const [ageLineRes] = await client.runReport({
+        property,
+        dateRanges,
+        dimensions: [{ name: "userAgeBracket" }],
+        metrics: [{ name: "eventCount" }],
+        dimensionFilter: {
+          filter: { fieldName: "eventName", stringFilter: { value: "line_click" } },
+        },
+      });
+      const lineByBracket = new Map<string, number>();
+      for (const r of rowsOf(ageLineRes)) {
+        lineByBracket.set(
+          r.dimensionValues?.[0]?.value ?? "unknown",
+          Number(r.metricValues?.[0]?.value ?? 0),
+        );
+      }
+      ageBrackets = rowsOf(ageRes).map((r) => {
+        const bracket = r.dimensionValues?.[0]?.value ?? "unknown";
+        return {
+          bracket,
+          sessions: Number(r.metricValues?.[0]?.value ?? 0),
+          activeUsers: Number(r.metricValues?.[1]?.value ?? 0),
+          lineClicks: lineByBracket.get(bracket) ?? 0,
+        };
+      });
+    } catch {
+      ageBrackets = null;
+    }
+
     return {
       available: true,
       reason: null,
@@ -144,6 +193,7 @@ export async function getGa4Data(days = 30): Promise<Ga4Data> {
         count: Number(r.metricValues?.[0]?.value ?? 0),
       })),
       lineClicksByCtaType,
+      ageBrackets,
     };
   } catch (err) {
     return {

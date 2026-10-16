@@ -67,33 +67,71 @@ T+1 の判定は暫定なので根拠にしない（T+1 の勝者も T+7 を待�
 断言しない。「今のところ」「n回中m回」のように、根拠の数を添える。
 
 ## C. 今日の3本を作る
+
+目的は2つ。**毎日同じ長さ・同じ構造にしないこと**（読み手に「また同じ型だ」と思わせない）と、
+**どの形式が表示・反応に効くかを測れるようにすること**（`format` 列。判定の基準は形式で変えない）。
+
+### C-1. 先に3本の形式（`format`）を決める
+
+| `format` | 字数 | どう書くか |
+|---|---|---|
+| `short` 一言 | 〜40字 | 言い切りでも問いでもよい。気づき・情景を1つだけ。**宣伝にしない**。説明を足さない |
+| `standard` 標準 | 80〜200字 | これまでの長さ。ただし下の「AI感を避ける」を守る |
+| `long` 長文 | 350〜500字（Threadsの上限は500字） | 出来事→気づき→読者への一言、のように**1本の中に起伏を入れる**。箇条書き・見出し・説明の羅列にしない |
+
+- 基本の組み合わせは **標準2＋一言1** か **標準1＋一言1＋長文1**。**同じ形式を3本続けない**
+- 長文は **週に2〜3本**。`--context` の「直近3日の形式の並び」に `long` が無ければ今日1本入れる、くらいの目安
+- 同じ形式を同じ slot に3日続けて置かない（朝は一言・夜は長文、のような決めつけをしない。並びを変えて測る）
+- `--context` の「形式別の表示」で伸びている形式は続けつつ、件数が少ない形式（n が5未満）は1本試す
+- 井上さんのメモ由来の1本は、メモの量で形式を選ぶ（一言のメモなら `short`、出来事が書いてあれば `long` に向く）
+- 字数は書いたあとに数える（例: `python -c "import sys; print(len(sys.argv[1]))" "本文"`）。幅から外れたら削るか足す
+
+### C-2. ネタを選ぶ
 - **まず井上さんのメモ由来（`threads_topics.source='owner'`）で未使用の在庫を確認する。1件でもあれば、
   最も古いもの1件を必ず3本のうち1本に使う**（無ければ通常どおり全て通常ネタでよい）。声のルール・写真の扱いは
   `.claude/skills/threads-blog-rules/SKILL.md` の「井上さん本人のメモ由来の投稿」を見る（一人称OK・断定禁止は変わらず）
 - 残り（通常は2本、owner在庫が無ければ3本）は「未テストの新鮮ネタ」から。persona と pillar を偏らせず、同じ pillar を同じ日に重ねない
 - `knowledge` の「効いた型」があれば1本は寄せ、1本は別の型を試す（同じ型を3日続けない）
-- 1本ごとに `post_text`（**80〜200字**）・`hook`（型名）・`predicted_note`（伸びそうな指標と根拠）
-- さらに **測れる予測を2つ必須で付ける**（無いとDBが登録を拒否する）:
+
+### C-3. 書く — AI感を避ける
+声はサロン公式・共感型（説教・断定・上から目線は禁止）。その上で、次を守る:
+
+- **「問いかけで始めて提案で締める」の定型を毎回使わない**。この型は1日1本まで
+- **結論や提案を言わずに終えてよい**。情景や気づきで止めて、読者が続きを考える余白を残す
+- **具体的な名詞を1本に1つ入れる**: 天気・季節・曜日や時間帯（火曜の21時、など）・店の道具（蒸しタオル、バリカン、鏡…）。
+  ただし事実は捏造しない。店の設備・道具は `lib/fallback-data.ts` で確認できるものだけ、店の出来事は井上さんのメモにある範囲だけ。
+  前橋・群馬の地名は `threads-blog-rules` のとおり、井上さんのメモ由来か宣伝の1本でだけ使う
+- **3本とも同じ長さ・同じ構造にしない**。出だしも変える（名詞で始める／会話で始める／情景で始める／結論から始める）
+- **「月に一度、自分を整える。」で締めるのは1日1本まで**
+- 読者をひとまとめにする決まり文句（「〜ですよね」「〜ではないでしょうか」「そういう方は多い」）に頼らない。
+  使うなら3本で1回まで
+- 書き終えたら3本を並べて読む。長さと構造（問い→説明→提案）が揃っていたら、1本を崩してから登録する
+
+### C-4. 1本ごとに付けるもの
+- `post_text`（字数は C-1 の形式どおり）・`format`・`hook`（型名）・`predicted_note`（伸びそうな指標と根拠。**その形式を選んだ理由も1行**）
+- **測れる予測を2つ必須で付ける**（無いとDBが登録を拒否する）:
   - `predicted_metric` … `views`（表示）か `reaction_score`（いいね・返信など）
   - `predicted_vs_baseline` … 直近7日の平均と比べて `above`（1.2倍以上）／ `same` ／ `below`（0.8倍以下）
-  - 平均は `--context` の「直近7日の平均」を見る。T+1 と T+7 の両方でこの予測と答え合わせされる
+  - 平均は `--context` の「直近7日の平均」を見る。T+1 と T+7 の両方でこの予測と答え合わせされる。**形式が違っても比べる相手は同じ平均**
 - **トピックタグを1つ必須で付ける**（`topic_tag`。無いとDBが登録を拒否する）
   - 選び方・候補・使わない言葉は `scripts/threads/tags.md`。本文に `#` を書かない
   - `--context` の「タグ別の表示」を見て、伸びたタグは続け、3本に1本はまだ使っていないタグを試す
   - `check_article.py --text` にはタグも本文の末尾に足して通す（禁止表現が無いか確かめる）
-- 声はサロン公式・共感型。「〜ですよね」「実は多いです」。説教・断定・上から目線は禁止
 - サロンの宣伝は3本に1本まで。LINE誘導ではなく「月に一度、自分を整える。」の世界観で軽く
 - **理容室**であり美容室ではない。身だしなみ・コンディションの言葉で。限定・選別表現を使わない
 - 時間の柱では確認済みの事実（火・金 17:00〜23:00）を使ってよい
 - 髪の悩み（薄毛・分け目）に触れるときは「気になる場合は専門医に相談を」を添える
 
-フック型: `問いかけ` ／ `あるある共感` ／ `意外な事実（確認できるものだけ）` ／ `小さな行動提案` ／ `数字（確認済みの事実のみ）`
+フック型（`hook`。冒頭の型で、`format` とは別に付ける）:
+`問いかけ` ／ `あるある共感` ／ `意外な事実（確認できるものだけ）` ／ `小さな行動提案` ／ `数字（確認済みの事実のみ）` ／
+`一言`（`short` で、他の型に当てはまらない言い切り・情景）／ `長文の語り`（`long` で、出来事から語り起こすもの）
 
 ## D. 検査して登録
 ```
 python scripts/threads/check_article.py --text "投稿文"     # NGなら書き直す
-python scripts/threads/tdb.py "INSERT INTO threads_trials (trial_date, slot, topic_id, post_text, hook, predicted_note, predicted_metric, predicted_vs_baseline, topic_tag) VALUES ((now() at time zone 'Asia/Tokyo')::date, 1, 12, '...', '問いかけ', '...', 'views', 'above', '40代の疲れ')" --write
+python scripts/threads/tdb.py "INSERT INTO threads_trials (trial_date, slot, topic_id, post_text, hook, format, predicted_note, predicted_metric, predicted_vs_baseline, topic_tag) VALUES ((now() at time zone 'Asia/Tokyo')::date, 1, 12, '...', '問いかけ', 'standard', '...', 'views', 'above', '40代の疲れ')" --write
 ```
+`format` は `short` / `standard` / `long` のどれか（省略すると `standard` になるので、一言・長文のときは必ず書く）。
 **日付は必ず日本時間で書く。** SQL の `current_date` はUTCなので、朝9時前に実行すると1日前になる。
 今日すでに同じ slot があれば作り直さない（`unique(trial_date, slot)`）。
 
@@ -101,7 +139,7 @@ python scripts/threads/tdb.py "INSERT INTO threads_trials (trial_date, slot, top
 - `status` に明示的に `'pending_approval'` を入れる（省略すると既定の `'draft'` になり、承認なしで投稿されてしまう）
 - topicの `research_notes->>'image_urls'` に画像があれば、その1枚目を `image_url` 列に入れる（無ければ省略してよい）
 ```
-python scripts/threads/tdb.py "INSERT INTO threads_trials (trial_date, slot, topic_id, post_text, hook, predicted_note, predicted_metric, predicted_vs_baseline, topic_tag, status, image_url) VALUES ((now() at time zone 'Asia/Tokyo')::date, 1, 12, '...', '問いかけ', '...', 'views', 'above', '40代の疲れ', 'pending_approval', 'https://.../owner-notes/....jpg') RETURNING id" --write
+python scripts/threads/tdb.py "INSERT INTO threads_trials (trial_date, slot, topic_id, post_text, hook, format, predicted_note, predicted_metric, predicted_vs_baseline, topic_tag, status, image_url) VALUES ((now() at time zone 'Asia/Tokyo')::date, 1, 12, '...', '長文の語り', 'long', '...', 'views', 'above', '40代の疲れ', 'pending_approval', 'https://.../owner-notes/....jpg') RETURNING id" --write
 ```
 登録できたら、返ってきた `id` で承認依頼を送る（必ず実行する。忘れると井上さんに届かず、そのまま投稿されずに終わる）:
 ```
@@ -121,5 +159,5 @@ python scripts/threads/threads_api.py post-due      # dry-run（内容表示の�
 ③ 仕組みの改善案と ④ 事業の改善案は分けて書く。無ければ `--no-system` / `--no-business`。
 
 ## F. 報告
-勝者（あれば）と理由、知識に書いた型、今日の3本の要約（persona・pillar・フック・予測）、
+勝者（あれば）と理由、知識に書いた型、今日の3本の要約（persona・pillar・フック・**形式**・予測）、
 井上さんのメモを使ったか（使った場合は承認依頼を送ったこと）。

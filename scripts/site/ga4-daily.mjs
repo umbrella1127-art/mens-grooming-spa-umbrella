@@ -90,6 +90,39 @@ async function main() {
     push(r.dimensionValues[0].value, "(all)", "line_click", r.metricValues[0].value);
   }
 
+  // 年齢構成（Googleシグナル有効化 2026-09-27 以降に貯まる。少人数だとGA4のしきい値で空になる）
+  // page='(age:35-44)' のように年齢帯をページ枠に入れて保存する。
+  try {
+    const [agePerDay] = await c.runReport({
+      property,
+      dateRanges,
+      dimensions: [{ name: "date" }, { name: "userAgeBracket" }],
+      metrics: [{ name: "sessions" }, { name: "activeUsers" }],
+      limit: 100000,
+    });
+    for (const r of agePerDay.rows ?? []) {
+      const [d, bracket] = r.dimensionValues.map((v) => v.value);
+      const [s, u] = r.metricValues.map((v) => v.value);
+      push(d, `(age:${bracket})`, "sessions", s);
+      push(d, `(age:${bracket})`, "users", u);
+    }
+    const [ageLine] = await c.runReport({
+      property,
+      dateRanges,
+      dimensions: [{ name: "date" }, { name: "userAgeBracket" }],
+      metrics: [{ name: "eventCount" }],
+      dimensionFilter: lineFilter,
+      limit: 100000,
+    });
+    for (const r of ageLine.rows ?? []) {
+      const [d, bracket] = r.dimensionValues.map((v) => v.value);
+      push(d, `(age:${bracket})`, "line_click", r.metricValues[0].value);
+    }
+  } catch (err) {
+    // 年齢データが取れなくても日次の本体は止めない
+    console.error(`GA4 年齢構成の取得をスキップしました: ${err.message ?? err}`);
+  }
+
   process.stdout.write(JSON.stringify(out));
 }
 

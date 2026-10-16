@@ -9,9 +9,12 @@ export interface ThreadsTrial {
   slot: number;
   status: string;
   hook: string | null;
+  /** short=一言 / standard=標準 / long=長文（0041_threads_format.sql） */
+  format: "short" | "standard" | "long";
   topicTag: string | null;
   postText: string;
   views: number | null;
+  likes: number | null;
   score: number | null;
   isWinner: boolean;
   topicTitle: string | null;
@@ -21,6 +24,12 @@ export interface ThreadsTrial {
   t1: TrialSnapshot | null;
   t7: TrialSnapshot | null;
 }
+
+export const TRIAL_FORMAT_LABEL: Record<ThreadsTrial["format"], string> = {
+  short: "一言",
+  standard: "標準",
+  long: "長文",
+};
 
 export type TrialVerdict = "win" | "lead" | "flat" | "lose" | "insufficient";
 
@@ -121,7 +130,7 @@ export async function getThreadsData(): Promise<ThreadsData> {
       supabase
         .from("threads_trials")
         .select(
-          "id, trial_date, slot, status, hook, topic_tag, post_text, metrics, reaction_score, is_winner, topic_id, result_note, threads_trial_snapshots(days_after, views, verdict, prediction_hit, note)",
+          "id, trial_date, slot, status, hook, format, topic_tag, post_text, metrics, reaction_score, is_winner, topic_id, result_note, threads_trial_snapshots(days_after, views, verdict, prediction_hit, note)",
         )
         .gte("trial_date", since)
         .order("trial_date", { ascending: false })
@@ -172,16 +181,18 @@ export async function getThreadsData(): Promise<ThreadsData> {
   const trials: ThreadsTrial[] = (trialsRes.data ?? []).map((r) => {
     const topic = r.topic_id ? topicById.get(r.topic_id as number) : undefined;
     const notes = (topic?.research_notes ?? null) as { pillar?: string } | null;
-    const metrics = (r.metrics ?? null) as { views?: number } | null;
+    const metrics = (r.metrics ?? null) as { views?: number; likes?: number } | null;
     return {
       id: r.id,
       trialDate: r.trial_date,
       slot: r.slot,
       status: r.status,
       hook: r.hook,
+      format: (r.format ?? "standard") as ThreadsTrial["format"],
       topicTag: r.topic_tag,
       postText: r.post_text,
       views: metrics?.views ?? null,
+      likes: metrics?.likes ?? null,
       score: r.reaction_score === null ? null : Number(r.reaction_score),
       isWinner: r.is_winner,
       topicTitle: topic?.title ?? null,

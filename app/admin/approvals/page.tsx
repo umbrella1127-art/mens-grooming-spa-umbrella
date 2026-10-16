@@ -13,7 +13,7 @@ import { approveDraft, rejectDraft } from "../actions/drafts";
 
 /** 各チャンネルの使い道を、迷わないよう画面上に書いておく */
 const CHANNEL_NOTE: Record<ChannelType, string> = {
-  threads: "承認後、Threadsに手動で投稿します。",
+  threads: "井上さんの記録から作った投稿です。承認すると予定の時刻に自動でThreadsへ投稿されます。却下すると投稿されません。",
   blog: "承認すると、記事がそのままサイトに公開されます。",
   gbp: "承認後、Googleビジネスプロフィールの「投稿」に貼り付けます。",
 };

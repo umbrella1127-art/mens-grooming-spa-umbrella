@@ -19,8 +19,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "hpb"))
 from hpb_db import connect  # noqa: E402
 
 # knowledge は threads-librarian / strategist が「効いた型・外れた型」を書く。pipeline_issues は caretaker が書く
+# owner_notes は researcher が topics化のときに status/topic_id を更新する（取り込み自体は owner_notes.py が直接書く）
 WRITABLE = {"threads_topics", "threads_trials", "threads_trial_snapshots", "pipeline_issues", "knowledge",
-            "knowledge_evidence"}
+            "knowledge_evidence", "owner_notes"}
 BAD = ("drop", "alter", "create", "truncate", "grant")
 
 
@@ -52,7 +53,8 @@ def context(con):
            "where status='active' and priority=false and id not in "
            "(select topic_id from threads_trials where topic_id is not null) order by id"), "t")
     print("== 直近7日の投稿")
-    show(q("select trial_date, slot, status, reaction_score, is_winner, topic_id, topic_tag, left(post_text,40) txt "
+    show(q("select trial_date, slot, status, format, char_length(post_text) len, reaction_score, is_winner, topic_id, "
+           "topic_tag, left(post_text,40) txt "
            "from threads_trials where trial_date >= current_date - 7 order by trial_date desc, slot"), "t")
     print("== 直近7日の平均（T+1。今日の予測 predicted_vs_baseline の比べる相手）")
     show(q("select count(*) n, round(avg(s.views)) views, round(avg(s.reaction_score),1) score "
@@ -65,14 +67,35 @@ def context(con):
            "left join threads_trial_snapshots s7 on s7.trial_id=t.id and s7.days_after=7 "
            "where t.topic_tag is not null and t.status='posted' "
            "and t.trial_date >= (now() at time zone 'Asia/Tokyo')::date - 28 group by 1 order by v1 desc nulls last"), "t")
+    print("== 形式別の表示（直近28日。short=一言 / standard=標準 / long=長文。同じ形式を3本続けない）")
+    show(q("select t.format, count(*) n, round(avg(char_length(t.post_text))) len, round(avg(s1.views)) v1, "
+           "round(avg(s1.reaction_score),1) score1, round(avg(s7.views)) v7, "
+           "count(*) filter (where s7.verdict in ('win','lead')) good7, count(*) filter (where s7.verdict='lose') bad7, "
+           "max(t.trial_date) last_used "
+           "from threads_trials t left join threads_trial_snapshots s1 on s1.trial_id=t.id and s1.days_after=1 "
+           "left join threads_trial_snapshots s7 on s7.trial_id=t.id and s7.days_after=7 "
+           "where t.status='posted' and t.trial_date >= (now() at time zone 'Asia/Tokyo')::date - 28 "
+           "group by 1 order by 1"), "t")
+    print("== 直近3日の形式の並び（今日の組み合わせを決めるのに使う）")
+    show(q("select trial_date, string_agg(format, ' / ' order by slot) formats "
+           "from threads_trials where trial_date >= (now() at time zone 'Asia/Tokyo')::date - 3 "
+           "group by 1 order by 1 desc"), "t")
     print("== T+7 の確定判定（直近14日）")
-    show(q("select t.trial_date, t.slot, t.hook, s1.views v1, s7.views v7, s7.verdict, s7.prediction_hit, "
+    show(q("select t.trial_date, t.slot, t.hook, t.format, s1.views v1, s7.views v7, s7.verdict, s7.prediction_hit, "
            "left(s7.note,40) note from threads_trial_snapshots s7 join threads_trials t on t.id=s7.trial_id "
            "left join threads_trial_snapshots s1 on s1.trial_id=t.id and s1.days_after=1 "
            "where s7.days_after=7 and s7.measured_at >= now() - interval '14 days' order by t.trial_date desc, t.slot"), "t")
     print("== ブログ化待ちの勝者（priority=true・未記事化）")
     show(q("select id, age_band, pain_keyword, title from threads_topics "
            "where priority and post_id is null and status <> 'closed' order by id"), "t")
+    print("== 井上さんのメモ（owner_notes・未使用）")
+    show(q("select id, posted_at::date d, left(raw_text,50) txt, "
+           "case when image_urls is not null then jsonb_array_length(image_urls) else 0 end imgs "
+           "from owner_notes where status='new' order by posted_at"), "t")
+    print("== 承認待ちのThreads投稿（content_drafts channel_type=threads）")
+    show(q("select cd.id, cd.created_at::date d, tt.trial_date, tt.slot from content_drafts cd "
+           "join threads_trials tt on tt.id=cd.trial_id where cd.channel_type='threads' "
+           "and cd.status='pending' order by cd.created_at"), "t")
     print("== 未解決の異常（pipeline_issues）")
     show(q("select id, severity, kind, title, detected_at::date d from pipeline_issues "
            "where channel='threads' and status='open' order by detected_at desc limit 10"), "t")

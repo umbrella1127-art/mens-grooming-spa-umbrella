@@ -16,6 +16,8 @@ export interface ContentDraft {
   edit_note: string | null;
   /** ブログ記事に紐づく下書きのとき、その記事のid。承認すると公開される */
   post_id: string | null;
+  /** Threadsの投稿案に紐づく下書きのとき、その threads_trials.id。承認すると予定時刻に自動投稿される */
+  trial_id: number | null;
   created_at: string;
   updated_at: string;
 }

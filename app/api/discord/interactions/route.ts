@@ -4,6 +4,7 @@ import { verifyKey } from "discord-interactions";
 import { CACHE_TAGS } from "@/lib/cms";
 import { editDiscordMessage } from "@/lib/discord";
 import { publishLinkedPost } from "@/lib/publish-draft";
+import { describeTrialSync, syncLinkedTrial } from "@/lib/sync-linked-trial";
 import { getServiceClient } from "@/lib/supabase/service";
 import { SITE_URL } from "@/lib/seo";
 
@@ -75,7 +76,7 @@ export async function POST(req: Request) {
           .update({ status, updated_at: new Date().toISOString() })
           .eq("id", draftId)
           .eq("status", "pending")
-          .select("status, post_id")
+          .select("status, post_id, trial_id")
           .maybeSingle();
 
         if (!updated) {
@@ -107,8 +108,18 @@ export async function POST(req: Request) {
           }
         }
 
+        // Threadsの投稿案（井上さんのメモ由来）に紐づく下書きは、承認/却下を台帳に反映する（lib/sync-linked-trial.ts に一本化）。
+        // 承認＝予定の時刻にスケジューラが自動投稿する状態（status='draft'）に戻すだけで、ここでは投稿しない。
+        // 結果はDiscordのメッセージに必ず書く（反映できなかったときに黙って止まらないように）
+        let trialNote = "";
+        if (updated.trial_id) {
+          trialNote = describeTrialSync(
+            await syncLinkedTrial(supabase, updated.trial_id, status),
+          );
+        }
+
         await editOriginalInteractionResponse(interactionToken, {
-          content: `${STATUS_LABEL[status]}${published}\n\n${originalContent}`,
+          content: `${STATUS_LABEL[status]}${published}${trialNote}\n\n${originalContent}`,
           components: [],
         });
       });

@@ -152,6 +152,45 @@ export default async function Ga4Page({
             )}
           </Card>
 
+          <Card eyebrow="AGE" title="年齢構成（Googleシグナル）">
+            <p className="mb-3 text-[12px] text-charcoal-light">
+              「本当のターゲットは40代以上」が当たっているかを確かめる表。2026-09-27にGoogleシグナルを有効化したので、それ以降の訪問だけが対象。
+              訪問が少ない期間はGA4のしきい値で表示されない（期間を長くすると出ることがある）。
+            </p>
+            {ga4.ageBrackets === null ? (
+              <Empty>取得できませんでした。</Empty>
+            ) : ga4.ageBrackets.length === 0 ? (
+              <Empty>まだ表示できる数に達していません。有効化後に訪問が貯まるまで待つか、期間を長くしてください。</Empty>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[420px] text-left text-[12.5px]">
+                  <thead>
+                    <tr className="border-b border-beige text-[10.5px] uppercase tracking-wide text-greige">
+                      <th className="py-2 pr-3 font-semibold">年齢</th>
+                      <th className="py-2 pr-3 font-semibold">セッション</th>
+                      <th className="py-2 pr-3 font-semibold">ユーザー数</th>
+                      <th className="py-2 pr-3 font-semibold">LINEクリック</th>
+                      <th className="py-2 pr-3 font-semibold">クリック率</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {ga4.ageBrackets.map((a) => (
+                      <tr key={a.bracket} className="border-b border-beige/60 last:border-b-0">
+                        <td className="py-2.5 pr-3 align-top">{a.bracket === "unknown" ? "不明" : a.bracket}</td>
+                        <td className="py-2.5 pr-3 align-top tabular-nums">{a.sessions}</td>
+                        <td className="py-2.5 pr-3 align-top tabular-nums">{a.activeUsers}</td>
+                        <td className="py-2.5 pr-3 align-top tabular-nums">{a.lineClicks}</td>
+                        <td className="py-2.5 pr-3 align-top tabular-nums">
+                          {a.sessions > 0 ? `${((a.lineClicks / a.sessions) * 100).toFixed(1)}%` : "-"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </Card>
+
           <Card eyebrow="CTA" title="line_click の cta_type 別内訳">
             {ga4.lineClicksByCtaType === null ? (
               <Empty>
