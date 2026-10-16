@@ -98,4 +98,7 @@ DBは `0029_threads_pipeline.sql`（`threads_topics` / `threads_trials`）と `0
 答え合わせは T+1（翌朝）と T+7（1週間後）の2点で、`threads_trial_snapshots` に残し、前の7日間の平均と比べて判定する
 （`scripts/threads/judge.py`、`0033_threads_t7.sql`）。下書きは `predicted_metric`・`predicted_vs_baseline`・`topic_tag`（トピックタグ1つ。候補と禁止は `scripts/threads/tags.md`、`0037_threads_topic_tag.sql`）が無いとDBが拒否する。
 知識（`knowledge` source=threads）は3つのルールで運用する（`0034_knowledge_rules.sql`）: 型は保留で始まり、根拠（`knowledge_evidence`）の支持が3件以上かつ反証より多いときだけ採用できる／自動で書いた知識は削除できず、退役させて理由を残す／全担当が最初に `tdb.py --knowledge` を読む。
+アカウント全体の数字（日別の表示・反応・投稿数、URL別リンククリック、フォロワー数）は毎朝5:50に `threads_api.py account-daily` が
+`threads_account_daily` / `threads_link_clicks_daily`（`0040_threads_account.sql`）と `channel_metrics`(threads, 月合計) に保存し、
+`/admin/kpi/threads` の「アカウント全体」カードが推移と気づき（`lib/admin/threads-account.ts` の決まったルール）を出す。1日は日本時間の前日16時〜当日16時。
 管理画面は `/admin/kpi/threads`。点検（自分自身を直すループ）は `scripts/threads/health.py` → `pipeline_issues`、学びは `knowledge`（source=threads）。

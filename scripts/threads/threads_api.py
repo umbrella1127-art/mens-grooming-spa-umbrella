@@ -8,6 +8,9 @@
         それぞれ「前の7日間の同じ日数後の平均」と比べて判定し（judge.py）、投稿前の予測と答え合わせする。
         T+1 はその日の最高スコア（>0）を is_winner にし、topic に priority=true を付ける。
         T+7 で反応が平均を上回った投稿は、T+1 で漏れていても勝者に追加する。
+    python scripts/threads/threads_api.py account-daily [--days 7] [--since YYYY-MM-DD]
+        アカウント全体の日別インサイト（表示・反応・投稿数・URL別リンククリック・フォロワー数）を
+        threads_account_daily / threads_link_clicks_daily に保存し、月合計を channel_metrics(threads) へ入れる。
     python scripts/threads/threads_api.py refresh-token
         長期トークンを更新して .env.local に書き戻す（60日で失効するので月1回以上）。
 
@@ -16,6 +19,7 @@
 import argparse
 import json
 import sys
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -43,7 +47,7 @@ def creds():
 
 def call(method, url, params):
     data = urllib.parse.urlencode(params).encode() if method == "POST" else None
-    if method == "GET":
+    if method == "GET" and params:
         url += "?" + urllib.parse.urlencode(params)
     req = urllib.request.Request(url, data=data, method=method)
     try:
@@ -180,6 +184,126 @@ def cmd_measure(a):
         measure_day(con, tok, a.t7_date or (today - timedelta(days=7)).isoformat(), 7)
 
 
+ACCOUNT_SUMS = ("likes", "replies", "reposts", "quotes")
+API_MIN_SINCE = 1712991600  # Threads のアカウントインサイトはこれ（2024-04-13）より前を返さない
+
+
+def _api_day(end_time):
+    """views の日別値の区間を (日本時間の日付, since, until) にする。
+    API の day は米国太平洋時間の0時区切りで、値に付く end_time は実際には区間の「始まり」を指す
+    （投稿の時刻と表示の出方を突き合わせて確認。2026-10-16）。日付は区間が終わる日本時間の日。"""
+    start = int(datetime.fromisoformat(end_time.replace("+0000", "+00:00")).timestamp())
+    until = start + 86400
+    return datetime.fromtimestamp(until - 1, JST).date(), start, until
+
+
+def _total(res, name):
+    for d in res.get("data", []):
+        if d["name"] == name:
+            return d.get("total_value", {}).get("value", 0)
+    return None
+
+
+def _post_counts(tok, uid, windows):
+    """区間ごとの投稿数を、API の投稿一覧（手動投稿も含む）から数える。"""
+    oldest = min(s for _, s, _ in windows)
+    counts = {d: 0 for d, _, _ in windows}
+    url, params = f"{BASE}/{uid}/threads", {"fields": "id,timestamp", "limit": 100, "access_token": tok}
+    while url:
+        res = call("GET", url, params)
+        stop = False
+        for p in res.get("data", []):
+            ts = int(datetime.fromisoformat(p["timestamp"].replace("+0000", "+00:00")).timestamp())
+            if ts < oldest:
+                stop = True
+                continue
+            for d, s, u in windows:
+                if s <= ts < u:
+                    counts[d] += 1
+        url = None if stop else res.get("paging", {}).get("next")
+        params = {}  # next にはクエリが全部入っている
+    return counts
+
+
+def rollup_account_months(con, months):
+    """集客KPIハブ用に、月合計を channel_metrics(threads) へ入れる。"""
+    store = con.execute("SELECT code FROM stores WHERE active ORDER BY code LIMIT 1").fetchone()
+    if not store:
+        return
+    for m in sorted(months):
+        r = con.execute(
+            "select coalesce(sum(views),0) views, coalesce(sum(likes),0) likes, coalesce(sum(replies),0) replies, "
+            "coalesce(sum(reposts),0) reposts, coalesce(sum(quotes),0) quotes, coalesce(sum(posts),0) posts, "
+            "(select coalesce(sum(clicks),0) from threads_link_clicks_daily where to_char(day,'YYYY-MM')=%s) link_clicks, "
+            "(select followers_count from threads_account_daily where to_char(day,'YYYY-MM')=%s "
+            " and followers_count is not null order by day desc limit 1) followers_count "
+            "from threads_account_daily where to_char(day,'YYYY-MM')=%s", (m, m, m)).fetchone()
+        for metric, v in r.items():
+            if v is None:
+                continue
+            con.execute(
+                "INSERT INTO channel_metrics (store, channel, month, metric, value, source, updated_at) "
+                "VALUES (%s,'threads',%s,%s,%s,'api',now()) ON CONFLICT (store, channel, month, metric) "
+                "DO UPDATE SET value=EXCLUDED.value, source='api', updated_at=now()",
+                (store["code"], m, metric, v))
+
+
+def cmd_account_daily(a):
+    """アカウント全体の日別インサイト（表示・反応・リンククリック・フォロワー数）を保存する。
+    反応やクリックは遅れて数え直されるので、毎回直近 --days 日分を取り直して上書きする。"""
+    tok, uid = creds()
+    con = connect()
+    now = int(time.time())
+    if a.since:
+        start = int(datetime.fromisoformat(a.since).replace(tzinfo=JST).timestamp())
+    else:
+        start = now - a.days * 86400
+    start = max(start, API_MIN_SINCE)
+    res = call("GET", f"{BASE}/{uid}/threads_insights",
+               {"metric": "views", "since": start, "until": now, "access_token": tok})
+    series = next((d["values"] for d in res.get("data", []) if d["name"] == "views"), [])
+    windows, views = [], {}
+    for v in series:
+        day, since, until = _api_day(v["end_time"])
+        if until > now:
+            continue  # まだ終わっていない区間は途中の値なので保存しない（翌朝に取り直す）
+        windows.append((day, since, until))
+        views[day] = v["value"]
+    if not windows:
+        sys.exit("アカウントの表示数が返ってきませんでした（期間かトークンの権限を確認）")
+    posts = _post_counts(tok, uid, windows)
+
+    clicks_total = 0
+    for day, since, until in windows:
+        q = {"since": since, "until": until, "access_token": tok}
+        sums = call("GET", f"{BASE}/{uid}/threads_insights", dict(q, metric=",".join(ACCOUNT_SUMS)))
+        con.execute(
+            "insert into threads_account_daily (day, views, likes, replies, reposts, quotes, posts, fetched_at) "
+            "values (%s,%s,%s,%s,%s,%s,%s,now()) on conflict (day) do update set views=excluded.views, "
+            "likes=excluded.likes, replies=excluded.replies, reposts=excluded.reposts, quotes=excluded.quotes, "
+            "posts=excluded.posts, fetched_at=now()",
+            (day, views[day], *(_total(sums, k) for k in ACCOUNT_SUMS), posts[day]))
+        clicks = call("GET", f"{BASE}/{uid}/threads_insights", dict(q, metric="clicks"))
+        for d in clicks.get("data", []):
+            for lv in d.get("link_total_values", []):
+                clicks_total += lv.get("value", 0)
+                con.execute(
+                    "insert into threads_link_clicks_daily (day, link_url, clicks, fetched_at) "
+                    "values (%s,%s,%s,now()) on conflict (day, link_url) do update set "
+                    "clicks=excluded.clicks, fetched_at=now()", (day, lv["link_url"], lv.get("value", 0)))
+
+    # フォロワー数は現在値しか取れないので、いちばん新しい日に置く
+    fc = _total(call("GET", f"{BASE}/{uid}/threads_insights",
+                     {"metric": "followers_count", "access_token": tok}), "followers_count")
+    last = windows[-1][0]
+    con.execute("update threads_account_daily set followers_count=%s where day=%s", (fc, last))
+    rollup_account_months(con, {d.strftime("%Y-%m") for d, _, _ in windows})
+    con.commit()
+    first = windows[0][0]
+    print(f"Threadsアカウント全体を保存: {first}〜{last}（{len(windows)}日） 表示{sum(views.values())} "
+          f"リンククリック{clicks_total} 投稿{sum(posts.values())} フォロワー{fc}")
+
+
 def cmd_refresh(_):
     tok = env("THREADS_ACCESS_TOKEN")
     if not tok:
@@ -214,6 +338,10 @@ def main():
     m.add_argument("--only-t1", action="store_true")
     m.add_argument("--only-t7", action="store_true")
     m.set_defaults(fn=cmd_measure)
+    ac = sub.add_parser("account-daily")
+    ac.add_argument("--days", type=int, default=7, help="取り直す日数（既定: 直近7日）")
+    ac.add_argument("--since", help="過去分の読み込み用。この日（YYYY-MM-DD）から今日まで")
+    ac.set_defaults(fn=cmd_account_daily)
     sub.add_parser("refresh-token").set_defaults(fn=cmd_refresh)
     a = ap.parse_args()
     a.fn(a)

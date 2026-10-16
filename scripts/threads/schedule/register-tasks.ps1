@@ -11,6 +11,7 @@ $pwsh = (Get-Command pwsh).Source
 $jobs = @(
     @{ Job = 'improve';       At = '05:00'; Note = '自律改善（仕組みの改善案を起草→承認済みを反映→7日後に効果確認）' },
     @{ Job = 'research';      At = '05:30'; Note = '種ネタの在庫補充（不足時のみ）' },
+    @{ Job = 'account';       At = '05:50'; Note = 'アカウント全体のインサイト（表示・反応・リンククリック・フォロワー）を取り込み' },
     @{ Job = 'validate';      At = '06:00'; Note = '前日の実測→勝者→今日の3本を作成' },
     @{ Job = 'blog';          At = '06:30'; Note = '勝者の記事を下書き保存→Discord承認依頼' },
     @{ Job = 'care';          At = '07:00'; Note = '点検（異常の記録・安全な修正・Discord報告）' },

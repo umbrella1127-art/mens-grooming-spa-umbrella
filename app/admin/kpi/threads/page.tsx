@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Badge, Card, Empty, Flow } from "@/components/admin/board";
 import RunReflections from "@/components/admin/RunReflections";
+import ThreadsAccount from "@/components/admin/ThreadsAccount";
+import { getThreadsAccountData } from "@/lib/admin/threads-account";
 import { getReflections } from "@/lib/admin/reflections";
 import type { Stage, Tone } from "@/lib/admin/board";
 import { TEAM_AVATARS } from "@/lib/admin/team-avatars";
@@ -38,6 +40,7 @@ const JOB_LABEL: Record<string, string> = {
   "threads:post2": "投稿2",
   "threads:post3": "投稿3",
   "threads:refresh-token": "トークン更新",
+  "threads:account": "アカウント取り込み",
 };
 
 function jst(iso: string, withTime = true) {
@@ -126,7 +129,11 @@ const KNOWLEDGE_GROUPS: {
 ];
 
 export default async function ThreadsKpiPage() {
-  const [d, reflections] = await Promise.all([getThreadsData(), getReflections("threads")]);
+  const [d, reflections, account] = await Promise.all([
+    getThreadsData(),
+    getReflections("threads"),
+    getThreadsAccountData(),
+  ]);
   const today = new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Tokyo" }).format(new Date());
   const todays = d.trials.filter((t) => t.trialDate === today);
   const past = d.trials.filter((t) => t.trialDate !== today);
@@ -196,6 +203,8 @@ export default async function ThreadsKpiPage() {
       ) : (
         <>
           <Flow stages={stages} />
+
+          <ThreadsAccount d={account} />
 
           <Card eyebrow="TODAY" title={`今日の3本（${today}）`}>
             {todays.length === 0 ? (

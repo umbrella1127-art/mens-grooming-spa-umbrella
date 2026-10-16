@@ -1,6 +1,6 @@
 # Threads→ブログ基盤の定期実行ジョブ（タスクスケジューラから呼ばれる）
 #   pwsh -File run-job.ps1 <job>
-# job: research | validate | blog | care | library | improve | post1 | post2 | post3 | watch | refresh-token
+# job: research | validate | blog | care | library | improve | post1 | post2 | post3 | watch | refresh-token | account
 # ログ: scripts/threads/logs/<日付>-<job>.log（古いものは30日で削除）
 param([Parameter(Mandatory = $true)][string]$Job)
 
@@ -60,6 +60,7 @@ $out = switch ($Job) {
     # 見張りのついでに、日中に承認された自律改善を反映する
     'watch'         { & python scripts/threads/watch.py 2>&1; $first = $LASTEXITCODE; & python scripts/improve/improve.py tick 2>&1; $global:LASTEXITCODE = $first }
     'refresh-token' { & python scripts/threads/threads_api.py refresh-token 2>&1 }
+    'account'       { & python scripts/threads/threads_api.py account-daily 2>&1 }
     default         { "unknown job: $Job" }
 }
 $code = $LASTEXITCODE
