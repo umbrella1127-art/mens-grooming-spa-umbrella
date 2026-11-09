@@ -50,6 +50,7 @@ const SCHEDULE: ScheduleDef[] = [
   { time: "08:00", routine: "threads:post1", label: "Threads 1本目を投稿", team: "Threads", on: every },
   { time: "09:00", routine: "数字の共有リマインド", label: "数字の共有リマインド", team: "企画", on: dows(1, 2) },
   { time: "09:00", routine: "コンテンツ企画（週3）", label: "コンテンツ企画（週3）", team: "企画", on: dows(1, 3, 5) },
+  { time: "09:15", routine: "site:weekly", label: "GA4の週次分析（流入元・ページ別）", team: "サイト", agent: "ga4-analyst", on: dows(0) },
   { time: "09:30", routine: "threads:watch", label: "未投稿の見張り", team: "Threads", on: every },
   { time: "10:00", routine: "hpb:monthly", label: "HPB月次分析（締め翌日）", team: "HPB", agent: "hpb-orchestrator", on: isClosingFriday },
   { time: "10:00", routine: "hpb:midcheck", label: "HPB中間チェック", team: "HPB", on: (x) => x.day === 15, untracked: true },

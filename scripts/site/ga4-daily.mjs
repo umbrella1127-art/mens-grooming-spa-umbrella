@@ -123,6 +123,38 @@ async function main() {
     console.error(`GA4 年齢構成の取得をスキップしました: ${err.message ?? err}`);
   }
 
+  // 流入元（どこから来たか）。page='(src:google / organic)' のように 流入元/メディア を保存する。
+  // 「Googleで探した人」「Instagramのリンクから来た人」「直接来た人」などでLINEクリック率を比べるため
+  try {
+    const [srcPerDay] = await c.runReport({
+      property,
+      dateRanges,
+      dimensions: [{ name: "date" }, { name: "sessionSourceMedium" }],
+      metrics: [{ name: "sessions" }, { name: "engagedSessions" }],
+      limit: 100000,
+    });
+    for (const r of srcPerDay.rows ?? []) {
+      const [d, sm] = r.dimensionValues.map((v) => v.value);
+      const [s, e] = r.metricValues.map((v) => v.value);
+      push(d, `(src:${sm})`, "sessions", s);
+      push(d, `(src:${sm})`, "engaged_sessions", e);
+    }
+    const [srcLine] = await c.runReport({
+      property,
+      dateRanges,
+      dimensions: [{ name: "date" }, { name: "sessionSourceMedium" }],
+      metrics: [{ name: "eventCount" }],
+      dimensionFilter: lineFilter,
+      limit: 100000,
+    });
+    for (const r of srcLine.rows ?? []) {
+      const [d, sm] = r.dimensionValues.map((v) => v.value);
+      push(d, `(src:${sm})`, "line_click", r.metricValues[0].value);
+    }
+  } catch (err) {
+    console.error(`GA4 流入元の取得をスキップしました: ${err.message ?? err}`);
+  }
+
   process.stdout.write(JSON.stringify(out));
 }
 

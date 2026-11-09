@@ -102,3 +102,15 @@ DBは `0029_threads_pipeline.sql`（`threads_topics` / `threads_trials`）と `0
 `threads_account_daily` / `threads_link_clicks_daily`（`0040_threads_account.sql`）と `channel_metrics`(threads, 月合計) に保存し、
 `/admin/kpi/threads` の「アカウント全体」カードが推移と気づき（`lib/admin/threads-account.ts` の決まったルール）を出す。1日は日本時間の前日16時〜当日16時。
 管理画面は `/admin/kpi/threads`。点検（自分自身を直すループ）は `scripts/threads/health.py` → `pipeline_issues`、学びは `knowledge`（source=threads）。
+
+## エラー監視・自動修復（仕組みの外側から見張る）
+
+定期実行の仕組み自体が壊れると、その上で動く点検も一緒に止まる（2026-10-22〜11-09は全タスクの起動方式が壊れて18日間気づけなかった）。
+そのため監視は仕組みの外側に置く。
+- **監視担当** `scripts/monitor/watchdog.py`（Claude不要・2時間おき＋ログオン時）: Windowsタスクの失敗／routineの途絶／データの鮮度（GA4・Threadsアカウント）を点検し、
+  `pipeline_issues`（channel='system'）に記録、1回1通にまとめてDiscord（点検用チャンネル）へ。自動修復は RUNBOOK の範囲だけ
+  （起動方式を wscript経由→pwsh直接に戻す／`SAFE_RERUN` の再実行・取り込み直し）。
+- **修復担当** `.claude/agents/error-fixer.md`（手順 `.claude/skills/error-fix/SKILL.md`、毎日07:45・対象があるときだけ）: 自動で直せなかった件を調べる。
+  コードの変更は `improve.py draft`（承認制）、環境・秘密情報は人へ（`scripts/monitor/issues.py escalate`）。承認制は外さない。
+- **クラウドの見張り** `app/api/cron/watchdog/route.ts`（Vercel Cron・毎日）: PCが止まって記録が途絶えたことを検知。`CRON_SECRET` が必要。
+- 画面は `/admin/errors`。登録は `pwsh -File scripts/monitor/register-tasks.ps1`。タスクは pwsh を直接起動する（wscript経由は使わない）。
