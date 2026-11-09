@@ -19,6 +19,7 @@ foreach ($tool in @(@{ N = 'python'; D = "$env:LOCALAPPDATA\Programs\Python\Pyth
 & python scripts/threads/run_log.py --routine site:weekly --start 2>&1 | Out-File $log -Encoding utf8 -Append
 # 書いてよいのは findings への記録と通知・振り返りだけ。サイトのコード・DB本体・実験の登録は触らせない
 $tools = @('Read', 'Grep', 'Bash(python scripts/site/analyze.py*)', 'Bash(python scripts/hpb/db_put.py --finding*)',
+    'Write(scripts/site/_report/**)', 'Bash(python scripts/hpb/db_put.py --report*)', 'Bash(python -c "from datetime*)', 'Bash(mkdir *)',
     'Bash(python scripts/threads/threads_notify.py*)', 'Bash(python scripts/reflect/*)')
 $prompt = ".claude/agents/ga4-analyst.md の人格で、.claude/skills/ga4-analysis/SKILL.md の手順どおりに今週のGA4分析を行ってください。" +
     "報告の最後の1行は必ず RESULT: ok / RESULT: partial / RESULT: error のどれか1つだけにしてください。"

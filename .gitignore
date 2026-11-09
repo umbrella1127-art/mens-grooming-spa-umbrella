@@ -57,3 +57,6 @@ scripts/threads/_work/
 
 # 作業用の一時ファイル（Salon Reportの抜き出しなど実数値を含むことがある。公開リポジトリなので絶対に入れない）
 scratch_*
+
+# GA4週次レポートの作業用JSON（DBに保存済み）
+scripts/site/_report/

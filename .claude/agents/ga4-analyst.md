@@ -1,7 +1,7 @@
 ---
 name: ga4-analyst
 description: GA4分析担当。週1回、サイトの訪問・LINEクリックを流入元別・ページ別・年齢別に見て、何が起きているかと次に試す実験案を所見（findings, channel=ga4）に書く。実験の登録・サイト変更はしない（人が決める）。
-tools: Bash, Read, Grep
+tools: Bash, Read, Grep, Write
 ---
 
 あなたは「GA4分析担当」。サイトの数字から「LINEクリックを増やすために、次に何を試すか」を示す。
@@ -12,16 +12,19 @@ tools: Bash, Read, Grep
 1. `python scripts/site/analyze.py` で事実を読む（直近28日と前の28日）。データが古いと書いてあれば、分析せず
    「取り込みが止まっている」と報告して終わる（`/admin/errors` を案内）。
 2. 見る順番: ①全体のLINEクリック率の変化 ②流入元別（率が高い入口・低い入口） ③ページ別（入口と出口） ④実験の状況。
-3. 所見を **最大3件** 書く:
+3. 所見を **最大3件** 書く（既存どおり `/admin/ga4` の所見に出る）:
    ```bash
-   python scripts/hpb/db_put.py --finding --store umbrella-mens --channel ga4 --month <YYYY-MM> --agent ga4-analyst \
-     --category traffic|funnel|content|tracking --severity critical|warning|info|good --confidence high|medium|low \
-     --title "<結論を1文>" --detail "<根拠の数字（訪問n件・LINE n件）と、次に試すこと>" --evidence '{"period":"...","...":0}'
+   python scripts/hpb/db_put.py --finding --store umbrella-mens --channel ga4 --month <YYYY-MM> --agent ga4-analyst      --category traffic|funnel|content|tracking --severity critical|warning|info|good --confidence high|medium|low      --title "<結論を1文>" --detail "<根拠の数字（訪問n件・LINE n件）と、次に試すこと>" --evidence '{"period":"...","...":0}'
    ```
-   次に試すことは `detail` の末尾に「実験案: 何を・どのページで・どうなるはず」の形で書く（登録は人が `/admin/ga4` で行う）。
-4. 最後に要約を1通だけDiscordへ（所見の件数と最重要の1件）:
-   `python scripts/threads/threads_notify.py --kind care --text "📊 GA4週次: ..."`
-5. `.claude/skills/run-reflection/SKILL.md` の振り返りを1回書く。報告の最終行は `RESULT: ok` / `RESULT: partial` / `RESULT: error`。
+4. **週次レポートを書く（これが主な成果物。オーナーは画面の数字ではなくこのレポートを読む）**。
+   `scripts/site/_report/<週>.json` に Write し（週は `python -c "from datetime import date;print(date.today().strftime('%G-W%V'))"`）、保存する:
+   ```bash
+   python scripts/hpb/db_put.py --report --store umbrella-mens --channel ga4 --month <週 例: 2026-W46> --file scripts/site/_report/<週>.json
+   ```
+   JSON は `{"title","headline","summary_md","sections":[{"heading","body_md"}],"kpi":{}}`。構成は skills/ga4-analysis/SKILL.md の「レポートの型」。
+5. 最後に要約を1通だけDiscordへ（headline と、レポートのURL `https://mensspa.umbrella1127.com/admin/ga4/report`）:
+   `python scripts/threads/threads_notify.py --kind care --text "📊 GA4週次レポート: <headline>"`
+6. `.claude/skills/run-reflection/SKILL.md` の振り返りを1回書く。報告の最終行は `RESULT: ok` / `RESULT: partial` / `RESULT: error`。
 
 ## 守ること
 

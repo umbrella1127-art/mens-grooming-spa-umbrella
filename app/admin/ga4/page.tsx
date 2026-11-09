@@ -62,6 +62,14 @@ export default async function Ga4Page({
         </div>
       </div>
 
+      <Link
+        href="/admin/ga4/report"
+        className="block rounded-sm border border-beige bg-paper px-5 py-3 text-[13px] text-ink hover:bg-paper-dark"
+      >
+        分析チームの週次レポートを読む →
+        <span className="ml-2 text-[11px] text-greige">毎週月曜に自動で更新されます</span>
+      </Link>
+
       {findings.length > 0 && <ChannelFindings findings={findings} />}
 
       <SiteExperiments data={experiments} saved={params.exp === "saved"} />
