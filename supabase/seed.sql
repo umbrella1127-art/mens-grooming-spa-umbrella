@@ -31,14 +31,14 @@ insert into site_settings (key, value, label, group_name, input_type, sort_order
 insert into menus (slug, name, category, description, duration_min, price_yen, price_status, price_note, is_published, is_recommended, sort_order, page_slug) values
 -- ヘッドスパ
 ('headspa-tsuki', '月（つき）', 'head_spa',
- 'カット＋シェービング＋ヘッドスパ35分。月に一度の身だしなみとリセットを、一度にまとめて。', 90, 9900, 'fixed', '税込', true, false, 1, 'head-spa'),
+ 'カット＋シェービング＋ヘッドスパ35分。ヘッドスパは、頭皮のクレンジングと保湿を行う入門コースです。悩みがなくても、定期的にケアしたい方におすすめです。', 90, 9900, 'fixed', '税込', true, false, 1, 'head-spa'),
 ('headspa-jo', '浄（じょう）', 'head_spa',
- 'カット＋シェービング＋ヘッドスパ50分。頭浸浴と専用オイルを使い、たっぷりのマッサージで深く整える上位コース。', 120, 12870, 'fixed', '税込', true, true, 2, 'head-spa'),
+ 'カット＋シェービング＋ヘッドスパ50分。オイルで頭皮を保湿し、年齢を重ねた頭皮をいたわる（エイジングケア）コースです。月の保湿とは別のケアです。40代後半〜50代以上の方に、特におすすめしています。', 120, 12870, 'fixed', '税込', true, true, 2, 'head-spa'),
 -- カットなしメニュー
 ('headspa-solo-tsuki', 'ヘッドスパ単品（月）', 'head_spa_solo',
- 'カット・シェービングなしで、「月」のヘッドスパだけをご利用いただけます。予約枠の目安は60分です。', 60, 7700, 'fixed', '税込・カット不要', true, false, 1, 'head-spa'),
+ 'ヘッドスパの入門コース。頭皮のクレンジングと保湿を行います。悩みがなくても、定期的にケアしたい方におすすめです。カット・シェービングなしで、ヘッドスパだけをご利用いただけます。予約枠の目安は60分です。', 60, 7700, 'fixed', '税込・カット不要', true, false, 1, 'head-spa'),
 ('headspa-solo-jo', 'ヘッドスパ単品（浄）', 'head_spa_solo',
- 'カット・シェービングなしで、「浄」のヘッドスパだけをご利用いただけます。', null, 10450, 'fixed', '税込・カット不要', true, false, 2, 'head-spa'),
+ 'オイルで頭皮を保湿し、年齢を重ねた頭皮をいたわる（エイジングケア）コースです。月の保湿とは別のケアです。施術後の睡眠について、変化が見られたというモニター調査のデータがあります（個人差があります）。40代後半〜50代以上の方に、特におすすめしています。カット・シェービングなしで、ヘッドスパだけをご利用いただけます。', null, 10450, 'fixed', '税込・カット不要', true, false, 2, 'head-spa'),
 ('headspa-shave-facial-tsuki', 'シェービング＋ヘッドスパ「月」＋ベーシックGRフェイシャル', 'head_spa_solo',
  'カットなしでご利用いただけるセットコースです。シェービングで肌を整え、ヘッドスパ「月」で頭をほぐし、ベーシックGRフェイシャルで肌までケア。通常価格12,100円のところ、10,450円でご利用いただけます。', null, 10450, 'fixed', '税込・カット不要', true, false, 3, 'head-spa'),
 ('headspa-facial-jo', 'ヘッドスパ（浄）＋フェイシャル', 'head_spa_solo',
@@ -47,7 +47,7 @@ insert into menus (slug, name, category, description, duration_min, price_yen, p
 ('first-ume', 'GROOMING｜身だしなみを整える', 'first_grooming',
  'カット＋シェービング＋ヘッドスパ「月」35分。髪・顔・頭を一度に整える、umbrellaの基本コース。まずは月に一度のメンテナンスを始めたい方におすすめです。', 120, 9900, 'fixed', '税込', true, false, 1, 'first-grooming'),
 ('first-take', 'DEEP REST｜深く休む', 'first_grooming',
- 'カット＋シェービング＋ヘッドスパ「浄」50分。頭浸浴と専用オイルを使い、頭から肩までじっくりとほぐします。脳疲労や、休んでも抜けにくい疲れを感じている方へ。', 150, 12870, 'fixed', '税込', true, false, 2, 'first-grooming'),
+ 'カット＋シェービング＋ヘッドスパ「浄」50分。オイルで頭皮を保湿し、頭から肩までじっくりとほぐします。脳疲労や、休んでも抜けにくい疲れを感じている方、40代後半〜50代以上の方へ。', 150, 12870, 'fixed', '税込', true, false, 2, 'first-grooming'),
 ('first-matsu', 'TOTAL CARE｜印象まで整える', 'first_grooming',
  'GROOMINGの内容＋2種類のフェイシャルケア＋肌の水分・油分チェック。髪と頭を整えるだけでなく、疲れや年齢が表れやすい肌までケア。清潔感のある印象と、自信を取り戻したい方のためのコースです。', 180, 13860, 'fixed', '〜・税込', true, true, 3, 'first-grooming'),
 -- フェイシャル

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import CtaSection from "@/components/sections/CtaSection";
+import MenuPicker from "@/components/sections/MenuPicker";
 import PageHero from "@/components/sections/PageHero";
 import Container from "@/components/ui/Container";
 import FadeIn from "@/components/ui/FadeIn";
@@ -33,6 +34,8 @@ export default async function MenuPage() {
         imageUrl={images.head_spa_hero?.url}
         imageAlt={images.head_spa_hero?.alt}
       />
+
+      <MenuPicker />
 
       {/* グループごとの目次 */}
       <section className="border-b border-beige py-8">

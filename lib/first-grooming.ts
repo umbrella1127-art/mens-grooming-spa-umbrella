@@ -37,7 +37,7 @@ export const FIRST_GROOMING_COURSES: FirstGroomingCourse[] = [
     duration: "約150分",
     content: "カット＋シェービング＋ヘッドスパ「浄」50分。",
     description:
-      "頭浸浴と専用オイルを使い、頭から肩までじっくりとほぐします。脳疲労や、休んでも抜けにくい疲れを感じている方へ。",
+      "オイルで頭皮を保湿し、頭から肩までじっくりとほぐします。脳疲労や、休んでも抜けにくい疲れを感じている方、40代後半〜50代以上の方へ。",
     originalPrice: "¥14,300",
     campaignPrice: "¥12,870",
     recommended: false,

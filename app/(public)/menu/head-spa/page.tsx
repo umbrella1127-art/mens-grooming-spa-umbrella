@@ -7,6 +7,7 @@ import {
   MessageCircle,
   Microscope,
   Moon,
+  Sparkles,
   TrendingUp,
   Waves,
 } from "lucide-react";
@@ -97,26 +98,31 @@ const SLEEP_DATA = [
   { label: "40代女性", value: 0 },
 ];
 
-const JO_FEATURES = [
+const JO_STEPS = [
   {
-    title: "頭浸浴",
-    body: "水の流れる音と、体温に近い温かいお湯。アーユルヴェーダの伝統技法シローダーラの発想を取り入れ、オイルの代わりにお湯を頭に注ぎ続けることで、思考を手放す時間をつくります。50分コースだけの工程です。",
-    icon: Droplets,
-  },
-  {
-    title: "専用オイル",
-    body: "アーユルヴェーダなどでも使われる、エイジングケアに定評のあるオイルを使用。頭皮に浸透させながら、指の腹でじっくりとほぐしていきます。",
+    title: "オイルを塗布し、スチームで温める",
+    body: "オイルをなじませ、浸透を高めるためにスチームと一緒に温めていきます。",
     icon: Droplet,
   },
   {
-    title: "しっかりとしたマッサージ",
-    body: "35分コースより伸びた時間は、表面をなでるためではなく、指の腹で圧を抜かずに芯まで届かせるために使います。",
+    title: "炭酸シャンプー＆頭皮に合わせたシャンプー",
+    body: "炭酸シャンプーと、頭皮の状態に合ったシャンプーで、頭皮をゆるめながら洗っていきます。",
+    icon: Sparkles,
+  },
+  {
+    title: "頭浸浴（炭酸泉）",
+    body: "炭酸泉に頭を浸し、毛穴まわりをすっきりさせながら、頭の疲れをゆるめていきます。50分コースだけの工程です。",
+    icon: Droplets,
+  },
+  {
+    title: "保湿クリームでヘッドマッサージ",
+    body: "保湿クリームをしっかりなじませ、頭皮の筋肉をほぐしていきます。首のこりにもアプローチします。",
     icon: Hand,
   },
   {
-    title: "静かな空間",
-    body: "落ち着いたトーンの照明と、歌詞のない音楽。ヘッドスパの間は話しかけられることもありません。目を閉じて、ただ身を委ねる時間です。",
-    icon: Moon,
+    title: "仕上げの肩マッサージ",
+    body: "最後は肩。手を抜かず、しっかりほぐして終わります。",
+    icon: Waves,
   },
 ];
 
@@ -225,19 +231,25 @@ export default async function HeadSpaPage() {
             50分「浄」で行うこと
           </SectionHeading>
           <FadeIn>
-            <div className="grid gap-5 sm:grid-cols-2">
-              {JO_FEATURES.map((f) => (
-                <div key={f.title} className="rounded-sm bg-charcoal p-6">
-                  <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-full border border-beige/40">
-                    <f.icon className="h-4 w-4 text-beige" strokeWidth={1.75} aria-hidden="true" />
+            <ol className="mx-auto max-w-2xl space-y-3">
+              {JO_STEPS.map((f, i) => (
+                <li key={f.title} className="flex gap-4 rounded-sm bg-charcoal p-5">
+                  <div className="flex shrink-0 flex-col items-center gap-2">
+                    <span className="font-serif-jp text-xs tracking-wider text-beige">0{i + 1}</span>
+                    <div className="flex h-9 w-9 items-center justify-center rounded-full border border-beige/40">
+                      <f.icon className="h-4 w-4 text-beige" strokeWidth={1.75} aria-hidden="true" />
+                    </div>
                   </div>
-                  <p className="mb-2 font-serif-jp text-base text-paper">
-                    {f.title}
-                  </p>
-                  <p className="text-sm leading-loose text-beige">{f.body}</p>
-                </div>
+                  <div>
+                    <p className="mb-1.5 font-serif-jp text-base text-paper">{f.title}</p>
+                    <p className="text-sm leading-loose text-beige">{f.body}</p>
+                  </div>
+                </li>
               ))}
-            </div>
+            </ol>
+            <p className="mx-auto mt-6 max-w-2xl text-center text-xs leading-loose text-beige">
+              ヘッドスパの間は、落ち着いた照明と歌詞のない音楽の中で、話しかけられることもありません。
+            </p>
             {/* 動画枠: 施術動画が用意でき次第ここに挿入する */}
           </FadeIn>
         </Container>

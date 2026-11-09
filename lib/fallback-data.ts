@@ -46,7 +46,7 @@ export const fallbackMenus: Menu[] = [
     name: "月（つき）",
     category: "head_spa",
     description:
-      "カット＋シェービング＋ヘッドスパ35分。月に一度の身だしなみとリセットを、一度にまとめて。",
+      "カット＋シェービング＋ヘッドスパ35分。ヘッドスパは、頭皮のクレンジングと保湿を行う入門コースです。悩みがなくても、定期的にケアしたい方におすすめです。",
     duration_min: 90,
     price_yen: 9900,
     price_status: "fixed",
@@ -59,7 +59,7 @@ export const fallbackMenus: Menu[] = [
     name: "浄（じょう）",
     category: "head_spa",
     description:
-      "カット＋シェービング＋ヘッドスパ50分。頭浸浴と専用オイルを使い、たっぷりのマッサージで深く整える上位コース。",
+      "カット＋シェービング＋ヘッドスパ50分。オイルで頭皮を保湿し、年齢を重ねた頭皮をいたわる（エイジングケア）コースです。月の保湿とは別のケアです。40代後半〜50代以上の方に、特におすすめしています。",
     duration_min: 120,
     price_yen: 12870,
     price_status: "fixed",
@@ -73,7 +73,7 @@ export const fallbackMenus: Menu[] = [
     name: "ヘッドスパ単品（月）",
     category: "head_spa_solo",
     description:
-      "カット・シェービングなしで、「月」のヘッドスパだけをご利用いただけます。予約枠の目安は60分です。",
+      "ヘッドスパの入門コース。頭皮のクレンジングと保湿を行います。悩みがなくても、定期的にケアしたい方におすすめです。カット・シェービングなしで、ヘッドスパだけをご利用いただけます。予約枠の目安は60分です。",
     duration_min: 60,
     price_yen: 7700,
     price_status: "fixed",
@@ -86,7 +86,7 @@ export const fallbackMenus: Menu[] = [
     name: "ヘッドスパ単品（浄）",
     category: "head_spa_solo",
     description:
-      "カット・シェービングなしで、「浄」のヘッドスパだけをご利用いただけます。",
+      "オイルで頭皮を保湿し、年齢を重ねた頭皮をいたわる（エイジングケア）コースです。月の保湿とは別のケアです。施術後の睡眠について、変化が見られたというモニター調査のデータがあります（個人差があります）。40代後半〜50代以上の方に、特におすすめしています。カット・シェービングなしで、ヘッドスパだけをご利用いただけます。",
     price_yen: 10450,
     price_status: "fixed",
     price_note: "税込・カット不要",
@@ -123,7 +123,7 @@ export const fallbackMenus: Menu[] = [
     name: "DEEP REST｜深く休む",
     category: "first_grooming",
     description:
-      "カット＋シェービング＋ヘッドスパ「浄」50分。頭浸浴と専用オイルを使い、頭から肩までじっくりとほぐします。脳疲労や、休んでも抜けにくい疲れを感じている方へ。",
+      "カット＋シェービング＋ヘッドスパ「浄」50分。オイルで頭皮を保湿し、頭から肩までじっくりとほぐします。脳疲労や、休んでも抜けにくい疲れを感じている方、40代後半〜50代以上の方へ。",
     duration_min: 150,
     price_yen: 12870,
     price_status: "fixed",
