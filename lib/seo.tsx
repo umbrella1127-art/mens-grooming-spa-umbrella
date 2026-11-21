@@ -54,7 +54,7 @@ export function localBusinessJsonLd(settings: Settings) {
       addressLocality: "前橋市",
       streetAddress: "小相木町388-1",
     },
-    geo: { "@type": "GeoCoordinates", latitude: 36.3833, longitude: 139.0364 },
+    geo: { "@type": "GeoCoordinates", latitude: 36.3732, longitude: 139.0566 },
     openingHoursSpecification: [
       {
         "@type": "OpeningHoursSpecification",
