@@ -29,6 +29,9 @@ RULES = [
     ("上から目線・高級演出", r"(であるべき|すべきです)|セレブ|ラグジュアリー|至高|極上"),
 ]
 # 確定済み価格以外の金額（¥・円）は人が確認する対象として警告（違反ではなく要確認）
+# 他店・同業への配慮（threads-blog-rules 8）。意味で決まるので違反にはせず、人が読んで確認する対象として警告
+OTHER_SHOP = re.compile(r"マスター|行きつけ|行き付け|なじみの(店|お店)|馴染みの(店|お店)|他の(店|お店|サロン|床屋)|別の(店|お店|サロン|床屋)|"
+                        r"他店|乗り換え|鞍替え|浮気|理髪店|床屋|義理")
 PRICE = re.compile(r"[¥￥]\s?[\d,]+|[\d,]{3,}\s?円")
 CONFIRMED = ("9,900", "12,870", "17,600", "9900", "12870", "17600")
 
@@ -43,6 +46,11 @@ def check(text):
     for m in PRICE.finditer(text):
         if not any(c in m.group(0) for c in CONFIRMED):
             warn.append(f"[要確認・価格] 未確定の可能性: {m.group(0)}")
+    seen = set()
+    for m in OTHER_SHOP.finditer(text):
+        if m.group(0) not in seen:
+            seen.add(m.group(0))
+            warn.append(f"[要確認・他店/誤読] 「{m.group(0)}」他店・同業を下げたり乗り換えを促したり、誤読されたりしないか確認")
     return bad, warn
 
 
