@@ -15,7 +15,7 @@ export async function generateMetadata() {
   return buildMetadata({
     title: "メニュー・料金",
     description:
-      "カット・シェービング・ヘッドスパ・フェイシャル・育毛・カラー・パーマまで、MEN'S GROOMING SPA umbrellaのメニューと料金の一覧です。前橋の男性専用グルーミングサロン。",
+      "メンズカット・シェービング・ヘッドスパ・フェイシャル・育毛・カラー・パーマまで、メニューと料金の一覧です。前橋の男性専用の理容室。",
     path: "/menu",
   });
 }
