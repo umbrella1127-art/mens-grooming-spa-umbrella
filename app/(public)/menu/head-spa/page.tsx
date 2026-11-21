@@ -11,9 +11,11 @@ import {
   TrendingUp,
   Waves,
 } from "lucide-react";
+import Link from "next/link";
 import CertificateBadge from "@/components/sections/CertificateBadge";
 import CtaSection from "@/components/sections/CtaSection";
 import EvidenceChart from "@/components/sections/EvidenceChart";
+import FaqList from "@/components/sections/FaqList";
 import FlowSteps from "@/components/sections/FlowSteps";
 import MenuCard from "@/components/sections/MenuCard";
 import PageHero from "@/components/sections/PageHero";
@@ -23,18 +25,53 @@ import FadeIn from "@/components/ui/FadeIn";
 import SectionHeading from "@/components/ui/SectionHeading";
 import StarRating from "@/components/ui/StarRating";
 import { getImages, getMenus, getSettings } from "@/lib/cms";
-import { buildMetadata } from "@/lib/seo";
+import { buildMetadata, faqJsonLd, JsonLd } from "@/lib/seo";
+import type { Faq } from "@/lib/types";
 
 export const revalidate = 3600;
 
 export async function generateMetadata() {
   return buildMetadata({
-    title: "メンズヘッドスパ",
+    title: "前橋のメンズヘッドスパ",
     description:
-      "前橋の男性専用サロンの本格ヘッドスパ。カウンセリング・マイクロスコープでの頭皮診断・施術・肩までのケア・施術後の頭皮確認まで含めた、「気持ちいい」で終わらないヘッドスパです。頭浸浴付きの50分「浄」もご用意。",
+      "前橋の男性専用サロンのメンズヘッドスパ。マイクロスコープでの頭皮確認から肩までのケアまで。頭浸浴付きの50分「浄」もご用意。",
     path: "/menu/head-spa",
   });
 }
+
+const HEAD_SPA_FAQS: Faq[] = [
+  {
+    question: "髪を切らなくても、ヘッドスパだけ受けられますか？",
+    answer:
+      "はい、受けられます。カットの予定がない日も大歓迎です。ヘッドスパだけ、フェイシャルと組み合わせてなど、お選びいただけます。",
+  },
+  {
+    question: "美容やヘッドスパの知識がなくても大丈夫ですか？",
+    answer:
+      "大丈夫です。最初のカウンセリングで、今日の状態や気になることを伺います。うまく言葉にできなくても問題ありません。",
+  },
+  {
+    question: "「浄」（50分）では何をしますか？",
+    answer:
+      "オイルをなじませてスチームで温め、炭酸シャンプーと頭皮に合ったシャンプーで洗い、頭浸浴（炭酸泉）、保湿クリームでのヘッドマッサージ、仕上げの肩マッサージまで行います。頭浸浴は50分コースだけの工程です。",
+  },
+  {
+    question: "施術中は、話しかけられますか？",
+    answer:
+      "ヘッドスパの間は、落ち着いた照明と歌詞のない音楽の中で、話しかけられることはありません。",
+  },
+  {
+    question: "予約はどうすればいいですか？",
+    answer:
+      "公式LINEからご予約・ご相談いただけます。どのメニューを選べばよいか迷う場合も、LINEでお気軽にご相談ください。",
+  },
+].map((f, i) => ({
+  ...f,
+  id: `head-spa-faq-${i + 1}`,
+  category: "head_spa",
+  sort_order: i + 1,
+  is_published: true,
+}));
 
 const SPA_FLOW = [
   {
@@ -156,11 +193,12 @@ export default async function HeadSpaPage() {
 
   return (
     <>
+      <JsonLd data={faqJsonLd(HEAD_SPA_FAQS)} />
       <PageHero
         en="Head Spa"
-        title="ヘッドスパ"
+        title="前橋のメンズヘッドスパ"
         lead={
-          "「気持ちよかった」で終わらせない。\nカウンセリングからマイクロスコープでの頭皮確認まで含めた、本格的なヘッドスパです。"
+          "前橋の男性専用サロンで受けられる、本格的なヘッドスパです。\n「気持ちよかった」で終わらせない。カウンセリングからマイクロスコープでの頭皮確認まで含めています。"
         }
         imageUrl={images.head_spa_hero?.url}
         imageAlt={images.head_spa_hero?.alt}
@@ -366,6 +404,28 @@ export default async function HeadSpaPage() {
           </Container>
         </section>
       )}
+
+      <section className="py-16 md:py-24">
+        <Container>
+          <SectionHeading en="Q&A">ヘッドスパのよくある質問</SectionHeading>
+          <FadeIn>
+            <div className="mx-auto max-w-3xl">
+              <FaqList faqs={HEAD_SPA_FAQS} />
+              <p className="mt-8 text-center text-sm leading-loose text-charcoal-light">
+                場所・営業時間は{" "}
+                <Link href="/access" className="text-brown underline underline-offset-4">
+                  アクセス
+                </Link>{" "}
+                のページをご覧ください。ほかの質問は{" "}
+                <Link href="/faq" className="text-brown underline underline-offset-4">
+                  よくある質問
+                </Link>{" "}
+                へ。
+              </p>
+            </div>
+          </FadeIn>
+        </Container>
+      </section>
 
       <CtaSection
         settings={settings}
