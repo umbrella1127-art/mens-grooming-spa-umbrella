@@ -7,6 +7,7 @@ const STATIC_PATHS = [
   "/first-visit",
   "/menu/first-grooming",
   "/menu/head-spa",
+  "/menu/cut",
   "/menu/facial",
   "/menu/shaving",
   "/menu/hair-growth",

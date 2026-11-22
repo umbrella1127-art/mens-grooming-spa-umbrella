@@ -28,7 +28,7 @@ export default function PageHero({
               {en}
             </p>
           )}
-          <h1 className="mb-5 text-3xl md:text-4xl">{title}</h1>
+          <h1 className="mb-5 text-balance text-3xl md:text-4xl">{title}</h1>
           {lead && (
             <p className="max-w-2xl whitespace-pre-line text-sm text-beige md:text-base">
               {lead}
@@ -57,7 +57,7 @@ export default function PageHero({
             {en}
           </p>
         )}
-        <h1 className="mb-5 text-3xl md:text-5xl">{title}</h1>
+        <h1 className="mb-5 text-balance text-3xl md:text-5xl">{title}</h1>
         {lead && (
           <p className="max-w-2xl whitespace-pre-line text-sm text-beige md:text-base">
             {lead}

@@ -69,7 +69,7 @@ const SIGNATURE_CARE = [
     en: "HAIR CUT",
     title: "カット",
     body: "身だしなみの基本を、丁寧なカットで。",
-    href: "/menu/first-grooming",
+    href: "/menu/cut",
   },
 ] as const;
 
