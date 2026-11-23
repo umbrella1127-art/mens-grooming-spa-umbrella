@@ -38,10 +38,11 @@ OK_RESULTS = {0, 267009, 267011, 267014}
 # 起動方式を直したあとに、念のため1回だけ走らせ直してよいタスク（何度走らせても同じ結果になるものだけ）
 SAFE_RERUN = {"mensumbrella-site-daily", "mensumbrella-threads-account"}
 
+# threads:validate は 2026-11-20 から意図して停止中（自動投稿ストップ）なので入れない。再開時に戻す。
 # routine ごとの「この時間以内に ok/partial が1つは残っているはず」。日次=36時間、週次=8日
 STALE_AFTER = {
     "site:daily": 36, "threads:improve": 36, "threads:owner-fetch": 36, "threads:research": 36,
-    "threads:account": 36, "threads:validate": 36, "threads:blog": 36, "threads:care": 36,
+    "threads:account": 36, "threads:blog": 36, "threads:care": 36,
     "threads:library": 8 * 24, "site:weekly": 9 * 24,
 }
 # データの鮮度。(テーブル, 日付列, 許容する遅れ(日), 取り込み直しコマンド)

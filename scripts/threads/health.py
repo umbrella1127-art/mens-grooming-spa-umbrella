@@ -16,6 +16,8 @@
   draft_stale      … ブログ下書き（content_drafts blog/pending）が3日以上放置
   run_error        … 直近48時間の agent_runs（threads:*）で error/partial
   run_stuck        … 直近48時間の agent_runs（threads:*）で running のまま2時間以上（途中で止まった疑い）
+  run_missing      … 今日の朝の定期実行（improve〜care）の agent_runs が無い（PCにログオンしていない・停止など。
+                     全タスクが一斉に走らなかった日を当日中に拾う。watch.py が投稿時刻の後に記録・通知する）
   rule_violation   … 投稿済み本文が今の禁止表現チェックに引っかかる（ルールを後から強めた場合）
   open_issues      … pipeline_issues の未解決件数
 """
@@ -31,6 +33,52 @@ from check_article import check  # noqa: E402
 from hpb_db import JST, connect  # noqa: E402
 
 SLOT_TIMES = {1: (8, 0), 2: (12, 30), 3: (19, 0)}
+
+# 毎朝（と日曜）に走るはずの定期実行。routine は agent_runs の名前、時刻は register-tasks.ps1 と同じ。
+# 時刻や工程を変えたら register-tasks.ps1 と lib/admin/activity-build.ts の SCHEDULE も揃えること。
+# 投稿（post1〜3）は入れない: 走らなければ draft が残って not_posted が個別に拾うので二重にしない。
+# 3つ目は曜日（月=0〜日=6）。None は毎日
+EXPECTED_RUNS = [
+    ("threads:improve", (5, 0), None),
+    ("threads:owner-fetch", (5, 25), None),
+    ("threads:research", (5, 30), None),
+    ("threads:account", (5, 50), None),
+    # threads:validate は 2026-11-20 から意図して停止中（自動投稿ストップ）。再開するときにここへ戻す
+    ("threads:blog", (6, 30), None),
+    ("threads:care", (7, 0), None),
+    ("threads:library", (7, 30), (6,)),
+]
+# 予定時刻からこれだけ待っても記録が無ければ「走らなかった」とみなす（開始時に running の行が作られるので、
+# 実行中・長引いている場合は記録がある扱いになる）
+RUN_GRACE = timedelta(minutes=30)
+
+
+def missing_runs(con, now):
+    """今日、予定時刻+猶予を過ぎたのに agent_runs に1行も無い定期実行の routine 一覧（予定順）"""
+    day_start = datetime(now.year, now.month, now.day, tzinfo=JST)
+    due = [r for r, (h, m), dows in EXPECTED_RUNS
+           if (dows is None or now.weekday() in dows) and now >= day_start + timedelta(hours=h, minutes=m) + RUN_GRACE]
+    if not due:
+        return []
+    seen = {r["routine"] for r in con.execute(
+        "select distinct routine from agent_runs where routine = any(%s) and ran_at >= %s and ran_at < %s",
+        (due, day_start, day_start + timedelta(days=1))).fetchall()}
+    return [r for r in due if r not in seen]
+
+
+def outage_window(con, now, missing):
+    """止まっていた時間帯。欠けた朝の実行のうち最も早い予定時刻の直前の記録（last_before）と、その後の最初の記録
+    （first_after。まだ無ければ None）、その間の時間数。記録は threads:* だけを見る（どれか1本でも走れば再開とみなす）"""
+    day_start = datetime(now.year, now.month, now.day, tzinfo=JST)
+    first_due = min(day_start + timedelta(hours=h, minutes=m) for r, (h, m), _ in EXPECTED_RUNS if r in missing)
+    last = con.execute("select max(ran_at) as t from agent_runs where routine like 'threads:%%' and ran_at < %s",
+                       (first_due,)).fetchone()["t"]
+    after = con.execute("select min(ran_at) as t from agent_runs where routine like 'threads:%%' and ran_at >= %s",
+                        (first_due,)).fetchone()["t"]
+    last = last.astimezone(JST) if last else None
+    after = after.astimezone(JST) if after else None
+    hours = ((after or now) - last).total_seconds() / 3600 if last else 0
+    return {"last_before": last, "first_after": after, "hours": hours}
 
 
 def run_checks(con):
@@ -112,6 +160,21 @@ def run_checks(con):
     for r in stuck:
         add("run_stuck", "warning", f"{r['routine']} が running のまま2時間以上（{r['ran_at']:%m/%d %H:%M}）",
             {"summary": r["summary"], "started_at": r["ran_at"].isoformat()})
+
+    missing = missing_runs(con, now)
+    if missing:
+        names = "・".join(r.split(":", 1)[1] for r in missing)
+        gap = outage_window(con, now, missing)
+        span = ""
+        if gap["last_before"]:
+            span = (f"。最後の記録 {gap['last_before']:%m/%d %H:%M}"
+                    + (f" → 再開 {gap['first_after']:%m/%d %H:%M}" if gap["first_after"] else " → まだ再開の記録なし")
+                    + f"（この間 約{gap['hours']:.0f}時間 動いていません）")
+        add("run_missing", "critical" if len(missing) >= 3 else "warning",
+            f"今日（{today:%m/%d}）の定期実行 {len(missing)}件が記録なし: {names}{span}",
+            {"date": str(today), "routines": missing,
+             "last_run_before": gap["last_before"].isoformat() if gap["last_before"] else None,
+             "first_run_after": gap["first_after"].isoformat() if gap["first_after"] else None})
 
     posted = q("select id, trial_date, slot, post_text from threads_trials where status='posted' "
                "and trial_date >= %s", today - timedelta(days=14))

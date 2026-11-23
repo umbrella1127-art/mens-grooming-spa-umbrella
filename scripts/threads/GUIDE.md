@@ -1,5 +1,13 @@
 # Threads検証 → 公式ブログ化パイプライン 運用ガイド
 
+> **【2026-11-20〜 自動投稿は停止中（オーナー判断：効果が見合わないため）】**
+> 止めているもの: 毎日3本の自動投稿（`post1`〜`post3`）と、今日の3本を作る毎朝の `validate`。タスクスケジューラ上は無効（Disabled）。
+> `register-tasks.ps1` は登録後に再び無効化するので、再登録しても復活しない。
+> 監視（`watchdog.py` の鮮度チェック・`health.py` の run_missing）も `threads:validate` を「走るはず」に数えない。
+> **勝手に再開しない・タスクを有効化しない。** 再開はオーナーの明示の指示があったときだけ（その際は上記3か所を戻す）。
+> 投稿は `/threads-batch`（人がネタを決め、AIが書き、井上さんの「投稿して」で出す）だけ。
+> 続けているもの: リサーチ・アカウント数字の取り込み・ブログ化・点検・知識整理・井上さんメモの取り込み・トークン更新。
+
 「リサーチ → 悩みキーワードを種ネタに → Threadsに1日3投稿 → 一番反応が良かったものだけ翌日ブログ化」を回す仕組み。
 ブログは公式サイトの `posts`（`/blog`）に**下書き**で入り、Discordで承認すると公開される。
 種ネタの最優先ソースは、井上さんがDiscord「#今日の店」に書く日々の記録（`threads_topics.source='owner'`）。
@@ -23,7 +31,7 @@
 | 実行 | `/threads-run`（`research` `validate` `blog` `care` `library`） |
 | 名簿 | `python scripts/threads/roster.py`（agent_roster。名前・年齢・性格） |
 | 点検（ループB） | `python scripts/threads/health.py`（異常の候補）→ caretaker が `pipeline_issues` に記録・安全な修正・Discord報告 |
-| 未投稿の見張り | `python scripts/threads/watch.py`（09:30/14:00/20:30。Claudeを呼ばない。未投稿を記録＋Discord通知、再投稿はしない） |
+| 未投稿・定期実行の欠けの見張り | `python scripts/threads/watch.py`（09:30/14:00/20:30。Claudeを呼ばない。①投稿時刻+1時間を過ぎても draft のまま（not_posted）②今日の朝の定期実行（improve〜care、日曜は library）が予定+30分を過ぎても `agent_runs` に無い（run_missing。PCにログオンしていない・停止した日に1日1件）を記録＋Discord通知。再投稿・工程の手動実行はしない。PC自体が止まっている間は走れないので、気づけるのはPCが戻って最初の見張りから） |
 | 実行記録 | `run-job.ps1` が毎回 `agent_runs`（routine=`threads:<job>`）に1行残す（`run_log.py`） |
 | 管理画面 | `/admin/kpi/threads`（在庫・今日の3本・反応・異常・実行記録・効いた型・名簿） |
 | DB窓口 | `python scripts/threads/tdb.py`（`--context` で現状） |
@@ -79,6 +87,28 @@
 
 - 実測は投稿の翌日に取る（`measure` は既定で前日分）。表示が安定するのを待つため、朝6:00の実行が目安
 - 実投稿の3本は決まった時間帯に投稿するので、絶対に手動で `--live` を連打しない（同じ slot は `posted` になると再投稿されない）
+
+### ログオン不要で動かす（S4U）の検証メモ（2026-10-19）
+
+現在の全タスクは「ログオン中のみ実行（Interactive）」。PCが再起動して誰もログオンしないと、朝の工程は走らない（2026-10-18の事故）。
+`register-tasks.ps1 -S4U` で「ログオンの有無にかかわらず実行・パスワード不要（S4U）」に変えられる。**全タスクへ広げる前に、1タスクだけで確かめる**:
+
+1. **管理者として実行した PowerShell で** `pwsh -File scripts/threads/schedule/s4u-verify.ps1`（通常権限だと S4U の登録が「アクセスが拒否されました」になる＝2026-10-21に確認）… テスト用タスク `mensumbrella-threads-s4utest` をS4Uで登録→手動実行→結果表示。
+   中身は `s4u-check.ps1`（副作用なし）: セッションID（0＝ログオフ中と同じ条件）・python/claude/git が見つかるか・.env.local・
+   DB接続（watch.py --dry-run）・Threads/Discord/Anthropic への到達・`claude -p`・logs への書き込み。終わったら `-Cleanup` で削除
+2. 見るのは次の4つ: ①`session id` が 0 ②python/claude が見つかる（見つからなければ run-job.ps1 の PATH 補完が効く）
+   ③`claude -p` が答える（ログイン情報がS4Uから読めるか） ④ DB・HTTPS が通る
+3. 全部OKなら、本番は1つずつ `register-tasks.ps1 -Only <名前> -S4U` で切り替える（まず account → watch → 他）。
+   戻すときは `-Only <名前>`（-S4U なし）。S4Uでもスリープ中は走らない（StartWhenAvailable で復帰後に追いかける）
+4. watch にはログオン3分後のトリガーも付けた（`register-tasks.ps1` の `$logonWatch`）。停止・ログオン遅れのあとでも、戻った直後に
+   「朝の工程が動いていない（最後の記録→再開、止まっていた時間）」を拾う
+
+**検証結果（2026-10-21 06:56、管理者PowerShellで実行）**: LastTaskResult=0。session id 0（ログオフ中と同条件）で、python/claude/git が見つかり、
+.env.local 読込・DB接続(watch.py --dry-run)・Discord到達・`claude -p`(応答7)・git・logs書き込みがすべて通った。S4Uは使える。
+切り替え・削除（Unregister）にも管理者権限が必要。
+
+S4Uの制約: ネットワーク資格情報・DPAPI・資格情報マネージャ・暗号化ファイル（EFS）は使えない。リポジトリはOneDrive配下のため、
+ファイルが「オンラインのみ」に退避されるとログオン前（OneDrive未起動）は読めない可能性がある（フォルダを「常にこのデバイスに保持」にしておく）。
 
 ## 運用の原則
 

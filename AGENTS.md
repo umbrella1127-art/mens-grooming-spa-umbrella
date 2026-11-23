@@ -89,6 +89,9 @@
 
 ## Threads検証 → 公式ブログ化パイプライン
 
+**【2026-11-20〜 自動投稿は停止中】** 毎日3本の自動投稿（post1〜3）と毎朝の3本づくり（validate）は、オーナーが効果が見合わないと判断して止めた。
+タスクは無効のまま、監視も対象外。**エージェントは勝手に再開・有効化しない**（再開はオーナーの明示の指示のみ）。投稿は `/threads-batch`（人が決めて井上さんの合図で出す）だけ。
+
 30〜50代男性の悩みをリサーチし、Threadsに1日3投稿 → 最も反応が良かった1本のテーマだけを翌日ブログ記事にする。
 記事は `posts`（draft, source=ai）に入り、Discord承認（`content_drafts`）で公開する。**自動公開はしない**。
 運用・接続手順は [scripts/threads/GUIDE.md](scripts/threads/GUIDE.md)、エージェントは `.claude/agents/threads-*.md`、
